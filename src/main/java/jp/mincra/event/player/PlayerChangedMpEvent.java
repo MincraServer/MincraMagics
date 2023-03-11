@@ -1,5 +1,6 @@
 package jp.mincra.event.player;
 
+import jp.mincra.core.MP;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -11,17 +12,15 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerChangedMpEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player player;
-    private final float oldMp;
-    private final float newMp;
+    private final MP mp;
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
-    public PlayerChangedMpEvent(Player player, float oldMp, float newMp) {
+    public PlayerChangedMpEvent(Player player, MP mp) {
         this.player = player;
-        this.oldMp = oldMp;
-        this.newMp = newMp;
+        this.mp = mp;
     }
 
     @Override
@@ -33,11 +32,7 @@ public class PlayerChangedMpEvent extends Event {
         return player;
     }
 
-    public float getOldMp() {
-        return oldMp;
-    }
-
-    public float getNewMp() {
-        return newMp;
+    public MP getMp() {
+        return mp;
     }
 }

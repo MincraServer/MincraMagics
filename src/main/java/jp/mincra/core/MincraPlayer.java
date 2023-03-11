@@ -7,30 +7,33 @@ import org.bukkit.plugin.PluginManager;
 
 public class MincraPlayer {
     private final Player player;
-    private float mp;
-    private PluginManager pluginManager;
+    private final MP mp;
+    private final PluginManager pluginManager;
 
-    public MincraPlayer(Player player, float mp) {
+    public MincraPlayer(Player player, MP mp) {
         this.player = player;
         this.mp = mp;
         pluginManager = Bukkit.getPluginManager();
     }
 
-    public float getMp() {
+    public MP getMp() {
         return mp;
     }
 
     /**
      * MPを足します
      * @param mp 差分のMP
+     * @param ignoreMax MPの最大値を無視するか. デフォルトはfalse
      */
-    public void addMp(float mp) {
-        float oldMp = this.mp;
-        this.mp += mp;
-
+    public void addMp(float mp, boolean ignoreMax) {
+        this.mp.addMp(mp, ignoreMax);
         // イベントの呼び出し
-        PlayerChangedMpEvent e = new PlayerChangedMpEvent(player, oldMp, this.mp);
+        PlayerChangedMpEvent e = new PlayerChangedMpEvent(player, this.mp);
         pluginManager.callEvent(e);
+    }
+
+    public void addMp(float mp) {
+        addMp(mp, false);
     }
 
     /**
@@ -38,19 +41,26 @@ public class MincraPlayer {
      * @param mp 差分のMP
      */
     public void subMp(float mp) {
-        float oldMp = this.mp;
-        this.mp -= mp;
+        this.mp.subMp(mp);
 
-        PlayerChangedMpEvent e = new PlayerChangedMpEvent(player, oldMp, this.mp);
+        PlayerChangedMpEvent e = new PlayerChangedMpEvent(player, this.mp);
+        pluginManager.callEvent(e);
+    }
+
+    /**
+     * MPを入力値に設定する。MpMaxの上限はない。
+     * @param mp 書き換えるMP
+     * @param ignoreMax MPの最大値を無視するか. デフォルトはtrue
+     */
+    public void setMp(float mp, boolean ignoreMax) {
+        this.mp.setMp(mp, ignoreMax);
+
+        PlayerChangedMpEvent e = new PlayerChangedMpEvent(player, this.mp);
         pluginManager.callEvent(e);
     }
 
     public void setMp(float mp) {
-        float oldMp = this.mp;
-        this.mp = mp;
-
-        PlayerChangedMpEvent e = new PlayerChangedMpEvent(player, oldMp, this.mp);
-        pluginManager.callEvent(e);
+        setMp(mp, true);
     }
 
     public Player getPlayer() {

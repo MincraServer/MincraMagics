@@ -18,7 +18,8 @@ public class PlayerManager implements Listener {
         Player player = e.getPlayer();
         boolean isFirst = player.getFirstPlayed() == 0;
         float mp = isFirst ? 20 : 20; //TODO: 既にログインしたことのあるプレイヤーは、一番最後にログインしていた時のMPを代入
-        MincraPlayer mPlayer = new MincraPlayer(player, mp);
+        float maxMp = 20; //TODO: MaxMPを装備から参照
+        MincraPlayer mPlayer = new MincraPlayer(player, new MP(mp, maxMp, mp));
         players.put(player.getUniqueId(), mPlayer);
     }
 
