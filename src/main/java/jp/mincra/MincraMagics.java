@@ -7,12 +7,16 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import jp.mincra.core.PlayerManager;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MincraMagics extends JavaPlugin {
     private static MincraMagics INSTANCE;
 
     private static ProtocolManager protocolManager;
+    private static PlayerManager playerManager;
 
     @Override
     public void onEnable() {
@@ -24,38 +28,10 @@ public final class MincraMagics extends JavaPlugin {
     @Override
     public void onLoad() {
         protocolManager = ProtocolLibrary.getProtocolManager();
+        playerManager = new PlayerManager();
 
-        protocolManager.addPacketListener(new PacketAdapter(
-                this,
-                ListenerPriority.NORMAL,
-                PacketType.Play.Client.CHAT
-        ) {
-            @Override
-            public void onPacketReceiving(PacketEvent event) {
-                PacketContainer packet = event.getPacket();
-                String message = packet.getStrings().read(0);
-
-                if (message.contains("shit") || message.contains("damn")) {
-                    event.setCancelled(true);
-                    event.getPlayer().sendMessage("Bad manners!");
-                }
-            }
-        });
-
-        protocolManager.addPacketListener(new PacketAdapter(
-                this,
-                ListenerPriority.NORMAL,
-                PacketType.Play.Client.STEER_VEHICLE
-        ) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                PacketContainer packet = event.getPacket();
-                int actionId = packet.getIntegers().read(1);
-                int jumpBoost = packet.getIntegers().read(2);
-
-                event.getPlayer().sendMessage("Action Id: " + actionId + "\nJump Boost: " + jumpBoost);
-            }
-        });
+        PluginManager pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents((Listener) pluginManager, this);
     }
 
     @Override
@@ -68,5 +44,9 @@ public final class MincraMagics extends JavaPlugin {
 
     public static ProtocolManager getProtocolManager() {
         return protocolManager;
+    }
+
+    public static PlayerManager getPlayerManager() {
+        return playerManager;
     }
 }
