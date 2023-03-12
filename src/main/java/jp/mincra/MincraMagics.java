@@ -2,6 +2,7 @@ package jp.mincra;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import jp.mincra.command.CommandRegisterer;
 import jp.mincra.core.PlayerManager;
 import jp.mincra.hud.HudManager;
 import org.bukkit.plugin.PluginManager;
@@ -30,6 +31,8 @@ public final class MincraMagics extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(playerManager, this);
         pluginManager.registerEvents(hudManager, this);
+
+        new CommandRegisterer().registerAll();
     }
 
     @Override
