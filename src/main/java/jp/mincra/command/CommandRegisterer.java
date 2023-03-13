@@ -34,6 +34,7 @@ public class CommandRegisterer {
                                     mPlayer.setMp(amount, true);
                                     break;
                             }
-                        }));
+                        }))
+                .register();
     }
 }

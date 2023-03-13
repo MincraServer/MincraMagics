@@ -6,9 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerManager implements Listener {
     private final Map<UUID, MincraPlayer> players = new HashMap<>();
@@ -30,5 +28,8 @@ public class PlayerManager implements Listener {
 
     public MincraPlayer getPlayer(UUID id) {
         return players.get(id);
+    }
+    public Collection<MincraPlayer> getPlayers() {
+        return players.values();
     }
 }

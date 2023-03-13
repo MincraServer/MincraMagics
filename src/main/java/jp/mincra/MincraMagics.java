@@ -19,14 +19,9 @@ public final class MincraMagics extends JavaPlugin {
     public void onEnable() {
         INSTANCE = this;
 
-        CommandManager.register();
-    }
-
-    @Override
-    public void onLoad() {
         protocolManager = ProtocolLibrary.getProtocolManager();
         playerManager = new PlayerManager();
-        hudManager = new HudManager();
+        hudManager = new HudManager(playerManager);
 
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(playerManager, this);
