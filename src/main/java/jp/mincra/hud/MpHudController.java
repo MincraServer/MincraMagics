@@ -10,6 +10,7 @@ public class MpHudController {
     private static final String noMpIconCode = "%oraxen_mana_zero%";
     private static final String halfMpIconCode = "%oraxen_mana_half%";
     private static final String fullMpIconCode = "%oraxen_mana_full%";
+    private static final String shiftCode = "%oraxen_shift_mana%";
 
     public void displayMpBar(Player player, MP mp) {
         StringBuilder builder = new StringBuilder();
@@ -20,6 +21,8 @@ public class MpHudController {
         int noMpLen = mpDiff / 2;
         int halfMpLen = (mpDiff & 1); //奇数なら1 偶数なら0
         int fullMpLen = currentMp / 2;
+
+        builder.append(shiftCode);
 
         for (int i = 0; i < noMpLen; i++) {
             builder.append(noMpIconCode);
