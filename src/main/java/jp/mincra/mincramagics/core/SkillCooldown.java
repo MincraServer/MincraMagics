@@ -6,17 +6,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SkillCooldown {
-    private final Map<String, Integer> skillIdToCooldown = new HashMap<>();
+    private final Map<String, Integer> skillIdToCooldowntick = new HashMap<>();
 
     public boolean isCooldown(String skillId) {
-        if (!skillIdToCooldown.containsKey(skillId)) {
+        if (!skillIdToCooldowntick.containsKey(skillId)) {
             return false;
         }
-        int cooldownEndTime = skillIdToCooldown.get(skillId);
-        long current = System.currentTimeMillis();
-        boolean isCooldown = current < cooldownEndTime;
+        int cooldownEndTick = skillIdToCooldowntick.get(skillId);
+        long current = Bukkit.getCurrentTick();
+        boolean isCooldown = current < cooldownEndTick;
         if (!isCooldown) {
-            skillIdToCooldown.remove(skillId);
+            skillIdToCooldowntick.remove(skillId);
         }
         return isCooldown;
     }
@@ -28,12 +28,12 @@ public class SkillCooldown {
      */
     public void setCooldown(String skillId, float cooldown) {
         if (!isCooldown(skillId)) {
-            skillIdToCooldown.remove(skillId);
+            skillIdToCooldowntick.remove(skillId);
         }
 
         Bukkit.getLogger().warning("[MincraMagics] getCurrentTick works right??");
-        long current = System.currentTimeMillis();
-        int cooldownEndTime = (int) (current + (cooldown * 1000));
-        skillIdToCooldown.put(skillId, cooldownEndTime);
+        long current = Bukkit.getCurrentTick();
+        int cooldownEndTime = (int) (current + (cooldown * 20));
+        skillIdToCooldowntick.put(skillId, cooldownEndTime);
     }
 }

@@ -3,7 +3,9 @@ package jp.mincra.bktween;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.function.Consumer;
@@ -36,20 +38,26 @@ public class BKTween {
     }
 
     public BKTween delay(TickTime tickTime, long delay) {
-        tasks.add(new TweenTask(tmpFunction, tickTime.getMultiplier() * delay, 0));
+        tasks.add(new TweenTask(tmpFunction,
+                tickTime.getMultiplier() * delay, 0, 0));
         tmpFunction = null;
         return this;
     }
 
-    public BKTween repeat(TickTime tickTime, long interval, long delay) {
-        tasks.add(new TweenTask(tmpFunction, delay, interval));
+    public BKTween repeat(TickTime tickTime, long interval, long delay, int attempts) {
+        int multi = tickTime.getMultiplier();
+        tasks.add(new TweenTask(tmpFunction,
+                multi * delay,
+                multi * interval,
+                multi * attempts));
         tmpFunction = null;
         return this;
     }
 
     public void run() {
         if (tmpFunction != null) {
-            tasks.add(new TweenTask(tmpFunction, 0, 0));
+            tasks.add(new TweenTask(tmpFunction,
+                    0, 0, 0));
             tmpFunction = null;
         }
 
@@ -66,13 +74,29 @@ public class BKTween {
                 run();
             }, task.delay());
         } else {
-            scheduler.runTaskTimer(plugin, () -> {
-                task.func().accept(null);
-                run();
-            }, task.delay(), interval);
+            AtomicInteger currentIteration = new AtomicInteger(0);
+            AtomicInteger processId = new AtomicInteger();
+            int maxAttempts = task.attempts();
 
+            BukkitTask bkTask = scheduler.runTaskTimer(plugin, () -> {
+                int currentIterate = currentIteration.incrementAndGet();
+
+                if (currentIterate > maxAttempts) {
+                    Bukkit.getScheduler().cancelTask(processId.get());
+                }
+
+                task.func().accept(null);
+            }, task.delay(), interval);
+            processId.set(bkTask.getTaskId());
         }
     }
 }
 
-record TweenTask(Consumer<Void> func, long delay, long interval) { }
+/**
+ *
+ * @param func
+ * @param delay
+ * @param interval
+ * @param attempts interval != 0 の場合に何回繰り返すか。
+ */
+record TweenTask(Consumer<Void> func, long delay, long interval, int attempts) { }
