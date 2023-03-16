@@ -1,5 +1,7 @@
 package jp.mincra.core;
 
+import jp.mincra.event.player.PlayerChangedMpEvent;
+
 public class MP {
     private float mp;
     private float maxMp;

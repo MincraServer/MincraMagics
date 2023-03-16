@@ -3,3 +3,4 @@ version: ${project.version}
 main: jp.mincra.MincraMagics
 api-version: 1.19
 authors: [Harineko]
+depend: [Oraxen]
