@@ -40,6 +40,7 @@ repositories {
 }
 
 dependencies {
+    // mincramagics
     api("xyz.xenondevs:particle:1.8.3")
     api("de.tr7zw:item-nbt-api-plugin:2.11.1")
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
@@ -48,6 +49,9 @@ dependencies {
     compileOnly("dev.jorel:commandapi-core:8.7.0")
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("com.github.oraxen:oraxen:1.152.5")
+    // ezsvg
+    implementation("javax.xml.bind:jaxb-api:2.2.4")
+    implementation("org.w3c:dom:2.3.0-jaxb-1.0.6")
 }
 
 group = "jp.mincra"
