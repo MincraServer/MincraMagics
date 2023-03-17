@@ -40,7 +40,7 @@ public class Inferno extends MagicSkill {
         Location _playerLoc = playerLoc.clone();
         if (vfxManager == null) vfxManager = MincraMagics.getVfxManager();
         vfxManager.getVfx("inferno")
-                .playEffect(_playerLoc.add(new Vector(0, 0.2, 0)), 0.3);
+                .playEffect(_playerLoc.add(new Vector(0, 0.2, 0)), 3);
 
         Vector eyeDirection = player.getEyeLocation().getDirection().normalize();
         Location spawnLoc = playerLoc.add(new Vector(0, 5, 0));

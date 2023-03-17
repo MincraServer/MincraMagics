@@ -1,7 +1,6 @@
 package jp.mincra.bkvfx.particle;
 
 import jp.mincra.ezsvg.elements.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -28,12 +27,13 @@ public class SvgParticleVfx extends ParticleVfx {
         float size = svgObject.getHeight();
         float width = svgObject.getWidth();
         if (width > size) size = width;
-        double _size = 1 / size;
+        double invSize = 1 / size;
+        double halfSize = size / 2;
 
         for (SvgElement svgElement : svgElements) {
             if (svgElement instanceof Circle circle) {
-                Vector center = new Vector(circle.getCenterX() * _size, 0, circle.getCenterY() * _size);
-                double radius = circle.getRadius() * _size;
+                Vector center = new Vector((circle.getCenterX() - halfSize) * invSize, 0, (circle.getCenterY() - halfSize) * invSize);
+                double radius = circle.getRadius() * invSize;
                 circle(center, radius, density);
             } else if (svgElement instanceof Path path) {
                 List<PathElement> pathElements = path.getPaths();
@@ -43,25 +43,23 @@ public class SvgParticleVfx extends ParticleVfx {
                 float beforeY = 0;
                 for (PathElement pathElement : pathElements) {
                     switch (pathElement.pathType()) {
-                        case M:
-                            beforeX = (float) (pathElement.x() * _size);
-                            beforeY = (float) (pathElement.y() * _size);
+                        case M -> {
+                            beforeX = (float) ((pathElement.x() - halfSize) * invSize);
+                            beforeY = (float) ((pathElement.y() - halfSize) * invSize);
                             startX = beforeX;
                             startY = beforeY;
-                            break;
-                        case L:
-                            float currentX = (float) (pathElement.x() * _size);
-                            float currentY = (float) (pathElement.y() * _size);
+                        }
+                        case L -> {
+                            float currentX = (float) ((pathElement.x() - halfSize) * invSize);
+                            float currentY = (float) ((pathElement.y() - halfSize) * invSize);
                             // 座標系が違う(Yが高さ)
                             Vector start = new Vector(beforeX, 0, beforeY);
                             Vector end = new Vector(currentX, 0, currentY);
                             line(start, end, density);
                             beforeX = currentX;
                             beforeY = currentY;
-                            break;
-                        case Z:
-                            line(new Vector(beforeX, 0, beforeY), new Vector(startX, 0, startY), density);
-                            break;
+                        }
+                        case Z -> line(new Vector(beforeX, 0, beforeY), new Vector(startX, 0, startY), density);
                     }
                 }
             }
