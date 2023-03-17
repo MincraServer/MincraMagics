@@ -1,3 +1,5 @@
+import jp.mincra.bkvfx.Quaternion;
+import jp.mincra.bkvfx.Vector3;
 import jp.mincra.bkvfx.particle.SvgParticleVfx;
 import jp.mincra.ezsvg.elements.SvgObject;
 import org.bukkit.Particle;
@@ -6,29 +8,27 @@ import java.util.regex.Pattern;
 
 public class UnitTest {
     public static void main(String[] args) {
-        SvgTest svgTest = new SvgTest();
+//        SvgTest svgTest = new SvgTest();
+//        SvgObject svgObject = svgTest.getSvgObject("src/test/resources/magic_circle_1.svg");
+//        SvgParticleVfx particleVfx = new SvgParticleVfx(svgObject, 8, Particle.FLAME);
+//        System.out.println(particleVfx);
 
-//        expect("Test 1", isFloatNumeric("12.34"), true);
-//        expect("Test 2", isFloatNumeric("12"), false);
-//        expect("Test 3", isFloatCoordinates("12.34,56.78"), true);
-//        expect("Test 4", isFloatCoordinates("12.34"), false);
-
-        SvgObject svgObject = svgTest.getSvgObject("src/test/resources/magic_circle_1.svg");
-        SvgParticleVfx particleVfx = new SvgParticleVfx(svgObject, 8, Particle.FLAME);
-        System.out.println(particleVfx);
+        expect("Quaternion Test 1",
+                new Quaternion()
+                        .set(new Vector3(0, 1, 0), Math.PI / 6)
+                        .rotate(new Vector3(1, 0, 0)),
+                new Vector3(Math.cos(Math.PI / 6), 0, Math.sin(Math.PI / 6)));
+        expect("Quaternion Test 2",
+                new Quaternion()
+                        .set(new Vector3(1, 0, 0), Math.PI / 6)
+                        .rotate(new Vector3(1, 0, 0)),
+                new Vector3(1, 0, 0));
     }
 
     private static void expect(String id , Object attempt, Object result) {
         System.out.println(id + ": " + (attempt.equals(result) ? "Success" : "Failure"));
-    }
-
-    private static boolean isFloatNumeric(String string) {
-        String regex = "^[0-9]+[.][0-9]+$";
-        return Pattern.compile(regex).matcher(string).matches();
-    }
-
-    private static boolean isFloatCoordinates(String string) {
-        String regex = "^[0-9]+[.][0-9]+,[0-9]+[.][0-9]+$";
-        return Pattern.compile(regex).matcher(string).matches();
+        if (!attempt.equals(result)) {
+            System.out.println("Attempt: " + attempt);
+        }
     }
 }
