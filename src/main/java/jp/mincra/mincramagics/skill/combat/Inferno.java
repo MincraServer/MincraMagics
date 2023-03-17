@@ -8,13 +8,13 @@ import jp.mincra.mincramagics.core.MincraPlayer;
 import jp.mincra.mincramagics.core.PlayerManager;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.Random;
 
 public class Inferno extends MagicSkill {
     private PlayerManager playerManager;
@@ -40,26 +40,27 @@ public class Inferno extends MagicSkill {
         Location _playerLoc = playerLoc.clone();
         if (vfxManager == null) vfxManager = MincraMagics.getVfxManager();
         vfxManager.getVfx("inferno")
-                .playEffect(_playerLoc.add(new Vector(0, 0.2, 0)), 3);
+                .playEffect(_playerLoc.add(new Vector(0, 0.5, 0)), 5);
 
-        Vector eyeDirection = player.getEyeLocation().getDirection().normalize();
-        Location spawnLoc = playerLoc.add(new Vector(0, 5, 0));
-        Vector velocity = eyeDirection
-                .add(new Vector(0, -0.6, 0))
-                .multiply(0.7);
+        Location spawnLoc = playerLoc.add(new Vector(0, 3, 0));
 
         // Start repeating
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     // Spawn fireball
-                    Fireball fireball = (Fireball) world.spawnEntity(spawnLoc, EntityType.FIREBALL);
+                    Fireball fireball = (Fireball) world.spawnEntity(spawnLoc.add(new Vector(0, 1.5, 0)), EntityType.FIREBALL);
+                    // 射程 30 プロパティで変えても良いかも
+                    Vector eyeDirection = player.getTargetBlock(null, 30).getLocation().toVector()
+                            // Fireballはプレイヤーの目線より上から飛んでくるので、その分下向きのベクトルを足す。
+                            .add(spawnLoc.toVector().clone().multiply(-1)).normalize();
+                    Vector velocity = eyeDirection.multiply(0.7);
                     fireball.setVelocity(velocity);
                     fireball.setShooter(player);
 
                     // Sound;
                     world.playSound(playerLoc, Sound.ENTITY_BLAZE_SHOOT, 1, 1);
                 })
-                .repeat(TickTime.TICK, 5, 3, 5)
+                .repeat(TickTime.TICK, 5, 7, 5)
                 .run();
     }
 }

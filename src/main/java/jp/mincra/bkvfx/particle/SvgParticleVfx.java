@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SvgParticleVfx extends ParticleVfx {
@@ -15,13 +16,20 @@ public class SvgParticleVfx extends ParticleVfx {
     private Color color;
 //    private ParticleData particleData;
 
+    private final double density;
+    private final List<CircleProperty> circles;
+    private final List<LineProperty> lines;
+
     /**
      *
      * @param svgObject 描画するパーティクルのSvgObject
      */
     //TODO: パーティクルの中心を(0,0)に設定する
     public SvgParticleVfx(SvgObject svgObject, double density, org.bukkit.Particle particleEffect) {
+        this.density = density;
         this.particleEffect = particleEffect;
+        circles = new ArrayList<>();
+        lines = new ArrayList<>();
         List<SvgElement> svgElements = svgObject.getSvgElements();
         // heightとwidth, 大きい方をsizeにする
         float size = svgObject.getHeight();
@@ -34,7 +42,7 @@ public class SvgParticleVfx extends ParticleVfx {
             if (svgElement instanceof Circle circle) {
                 Vector center = new Vector((circle.getCenterX() - halfSize) * invSize, 0, (circle.getCenterY() - halfSize) * invSize);
                 double radius = circle.getRadius() * invSize;
-                circle(center, radius, density);
+                circles.add(new CircleProperty(center, radius));
             } else if (svgElement instanceof Path path) {
                 List<PathElement> pathElements = path.getPaths();
                 float startX = 0;
@@ -55,11 +63,13 @@ public class SvgParticleVfx extends ParticleVfx {
                             // 座標系が違う(Yが高さ)
                             Vector start = new Vector(beforeX, 0, beforeY);
                             Vector end = new Vector(currentX, 0, currentY);
-                            line(start, end, density);
+                            lines.add(new LineProperty(start, end));
                             beforeX = currentX;
                             beforeY = currentY;
                         }
-                        case Z -> line(new Vector(beforeX, 0, beforeY), new Vector(startX, 0, startY), density);
+                        case Z -> lines.add(new LineProperty(
+                                new Vector(beforeX, 0, beforeY), new Vector(startX, 0, startY)
+                        ));
                     }
                 }
             }
@@ -94,8 +104,15 @@ public class SvgParticleVfx extends ParticleVfx {
 //    }
 
     @Override
-    public void playEffect(Location center, double scale) {
-        System.out.println("Play effect in SvgParticleVfx");
+    public void playEffect(Location loc, double scale) {
+        for (CircleProperty circle : circles) {
+            circle(circle.center().clone().multiply(scale), circle.radius() * scale, density);
+        }
+
+        for (LineProperty line : lines) {
+            line(line.start().clone().multiply(scale), line.end().clone().multiply(scale), density);
+        }
+
         for (Particle particle : particles) {
             Vector offset = particle.getOffset();
             if (offset == null) offset = this.offset;
@@ -108,16 +125,18 @@ public class SvgParticleVfx extends ParticleVfx {
 //            ParticleData particleData = particle.getParticleData();
 //            if (particleData == null) particleData = this.particleData;
 
-            Location _center = center.clone();
+            Location _loc = loc.clone();
             Vector pLoc = particle.getLocation().clone();
-            center.getWorld().spawnParticle(particleEffect,
-                    _center.add(pLoc.multiply(scale)),
+            loc.getWorld().spawnParticle(particleEffect,
+                    _loc.add(pLoc),
                     amount,
                     offset.getX(),
                     offset.getY(),
                     offset.getZ(),
                     speed);
         }
+
+        particles = new ArrayList<>();
     }
 
     @Override
@@ -130,3 +149,6 @@ public class SvgParticleVfx extends ParticleVfx {
                 + "}";
     }
 }
+
+record CircleProperty(Vector center, double radius) {}
+record LineProperty(Vector start, Vector end) {}

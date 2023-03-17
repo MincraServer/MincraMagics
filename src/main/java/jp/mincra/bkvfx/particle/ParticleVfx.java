@@ -11,7 +11,7 @@ import java.util.List;
  *
  */
 public abstract class ParticleVfx implements Vfx {
-    protected final List<Particle> particles = new ArrayList<>();
+    protected List<Particle> particles = new ArrayList<>();
 
     /**
      * 直線を描画する
@@ -22,7 +22,8 @@ public abstract class ParticleVfx implements Vfx {
     protected void line(Vector start, Vector end, double density) {
         double distance = end.distance(start);
         int amount = (int) (distance * density);
-        Vector diff = end.subtract(start);
+        Vector diff = end.clone();
+        diff = diff.subtract(start);
 
         for (int i = 0; i < amount; i++) {
             // P = tA, t = i / amount

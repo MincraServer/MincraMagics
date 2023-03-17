@@ -2,6 +2,7 @@ package jp.mincra.bkvfx;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class VfxManager {
     private final Map<String, Vfx> vfxMap;
@@ -17,5 +18,9 @@ public class VfxManager {
     public Vfx getVfx(String vfxId) {
         System.out.println("getVfx() " + vfxId);
         return vfxMap.get(vfxId);
+    }
+
+    public Set<String> getVfxIds() {
+        return vfxMap.keySet();
     }
 }

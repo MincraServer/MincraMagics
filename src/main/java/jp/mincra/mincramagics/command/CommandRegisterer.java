@@ -50,7 +50,9 @@ public class CommandRegisterer {
     public CommandAPICommand skillCommand() {
         return new CommandAPICommand("skill")
                 .withArguments(new PlayerArgument("caster"))
-                .withArguments(new StringArgument("skill_id"))
+                .withArguments(new StringArgument("skill_id").replaceSuggestions(ArgumentSuggestions.strings(
+                        MincraMagics.getSkillManager().getSkillIds()
+                )))
                 .withArguments(new FloatArgument("cooldown"))
                 .withArguments(new IntegerArgument("consumed_mp"))
                 .withArguments(new IntegerArgument("strength"))
@@ -92,11 +94,14 @@ public class CommandRegisterer {
 
     private CommandAPICommand vfxCommand() {
         return new CommandAPICommand("vfx")
-                .withArguments(new StringArgument("id"))
+                .withArguments(new StringArgument("id").replaceSuggestions(ArgumentSuggestions.strings(
+                        MincraMagics.getVfxManager().getVfxIds()
+                )))
+                .withArguments(new LocationArgument("loc"))
                 .withArguments(new FloatArgument("scale"))
                 .executesPlayer(((sender, args) -> {
                     VfxManager vfxManager = MincraMagics.getVfxManager();
-                    vfxManager.getVfx((String) args[0]).playEffect(sender.getLocation(), (float) args[1]);
+                    vfxManager.getVfx((String) args[0]).playEffect((Location) args[1], (float) args[2]);
                 }));
     }
 

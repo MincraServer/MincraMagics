@@ -2,6 +2,7 @@ package jp.mincra.mincramagics.skill;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class SkillManager {
     private final Map<String, MagicSkill> idToSkill = new HashMap<>();
@@ -16,5 +17,9 @@ public class SkillManager {
 
     public boolean isRegistered(String id) {
         return idToSkill.containsKey(id);
+    }
+
+    public Set<String> getSkillIds() {
+        return idToSkill.keySet();
     }
 }
