@@ -8,7 +8,6 @@ import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.MechanicFactory;
 import jp.mincra.mincramagics.object.Material;
 import jp.mincra.mincramagics.object.MincraNBT;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,8 +37,8 @@ public class MagicStuffMechanic extends Mechanic {
             //TODO: Implement MaterialFilters and MagicEnchantments
 
             NBTItem nbtI = new NBTItem(itemBuilder.build());
-            Bukkit.getLogger().info("[MincraMagics] Loaded item");
-            Bukkit.getLogger().info(new Gson().toJson(mincraNbt));
+            System.out.println("[MincraMagics] Loaded item");
+            System.out.println(new Gson().toJson(mincraNbt));
             NBTContainer mincraNbtCom = new NBTContainer(new Gson().toJson(mincraNbt));
             nbtI.mergeCompound(mincraNbtCom);
             ItemStack item = nbtI.getItem();

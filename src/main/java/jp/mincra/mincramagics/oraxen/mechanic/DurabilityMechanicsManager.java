@@ -1,7 +1,6 @@
 package jp.mincra.mincramagics.oraxen.mechanic;
 
 import io.th0rgal.oraxen.api.OraxenItems;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -14,7 +13,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class DurabilityMechanicsManager implements Listener {
 
-    private DurabilityMechanicFactory factory;
+    private final DurabilityMechanicFactory factory;
 
     public DurabilityMechanicsManager(DurabilityMechanicFactory factory) {
         this.factory = factory;
@@ -22,7 +21,7 @@ public class DurabilityMechanicsManager implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     private void onItemDamaged(PlayerItemDamageEvent event) {
-        Bukkit.getLogger().info("[MincraMagics] DurabilityMechanicsManager works right?");
+        System.out.println("[MincraMagics] DurabilityMechanicsManager works right?");
 
         ItemStack item = event.getItem();
         String itemID = OraxenItems.getIdByItem(item);

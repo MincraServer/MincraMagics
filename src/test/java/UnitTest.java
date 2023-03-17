@@ -1,4 +1,6 @@
+import jp.mincra.bkvfx.particle.SvgParticleVfx;
 import jp.mincra.ezsvg.elements.SvgObject;
+import org.bukkit.Particle;
 
 import java.util.regex.Pattern;
 
@@ -11,7 +13,9 @@ public class UnitTest {
 //        expect("Test 3", isFloatCoordinates("12.34,56.78"), true);
 //        expect("Test 4", isFloatCoordinates("12.34"), false);
 
-        System.out.println(svgTest.getSvgObject("src/test/resources/magic_circle_1.svg"));
+        SvgObject svgObject = svgTest.getSvgObject("src/test/resources/magic_circle_1.svg");
+        SvgParticleVfx particleVfx = new SvgParticleVfx(svgObject, 8, Particle.FLAME);
+        System.out.println(particleVfx);
     }
 
     private static void expect(String id , Object attempt, Object result) {

@@ -54,6 +54,10 @@ public class SvgParser {
                         Float.parseFloat(xy[0]), Float.parseFloat(xy[1])));
             } else {
                 tmpCommand = d;
+
+                if (tmpCommand.equals("Z")) {
+                    pathElements.add(new PathElement(PathType.valueOf(tmpCommand), 0, 0));
+                }
             }
         }
         return pathElements;

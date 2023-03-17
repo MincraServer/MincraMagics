@@ -4,7 +4,6 @@ import io.th0rgal.oraxen.OraxenPlugin;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.MechanicFactory;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class MagicStuffMechanicFactory extends MechanicFactory {
@@ -18,7 +17,7 @@ public class MagicStuffMechanicFactory extends MechanicFactory {
     public Mechanic parse(ConfigurationSection itemMechanicConfiguration) {
         Mechanic mechanic = new MagicStuffMechanic(this, itemMechanicConfiguration);
         addToImplemented(mechanic);
-        Bukkit.getLogger().info("MagicStuffMechanicFactory#.parse()");
+        System.out.println("MagicStuffMechanicFactory#.parse()");
         return mechanic;
     }
 }

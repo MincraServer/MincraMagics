@@ -26,7 +26,9 @@ public abstract class ParticleVfx implements Vfx {
 
         for (int i = 0; i < amount; i++) {
             // P = tA, t = i / amount
-            Vector p = start.add(diff.multiply(i / amount));
+            Vector _diff = diff.clone();
+            Vector _start = start.clone();
+            Vector p = _start.add(_diff.multiply((float) i / (float) amount));
             Particle particle = new Particle();
             particle.setLocation(p);
             particles.add(particle);
@@ -43,12 +45,13 @@ public abstract class ParticleVfx implements Vfx {
         // 円周 = circumference
         double circumference = 2 * 3.14 * radius;
         int amount = (int) (circumference * density);
-        double radianPerI = 2 * 3.14 / amount;
+        double radianPerI = 2 * 3.14f / (float) amount;
 
         for (int i = 0; i < amount; i++) {
-            double x = Math.cos(i * radianPerI);
-            double y = Math.sin(i * radianPerI);
-            Vector p = center.add(new Vector(x, y, center.getZ()));
+            double x = Math.cos(i * radianPerI) * radius;
+            double z = Math.sin(i * radianPerI) * radius;
+            Vector _center = center.clone();
+            Vector p = _center.add(new Vector(x, 0, z));
             Particle particle = new Particle();
             particle.setLocation(p);
             particles.add(particle);

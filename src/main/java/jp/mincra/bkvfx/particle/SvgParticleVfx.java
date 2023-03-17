@@ -4,27 +4,24 @@ import jp.mincra.ezsvg.elements.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
-import xyz.xenondevs.particle.ParticleBuilder;
-import xyz.xenondevs.particle.ParticleEffect;
-import xyz.xenondevs.particle.data.ParticleData;
 
 import java.awt.*;
 import java.util.List;
 
 public class SvgParticleVfx extends ParticleVfx {
-    private ParticleEffect particleEffect;
-    private int amount;
-    private float speed;
+    private final org.bukkit.Particle particleEffect;
+    private int amount = 1;
+    private float speed ;
     private Vector offset;
     private Color color;
-    private ParticleData particleData;
+//    private ParticleData particleData;
 
     /**
      *
      * @param svgObject 描画するパーティクルのSvgObject
      */
     //TODO: パーティクルの中心を(0,0)に設定する
-    public SvgParticleVfx(SvgObject svgObject, double density, ParticleEffect particleEffect) {
+    public SvgParticleVfx(SvgObject svgObject, double density, org.bukkit.Particle particleEffect) {
         this.particleEffect = particleEffect;
         List<SvgElement> svgElements = svgObject.getSvgElements();
         // heightとwidth, 大きい方をsizeにする
@@ -34,38 +31,43 @@ public class SvgParticleVfx extends ParticleVfx {
         double _size = 1 / size;
 
         for (SvgElement svgElement : svgElements) {
-            if (svgElement instanceof Circle) {
-                Circle circle = (Circle) svgElement;
-                Vector center = new Vector(circle.getCenterX() * _size, circle.getCenterY() * _size, 0);
+            if (svgElement instanceof Circle circle) {
+                Vector center = new Vector(circle.getCenterX() * _size, 0, circle.getCenterY() * _size);
                 double radius = circle.getRadius() * _size;
                 circle(center, radius, density);
-            } else if (svgElement instanceof Path) {
-                Path path = (Path) svgElement;
+            } else if (svgElement instanceof Path path) {
                 List<PathElement> pathElements = path.getPaths();
+                float startX = 0;
+                float startY = 0;
                 float beforeX = 0;
                 float beforeY = 0;
                 for (PathElement pathElement : pathElements) {
                     switch (pathElement.pathType()) {
                         case M:
+                            beforeX = (float) (pathElement.x() * _size);
+                            beforeY = (float) (pathElement.y() * _size);
+                            startX = beforeX;
+                            startY = beforeY;
                             break;
                         case L:
-                            Vector start = new Vector(beforeX, beforeY, 0);
-                            Vector end = new Vector(pathElement.x(), pathElement.y(), 0);
+                            float currentX = (float) (pathElement.x() * _size);
+                            float currentY = (float) (pathElement.y() * _size);
+                            // 座標系が違う(Yが高さ)
+                            Vector start = new Vector(beforeX, 0, beforeY);
+                            Vector end = new Vector(currentX, 0, currentY);
                             line(start, end, density);
+                            beforeX = currentX;
+                            beforeY = currentY;
                             break;
                         case Z:
+                            line(new Vector(beforeX, 0, beforeY), new Vector(startX, 0, startY), density);
                             break;
                     }
-                    beforeX = pathElement.x();
-                    beforeY = pathElement.y();
                 }
             }
         }
-    }
 
-    public SvgParticleVfx setParticleEffect(ParticleEffect particleEffect) {
-        this.particleEffect = particleEffect;
-        return this;
+        offset = new Vector();
     }
 
     public SvgParticleVfx setAmount(int amount) {
@@ -88,55 +90,45 @@ public class SvgParticleVfx extends ParticleVfx {
         return this;
     }
 
-    public SvgParticleVfx setParticleData(ParticleData particleData) {
-        this.particleData = particleData;
-        return this;
-    }
+//    public SvgParticleVfx setParticleData(ParticleData particleData) {
+//        this.particleData = particleData;
+//        return this;
+//    }
 
     @Override
     public void playEffect(Location center, double scale) {
-        Bukkit.getLogger().info("Play effect in SvgParticleVfx");
+        System.out.println("Play effect in SvgParticleVfx");
         for (Particle particle : particles) {
-            ParticleBuilder builder =
-                    new ParticleBuilder(particleEffect, center.add(particle.getLocation()));
-
             Vector offset = particle.getOffset();
+            if (offset == null) offset = this.offset;
             int amount = particle.getAmount();
+            if (amount == 0) amount = this.amount;
             float speed = particle.getSpeed();
+            if (speed == 0) speed = this.speed;
             Color color = particle.getColor();
-            ParticleData particleData = particle.getParticleData();
+            if (color == null) color = this.color;
+//            ParticleData particleData = particle.getParticleData();
+//            if (particleData == null) particleData = this.particleData;
 
-            if (offset != null) {
-                builder = builder.setOffset(offset);
-            } else {
-                builder = builder.setOffset(this.offset);
-            }
-
-            if (amount != 0) {
-                builder = builder.setAmount(amount);
-            } else {
-                builder = builder.setAmount(this.amount);
-            }
-
-            if (speed != 0) {
-                builder = builder.setSpeed(speed);
-            } else {
-                builder = builder.setSpeed(this.speed);
-            }
-
-            if (color != null) {
-                builder = builder.setColor(color);
-            } else {
-                builder = builder.setColor(this.color);
-            }
-
-            if (particleData != null) {
-                builder = builder.setParticleData(particleData);
-            } else {
-                builder = builder.setParticleData(this.particleData);
-            }
-
-            builder.display();
+            Location _center = center.clone();
+            Vector pLoc = particle.getLocation().clone();
+            center.getWorld().spawnParticle(particleEffect,
+                    _center.add(pLoc.multiply(scale)),
+                    amount,
+                    offset.getX(),
+                    offset.getY(),
+                    offset.getZ(),
+                    speed);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "{"
+                + "\"particleEffect\":\"" + particleEffect + "\""
+                + ", \"amount\":\"" + amount + "\""
+                + ", \"speed\":\"" + speed + "\""
+                + ", \"particles\":" + particles
+                + "}";
     }
 }

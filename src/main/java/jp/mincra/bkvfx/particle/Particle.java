@@ -70,4 +70,13 @@ public class Particle {
     public void setParticleData(ParticleData particleData) {
         this.particleData = particleData;
     }
+
+    @Override
+    public String toString() {
+        return "{"
+                + "\"location\":\"" + location + "\""
+                + ", \"amount\":\"" + amount + "\""
+                + ", \"speed\":\"" + speed + "\""
+                + "}";
+    }
 }

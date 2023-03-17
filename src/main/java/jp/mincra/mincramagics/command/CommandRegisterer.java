@@ -2,7 +2,7 @@ package jp.mincra.mincramagics.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
-import dev.jorel.commandapi.executors.PlayerCommandExecutor;
+import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.core.MincraPlayer;
 import jp.mincra.mincramagics.core.PlayerManager;
@@ -23,6 +23,7 @@ public class CommandRegisterer {
                 .withSubcommand(mpCommand())
                 .withSubcommand(skillCommand())
                 .withSubcommand(effectCommand())
+                .withSubcommand(vfxCommand())
                 .register();
     }
 
@@ -39,15 +40,9 @@ public class CommandRegisterer {
                     float amount = (float) args[1];
 
                     switch (type) {
-                        case "add":
-                            mPlayer.getMp().addMp(amount, true);
-                            break;
-                        case "sub":
-                            mPlayer.getMp().subMp(amount);
-                            break;
-                        case "set":
-                            mPlayer.getMp().setMp(amount, true);
-                            break;
+                        case "add" -> mPlayer.getMp().addMp(amount, true);
+                        case "sub" -> mPlayer.getMp().subMp(amount);
+                        case "set" -> mPlayer.getMp().setMp(amount, true);
                     }
                 });
     }
@@ -93,6 +88,16 @@ public class CommandRegisterer {
                             .setAmount((Integer) args[4])
                             .display();
                 });
+    }
+
+    private CommandAPICommand vfxCommand() {
+        return new CommandAPICommand("vfx")
+                .withArguments(new StringArgument("id"))
+                .withArguments(new FloatArgument("scale"))
+                .executesPlayer(((sender, args) -> {
+                    VfxManager vfxManager = MincraMagics.getVfxManager();
+                    vfxManager.getVfx((String) args[0]).playEffect(sender.getLocation(), (float) args[1]);
+                }));
     }
 
     private void error(Player player, String message) {

@@ -41,9 +41,9 @@ repositories {
 
 dependencies {
     // mincramagics
+    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
     implementation("xyz.xenondevs:particle:1.8.3")
     api("de.tr7zw:item-nbt-api-plugin:2.11.1")
-    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
     compileOnly("io.lumine:Mythic-Dist:5.2.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
     compileOnly("dev.jorel:commandapi-core:8.7.0")
@@ -52,12 +52,14 @@ dependencies {
     // ezsvg
     implementation("javax.xml.bind:jaxb-api:2.2.4")
     implementation("org.w3c:dom:2.3.0-jaxb-1.0.6")
+    // Test
+    testImplementation("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
 }
 
 group = "jp.mincra"
 version = "0.1-SNAPSHOT"
 description = "MincraMagics"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 publishing {
     publications.create<MavenPublication>("maven") {

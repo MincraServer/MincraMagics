@@ -79,19 +79,18 @@ public class SvgFactory {
             Color strokeColor = Color.decode(style.get("stroke"));
 
             switch (nodeName) {
-                case "circle":
+                case "circle" -> {
                     float cx = Float.parseFloat(svgNode.getAttribute("cx"));
                     float cy = Float.parseFloat(svgNode.getAttribute("cy"));
                     float r = Float.parseFloat(svgNode.getAttribute("r"));
                     svgObject.addSvgElement(new Circle(strokeColor, cx, cy, r));
-                    break;
-                case "path":
+                }
+                case "path" -> {
                     String d = svgNode.getAttribute("d");
                     Path path = new Path(strokeColor, svgParser.parsePathD(d));
                     svgObject.addSvgElement(path);
-                    break;
-                default:
-                    System.out.println("Only <circle/>, <path/> are available.");
+                }
+                default -> System.out.println("Only <circle/>, <path/> are available.");
             }
         }
 

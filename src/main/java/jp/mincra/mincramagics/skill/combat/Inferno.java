@@ -2,7 +2,6 @@ package jp.mincra.mincramagics.skill.combat;
 
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
-import jp.mincra.bkvfx.BKVfx;
 import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.core.MincraPlayer;
@@ -37,16 +36,24 @@ public class Inferno extends MagicSkill {
         World world = player.getLocation().getWorld();
         world.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.1F, 4F);
 
+        // Play Vfx
+        Location _playerLoc = playerLoc.clone();
+        if (vfxManager == null) vfxManager = MincraMagics.getVfxManager();
+        vfxManager.getVfx("inferno")
+                .playEffect(_playerLoc.add(new Vector(0, 0.2, 0)), 0.3);
+
+        Vector eyeDirection = player.getEyeLocation().getDirection().normalize();
+        Location spawnLoc = playerLoc.add(new Vector(0, 5, 0));
+        Vector velocity = eyeDirection
+                .add(new Vector(0, -0.6, 0))
+                .multiply(0.7);
+
         // Start repeating
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     // Spawn fireball
-                    Vector eyeDirection = player.getEyeLocation().getDirection().normalize();
-                    Location spawnLoc = playerLoc.add(new Vector(0, 5, 0));
                     Fireball fireball = (Fireball) world.spawnEntity(spawnLoc, EntityType.FIREBALL);
-                    fireball.setVelocity(eyeDirection
-                            .add(new Vector(0, -0.6, 0))
-                            .multiply(0.7));
+                    fireball.setVelocity(velocity);
                     fireball.setShooter(player);
 
                     // Sound;
@@ -54,10 +61,5 @@ public class Inferno extends MagicSkill {
                 })
                 .repeat(TickTime.TICK, 5, 3, 5)
                 .run();
-
-        // Play Vfx
-        if (vfxManager == null) vfxManager = MincraMagics.getVfxManager();
-        vfxManager.getVfx("inferno")
-                .playEffect(playerLoc.add(new Vector(0, 0.2, 0)), 3);
     }
 }

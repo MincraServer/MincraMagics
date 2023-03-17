@@ -12,7 +12,6 @@ import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.MagicStuffMechanicFactory;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.Inferno;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -43,7 +42,7 @@ public final class MincraMagics extends JavaPlugin {
 
         new CommandRegisterer().registerAll();
 
-        Bukkit.getLogger().info("Is it updated?");
+        System.out.println("Is it updated?");
         MechanicsManager.registerMechanicFactory("magicstuff",
                 MagicStuffMechanicFactory::new);
         MechanicsManager.registerMechanicFactory("durability2",

@@ -4,7 +4,6 @@ import io.th0rgal.oraxen.OraxenPlugin;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.MechanicFactory;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class DurabilityMechanicFactory extends MechanicFactory {
@@ -13,7 +12,7 @@ public class DurabilityMechanicFactory extends MechanicFactory {
         super(section);
         MechanicsManager.registerListeners(OraxenPlugin.get(),
                 new DurabilityMechanicsManager(this));
-        Bukkit.getLogger().info("[MincraMagics] DurabilityMechanicFactory works right?");
+        System.out.println("[MincraMagics] DurabilityMechanicFactory works right?");
     }
 
     @Override

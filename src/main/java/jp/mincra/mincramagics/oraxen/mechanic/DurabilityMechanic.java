@@ -3,7 +3,6 @@ package jp.mincra.mincramagics.oraxen.mechanic;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.MechanicFactory;
 import jp.mincra.mincramagics.MincraMagics;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.persistence.PersistentDataType;
@@ -25,7 +24,7 @@ public class DurabilityMechanic extends Mechanic {
                 item.setCustomTag(REAL_DURABILITY_LEFT_KEY,
                         PersistentDataType.INTEGER, section.getInt("value")));
         this.itemDurability = section.getInt("value");
-        Bukkit.getLogger().info("[MincraMagics] DurabilityMechanic works right?");
+        System.out.println("[MincraMagics] DurabilityMechanic works right?");
     }
 
     public int getItemMaxDurability() {
