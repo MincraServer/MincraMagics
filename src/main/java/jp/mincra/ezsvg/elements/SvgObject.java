@@ -1,7 +1,5 @@
 package jp.mincra.ezsvg.elements;
 
-import jp.mincra.ezsvg.elements.SvgElement;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
