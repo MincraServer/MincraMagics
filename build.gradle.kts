@@ -41,7 +41,7 @@ repositories {
 
 dependencies {
     // mincramagics
-    api("xyz.xenondevs:particle:1.8.3")
+    implementation("xyz.xenondevs:particle:1.8.3")
     api("de.tr7zw:item-nbt-api-plugin:2.11.1")
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
     compileOnly("io.lumine:Mythic-Dist:5.2.0")
@@ -57,7 +57,7 @@ dependencies {
 group = "jp.mincra"
 version = "0.1-SNAPSHOT"
 description = "MincraMagics"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 publishing {
     publications.create<MavenPublication>("maven") {

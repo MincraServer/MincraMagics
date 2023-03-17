@@ -4,6 +4,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.durability.DurabilityMechanicFactory;
+import jp.mincra.bkvfx.BKVfx;
+import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.command.CommandRegisterer;
 import jp.mincra.mincramagics.core.PlayerManager;
 import jp.mincra.mincramagics.hud.HudManager;
@@ -21,6 +23,7 @@ public final class MincraMagics extends JavaPlugin {
     private static PlayerManager playerManager;
     private static SkillManager skillManager;
     private static HudManager hudManager;
+    private static VfxManager vfxManager;
 
     @Override
     public void onEnable() {
@@ -30,6 +33,7 @@ public final class MincraMagics extends JavaPlugin {
         playerManager = new PlayerManager();
         skillManager = new SkillManager();
         hudManager = new HudManager(playerManager);
+        vfxManager = BKVfx.instance().getVfxManager();
 
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(playerManager, this);
@@ -68,5 +72,9 @@ public final class MincraMagics extends JavaPlugin {
 
     public static HudManager getHudManager() {
         return hudManager;
+    }
+
+    public static VfxManager getVfxManager() {
+        return vfxManager;
     }
 }

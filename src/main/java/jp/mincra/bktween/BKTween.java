@@ -92,11 +92,32 @@ public class BKTween {
     }
 }
 
-/**
- *
- * @param func
- * @param delay
- * @param interval
- * @param attempts interval != 0 の場合に何回繰り返すか。
- */
-record TweenTask(Consumer<Void> func, long delay, long interval, int attempts) { }
+class TweenTask {
+    private final Consumer<Void> func;
+    private final long delay;
+    private final long interval;
+    private final int attempts;
+
+    public TweenTask(Consumer<Void> func, long delay, long interval, int attempts) {
+        this.func = func;
+        this.delay = delay;
+        this.interval = interval;
+        this.attempts = attempts;
+    }
+
+    public Consumer<Void> func() {
+        return func;
+    }
+
+    public long delay() {
+        return delay;
+    }
+
+    public long interval() {
+        return interval;
+    }
+
+    public int attempts() {
+        return attempts;
+    }
+}

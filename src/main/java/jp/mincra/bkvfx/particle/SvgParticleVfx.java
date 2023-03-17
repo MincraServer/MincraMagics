@@ -1,6 +1,7 @@
 package jp.mincra.bkvfx.particle;
 
 import jp.mincra.ezsvg.elements.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import xyz.xenondevs.particle.ParticleBuilder;
@@ -33,11 +34,13 @@ public class SvgParticleVfx extends ParticleVfx {
         double _size = 1 / size;
 
         for (SvgElement svgElement : svgElements) {
-            if (svgElement instanceof Circle circle) {
+            if (svgElement instanceof Circle) {
+                Circle circle = (Circle) svgElement;
                 Vector center = new Vector(circle.getCenterX() * _size, circle.getCenterY() * _size, 0);
                 double radius = circle.getRadius() * _size;
                 circle(center, radius, density);
-            } else if (svgElement instanceof Path path) {
+            } else if (svgElement instanceof Path) {
+                Path path = (Path) svgElement;
                 List<PathElement> pathElements = path.getPaths();
                 float beforeX = 0;
                 float beforeY = 0;
@@ -92,6 +95,7 @@ public class SvgParticleVfx extends ParticleVfx {
 
     @Override
     public void playEffect(Location center, double scale) {
+        Bukkit.getLogger().info("Play effect in SvgParticleVfx");
         for (Particle particle : particles) {
             ParticleBuilder builder =
                     new ParticleBuilder(particleEffect, center.add(particle.getLocation()));

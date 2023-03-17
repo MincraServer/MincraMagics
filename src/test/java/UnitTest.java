@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 public class UnitTest {
     public static void main(String[] args) {
-        var svgTest = new SvgTest();
+        SvgTest svgTest = new SvgTest();
 
 //        expect("Test 1", isFloatNumeric("12.34"), true);
 //        expect("Test 2", isFloatNumeric("12"), false);

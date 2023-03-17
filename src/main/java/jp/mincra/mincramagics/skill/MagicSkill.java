@@ -20,6 +20,6 @@ public abstract class MagicSkill {
 
     protected boolean canTrigger(MincraPlayer player, MaterialProperty property) {
         return player.getMp().isEnoughMP(property.mp())
-                && player.getCooldown().isCooldown(property.materialId());
+                && !player.getCooldown().isCooldown(property.materialId());
     }
 }

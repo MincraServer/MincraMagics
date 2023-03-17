@@ -7,6 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,14 +16,20 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.io.StringReader;
 import java.util.Map;
 
 public class SvgFactory {
     private static SvgParser svgParser;
 
-    public static SvgObject fromXMLPath(String path) {
-        return fromXML(Paths.get(path).toFile());
+    public static SvgObject fromString(String xml) {
+        Document document = stringToDoc(xml);
+        return getSvgObject(document);
+    }
+
+    public static SvgObject fromFile(File xml) {
+        Document document = fileToDoc(xml);
+        return getSvgObject(document);
     }
 
     /**
@@ -46,11 +53,10 @@ public class SvgFactory {
      *           cy="13.229167"
      *           r="10.976695" />
      * </svg>
-     * @param xmlFile XML File that you want to load.
+     * @param document document to load.
      */
-    public static SvgObject fromXML(File xmlFile)  {
+    private static SvgObject getSvgObject(Document document)  {
         // Load document and get <svg/> element.
-        Document document = getDocument(xmlFile);
         Element svgElement = document.getDocumentElement();
 
         // Load width and height.
@@ -73,25 +79,26 @@ public class SvgFactory {
             Color strokeColor = Color.decode(style.get("stroke"));
 
             switch (nodeName) {
-                case "circle" -> {
+                case "circle":
                     float cx = Float.parseFloat(svgNode.getAttribute("cx"));
                     float cy = Float.parseFloat(svgNode.getAttribute("cy"));
                     float r = Float.parseFloat(svgNode.getAttribute("r"));
                     svgObject.addSvgElement(new Circle(strokeColor, cx, cy, r));
-                }
-                case "path" -> {
+                    break;
+                case "path":
                     String d = svgNode.getAttribute("d");
                     Path path = new Path(strokeColor, svgParser.parsePathD(d));
                     svgObject.addSvgElement(path);
-                }
-                default -> System.out.println("Only <circle/>, <path/> are available.");
+                    break;
+                default:
+                    System.out.println("Only <circle/>, <path/> are available.");
             }
         }
 
         return svgObject;
     }
 
-    private static Document getDocument(File xmlFile) {
+    private static Document fileToDoc(File xmlFile) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         // DocumentBuilderのインスタンスを取得する
         DocumentBuilder builder;
@@ -108,6 +115,17 @@ public class SvgFactory {
             throw new RuntimeException(e);
         }
         return document;
+    }
+
+    private static Document stringToDoc(String xml) {
+        try (StringReader reader = new StringReader(xml)) {
+            InputSource source = new InputSource(reader);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            return builder.parse(source);
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static NodeList joinNodeList(final NodeList... lists) {

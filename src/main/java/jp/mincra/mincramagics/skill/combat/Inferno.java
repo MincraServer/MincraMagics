@@ -37,12 +37,6 @@ public class Inferno extends MagicSkill {
         World world = player.getLocation().getWorld();
         world.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.1F, 4F);
 
-        // Play Vfx
-        if (vfxManager == null) vfxManager = BKVfx.instance().getVfxManager();
-        vfxManager.getVfx("inferno")
-                // 少し上に描画
-                .playEffect(playerLoc.add(new Vector(0, 0.2, 0)), 3);
-
         // Start repeating
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
@@ -60,5 +54,10 @@ public class Inferno extends MagicSkill {
                 })
                 .repeat(TickTime.TICK, 5, 3, 5)
                 .run();
+
+        // Play Vfx
+        if (vfxManager == null) vfxManager = MincraMagics.getVfxManager();
+        vfxManager.getVfx("inferno")
+                .playEffect(playerLoc.add(new Vector(0, 0.2, 0)), 3);
     }
 }

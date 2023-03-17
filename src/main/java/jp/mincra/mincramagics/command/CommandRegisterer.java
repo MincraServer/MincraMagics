@@ -2,6 +2,7 @@ package jp.mincra.mincramagics.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
+import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.core.MincraPlayer;
 import jp.mincra.mincramagics.core.PlayerManager;
@@ -10,7 +11,10 @@ import jp.mincra.mincramagics.skill.MaterialProperty;
 import jp.mincra.mincramagics.skill.SkillManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import xyz.xenondevs.particle.ParticleBuilder;
+import xyz.xenondevs.particle.ParticleEffect;
 
 public class CommandRegisterer {
     public void registerAll() {
@@ -18,6 +22,7 @@ public class CommandRegisterer {
                 // /mincra mp <type> <amount>
                 .withSubcommand(mpCommand())
                 .withSubcommand(skillCommand())
+                .withSubcommand(effectCommand())
                 .register();
     }
 
@@ -71,6 +76,22 @@ public class CommandRegisterer {
                     skill.onTrigger(caster, new MaterialProperty(
                             cooldown, consumedMp, strength, skillId
                     ));
+                });
+    }
+
+    private CommandAPICommand effectCommand() {
+        return new CommandAPICommand("effect")
+                .withArguments(new StringArgument("particle"))
+                .withArguments(new LocationArgument("pos"))
+                .withArguments(new LocationArgument("offset"))
+                .withArguments(new FloatArgument("speed"))
+                .withArguments(new IntegerArgument("count"))
+                .executesPlayer((sender, args) -> {
+                    new ParticleBuilder(ParticleEffect.valueOf((String) args[0]), (Location) args[1])
+                            .setOffset(((Location) args[2]).toVector())
+                            .setSpeed(((Float) args[3]))
+                            .setAmount((Integer) args[4])
+                            .display();
                 });
     }
 

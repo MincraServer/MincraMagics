@@ -1,5 +1,7 @@
 package jp.mincra.bkvfx;
 
+import org.bukkit.Bukkit;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ public class VfxManager {
     }
 
     public Vfx getVfx(String vfxId) {
+        Bukkit.getLogger().info("getVfx() " + vfxId);
         return vfxMap.get(vfxId);
     }
 }

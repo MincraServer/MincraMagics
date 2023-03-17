@@ -31,7 +31,6 @@ public class SkillCooldown {
             skillIdToCooldowntick.remove(skillId);
         }
 
-        Bukkit.getLogger().warning("[MincraMagics] getCurrentTick works right??");
         long current = Bukkit.getCurrentTick();
         int cooldownEndTime = (int) (current + (cooldown * 20));
         skillIdToCooldowntick.put(skillId, cooldownEndTime);
