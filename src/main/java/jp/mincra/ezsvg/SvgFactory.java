@@ -15,10 +15,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class SvgFactory {
     private static SvgParser svgParser;
+
+    public static SvgObject fromXMLPath(String path) {
+        return fromXML(Paths.get(path).toFile());
+    }
 
     /**
      * Convert simplified SVG file to SvgObject.
@@ -89,14 +94,14 @@ public class SvgFactory {
     private static Document getDocument(File xmlFile) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         // DocumentBuilderのインスタンスを取得する
-        DocumentBuilder builder = null;
+        DocumentBuilder builder;
         try {
             builder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
         }
         // DocumentBuilderにXMLを読み込ませ、Documentを作る
-        Document document = null;
+        Document document;
         try {
             document = builder.parse(xmlFile);
         } catch (SAXException | IOException e) {
