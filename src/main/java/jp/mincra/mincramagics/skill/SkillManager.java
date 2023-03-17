@@ -6,8 +6,8 @@ import java.util.Map;
 public class SkillManager {
     private final Map<String, MagicSkill> idToSkill = new HashMap<>();
 
-    public void registerSkill(String id, MagicSkill skill) {
-        idToSkill.put(id, skill);
+    public void registerSkill(String skillId, MagicSkill skill) {
+        idToSkill.put(skillId, skill);
     }
 
     public MagicSkill getSkill(String id) {

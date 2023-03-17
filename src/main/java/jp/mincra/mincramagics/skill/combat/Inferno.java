@@ -2,10 +2,11 @@ package jp.mincra.mincramagics.skill.combat;
 
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
+import jp.mincra.bkvfx.BKVfx;
+import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.core.MincraPlayer;
 import jp.mincra.mincramagics.core.PlayerManager;
-import jp.mincra.mincramagics.core.SkillCooldown;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Location;
@@ -16,23 +17,31 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class Inferno implements MagicSkill {
+public class Inferno extends MagicSkill {
     private PlayerManager playerManager;
+    private VfxManager vfxManager;
+
     @Override
     public void onTrigger(Player player, MaterialProperty property) {
-        // MP, Cooldown
         if (playerManager == null) playerManager = MincraMagics.getPlayerManager();
         MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        SkillCooldown cooldown = mPlayer.getCooldown();
-        if (cooldown.isCooldown(property.skillId())) {
+
+        // MP, Cooldown
+        if (!canTrigger(mPlayer, property)) {
             return;
         }
-        cooldown.setCooldown(property.skillId(), property.cooldown());
-        mPlayer.getMp().subMp(property.consumedMp());
+        consumeMp(mPlayer, property);
+        setCooldown(mPlayer, property);
 
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
         world.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.1F, 4F);
+
+        // Play Vfx
+        if (vfxManager == null) vfxManager = BKVfx.instance().getVfxManager();
+        vfxManager.getVfx("inferno")
+                // 少し上に描画
+                .playEffect(playerLoc.add(new Vector(0, 0.2, 0)), 3);
 
         // Start repeating
         new BKTween(MincraMagics.getInstance())
@@ -44,6 +53,7 @@ public class Inferno implements MagicSkill {
                     fireball.setVelocity(eyeDirection
                             .add(new Vector(0, -0.6, 0))
                             .multiply(0.7));
+                    fireball.setShooter(player);
 
                     // Sound;
                     world.playSound(playerLoc, Sound.ENTITY_BLAZE_SHOOT, 1, 1);

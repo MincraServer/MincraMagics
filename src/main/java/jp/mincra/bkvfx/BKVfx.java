@@ -23,4 +23,8 @@ public class BKVfx {
                         8, ParticleEffect.FLAME));
 
     }
+
+    public VfxManager getVfxManager() {
+        return vfxManager;
+    }
 }

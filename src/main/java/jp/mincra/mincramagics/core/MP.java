@@ -23,6 +23,10 @@ public class MP {
         return oldMp;
     }
 
+    public boolean isEnoughMP(float requiredMp) {
+        return !(mp < requiredMp);
+    }
+
     public void setMp(float mp, boolean ignoreMax) {
         this.oldMp = this.mp;
         this.mp = mp;
