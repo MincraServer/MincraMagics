@@ -1,8 +1,8 @@
 package jp.mincra.ezsvg;
 
-import jp.mincra.ezsvg.elements.Circle;
-import jp.mincra.ezsvg.elements.Path;
-import jp.mincra.ezsvg.elements.SvgObject;
+import jp.mincra.ezsvg.element.Circle;
+import jp.mincra.ezsvg.element.Path;
+import jp.mincra.ezsvg.element.SvgObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

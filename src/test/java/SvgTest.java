@@ -1,5 +1,5 @@
 import jp.mincra.ezsvg.SvgFactory;
-import jp.mincra.ezsvg.elements.SvgObject;
+import jp.mincra.ezsvg.element.SvgObject;
 
 import java.nio.file.Paths;
 

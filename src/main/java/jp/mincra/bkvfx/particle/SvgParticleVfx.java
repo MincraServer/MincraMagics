@@ -1,7 +1,7 @@
 package jp.mincra.bkvfx.particle;
 
 import jp.mincra.bkvfx.Quaternion;
-import jp.mincra.ezsvg.elements.*;
+import jp.mincra.ezsvg.element.*;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 

@@ -1,4 +1,4 @@
-package jp.mincra.ezsvg.elements;
+package jp.mincra.ezsvg.element;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,7 +1,7 @@
 package jp.mincra.ezsvg;
 
-import jp.mincra.ezsvg.elements.PathElement;
-import jp.mincra.ezsvg.elements.PathType;
+import jp.mincra.ezsvg.element.PathElement;
+import jp.mincra.ezsvg.element.PathType;
 
 import java.util.ArrayList;
 import java.util.HashMap;

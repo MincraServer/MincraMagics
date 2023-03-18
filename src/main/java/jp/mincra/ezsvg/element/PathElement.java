@@ -1,4 +1,4 @@
-package jp.mincra.ezsvg.elements;
+package jp.mincra.ezsvg.element;
 
 public class PathElement {
     private final PathType pathType;
