@@ -1,6 +1,6 @@
 package jp.mincra.mincramagics.hud;
 
-import jp.mincra.mincramagics.core.MP;
+import jp.mincra.mincramagics.player.MP;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -24,15 +24,9 @@ public class MpHudController {
 
         builder.append(shiftCode);
 
-        for (int i = 0; i < noMpLen; i++) {
-            builder.append(noMpIconCode);
-        }
-        for (int i = 0; i < halfMpLen; i++) {
-            builder.append(halfMpIconCode);
-        }
-        for (int i = 0; i < fullMpLen; i++) {
-            builder.append(fullMpIconCode);
-        }
+        builder.append(noMpIconCode.repeat(Math.max(0, noMpLen)));
+        builder.append(halfMpIconCode.repeat(halfMpLen));
+        builder.append(fullMpIconCode.repeat(Math.max(0, fullMpLen)));
 
         String display = PlaceholderAPI.setPlaceholders(player, builder.toString());
         TextComponent component = Component

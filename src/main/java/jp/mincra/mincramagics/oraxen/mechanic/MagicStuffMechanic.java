@@ -6,8 +6,8 @@ import de.tr7zw.nbtapi.NBTItem;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.MechanicFactory;
-import jp.mincra.mincramagics.object.Material;
-import jp.mincra.mincramagics.object.MincraNBT;
+import jp.mincra.mincramagics.nbtobject.Material;
+import jp.mincra.mincramagics.nbtobject.MincraNBT;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 

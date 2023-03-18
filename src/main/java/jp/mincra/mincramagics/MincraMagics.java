@@ -6,8 +6,7 @@ import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.durability.DurabilityMechanicFactory;
 import jp.mincra.bkvfx.BKVfx;
 import jp.mincra.bkvfx.VfxManager;
-import jp.mincra.mincramagics.command.CommandRegisterer;
-import jp.mincra.mincramagics.core.PlayerManager;
+import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.MagicStuffMechanicFactory;
 import jp.mincra.mincramagics.skill.SkillManager;
@@ -40,7 +39,7 @@ public final class MincraMagics extends JavaPlugin {
 
         skillManager.registerSkill("inferno", new Inferno());
 
-        new CommandRegisterer().registerAll();
+        new CommandManager().registerAll();
 
         System.out.println("Is it updated?");
         MechanicsManager.registerMechanicFactory("magicstuff",

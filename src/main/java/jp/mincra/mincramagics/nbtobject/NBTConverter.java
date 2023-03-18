@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.object;
+package jp.mincra.mincramagics.nbtobject;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

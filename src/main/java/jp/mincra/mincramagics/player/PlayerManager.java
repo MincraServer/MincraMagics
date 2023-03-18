@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.core;
+package jp.mincra.mincramagics.player;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

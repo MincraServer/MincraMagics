@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.core;
+package jp.mincra.mincramagics.player;
 
 public class MP {
     private float mp;

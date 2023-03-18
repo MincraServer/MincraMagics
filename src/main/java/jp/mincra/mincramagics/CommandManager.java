@@ -1,11 +1,10 @@
-package jp.mincra.mincramagics.command;
+package jp.mincra.mincramagics;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
 import jp.mincra.bkvfx.VfxManager;
-import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.core.MincraPlayer;
-import jp.mincra.mincramagics.core.PlayerManager;
+import jp.mincra.mincramagics.player.MincraPlayer;
+import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import jp.mincra.mincramagics.skill.SkillManager;
@@ -16,7 +15,7 @@ import org.bukkit.entity.Player;
 import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
 
-public class CommandRegisterer {
+public class CommandManager {
     public void registerAll() {
         new CommandAPICommand("mincra")
                 // /mincra mp <type> <amount>

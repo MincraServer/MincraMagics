@@ -1,9 +1,9 @@
 package jp.mincra.mincramagics.hud;
 
 import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.core.MincraPlayer;
-import jp.mincra.mincramagics.core.PlayerManager;
-import jp.mincra.mincramagics.player.PlayerChangedMpEvent;
+import jp.mincra.mincramagics.player.MincraPlayer;
+import jp.mincra.mincramagics.player.PlayerManager;
+import jp.mincra.mincramagics.event.PlayerChangedMpEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

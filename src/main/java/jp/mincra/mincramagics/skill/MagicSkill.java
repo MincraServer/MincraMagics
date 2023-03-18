@@ -1,8 +1,8 @@
 package jp.mincra.mincramagics.skill;
 
-import jp.mincra.mincramagics.core.MP;
-import jp.mincra.mincramagics.core.MincraPlayer;
-import jp.mincra.mincramagics.core.SkillCooldown;
+import jp.mincra.mincramagics.player.MP;
+import jp.mincra.mincramagics.player.MincraPlayer;
+import jp.mincra.mincramagics.player.SkillCooldown;
 import org.bukkit.entity.Player;
 
 public abstract class MagicSkill {

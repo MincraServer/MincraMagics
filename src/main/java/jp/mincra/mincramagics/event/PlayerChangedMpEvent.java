@@ -1,6 +1,6 @@
-package jp.mincra.mincramagics.player;
+package jp.mincra.mincramagics.event;
 
-import jp.mincra.mincramagics.core.MP;
+import jp.mincra.mincramagics.player.MP;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
