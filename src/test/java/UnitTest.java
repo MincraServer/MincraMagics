@@ -1,10 +1,5 @@
 import jp.mincra.bkvfx.Quaternion;
-import jp.mincra.bkvfx.Vector3;
-import jp.mincra.bkvfx.particle.SvgParticleVfx;
-import jp.mincra.ezsvg.elements.SvgObject;
-import org.bukkit.Particle;
-
-import java.util.regex.Pattern;
+import org.bukkit.util.Vector;
 
 public class UnitTest {
     public static void main(String[] args) {
@@ -14,14 +9,12 @@ public class UnitTest {
 //        System.out.println(particleVfx);
 
         expect("Quaternion Test 1",
-                new Quaternion()
-                        .set(new Vector3(0, 1, 0), Math.PI / 6)
-                        .rotate(new Vector3(1, 0, 0)),
+                new Quaternion(new Vector(0, 1, 0), Math.PI / 6)
+                        .rotate(new Vector(1, 0, 0)),
                 new Vector3(Math.cos(Math.PI / 6), 0, Math.sin(Math.PI / 6)));
         expect("Quaternion Test 2",
-                new Quaternion()
-                        .set(new Vector3(1, 0, 0), Math.PI / 6)
-                        .rotate(new Vector3(1, 0, 0)),
+                new Quaternion(new Vector(1, 0, 0), Math.PI / 6)
+                        .rotate(new Vector(1, 0, 0)),
                 new Vector3(1, 0, 0));
     }
 

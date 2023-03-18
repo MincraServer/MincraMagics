@@ -1,5 +1,6 @@
 package jp.mincra.bkvfx.particle;
 
+import jp.mincra.bkvfx.Quaternion;
 import jp.mincra.ezsvg.elements.*;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -104,7 +105,9 @@ public class SvgParticleVfx extends ParticleVfx {
 //    }
 
     @Override
-    public void playEffect(Location loc, double scale) {
+    public void playEffect(Location loc, double scale, Vector axis, double angle) {
+        Quaternion qua = new Quaternion(axis, angle);
+
         for (CircleProperty circle : circles) {
             circle(circle.center().clone().multiply(scale), circle.radius() * scale, density);
         }
@@ -127,6 +130,10 @@ public class SvgParticleVfx extends ParticleVfx {
 
             Location _loc = loc.clone();
             Vector pLoc = particle.getLocation().clone();
+            if (axis.length() > 0) {
+                System.out.println("rotate! angle: " + angle + ", axis: " + axis);
+                pLoc = qua.rotate(pLoc);
+            }
             loc.getWorld().spawnParticle(particleEffect,
                     _loc.add(pLoc),
                     amount,
@@ -137,6 +144,11 @@ public class SvgParticleVfx extends ParticleVfx {
         }
 
         particles = new ArrayList<>();
+    }
+
+    @Override
+    public void playEffect(Location loc, double scale) {
+        playEffect(loc, scale, new Vector(0, 0, 0), 0);
     }
 
     @Override

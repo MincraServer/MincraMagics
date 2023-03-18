@@ -1,5 +1,7 @@
 package jp.mincra.bkvfx;
 
+import org.bukkit.util.Vector;
+
 public final class Quaternion {
     private double x;
     private double y;
@@ -18,13 +20,6 @@ public final class Quaternion {
         this.w = w;
     }
 
-    public Quaternion() {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-        this.w = 0;
-    }
-
     public void set(final Quaternion q) {
         this.x = q.x;
         this.y = q.y;
@@ -32,7 +27,7 @@ public final class Quaternion {
         this.w = q.w;
     }
 
-    public Quaternion(Vector3 axis, double angle) {
+    public Quaternion(Vector axis, double angle) {
         set(axis, angle);
     }
 
@@ -48,11 +43,11 @@ public final class Quaternion {
         return x;
     }
 
-    public double y() {
+    public double getY() {
         return y;
     }
 
-    public double z() {
+    public double getZ() {
         return z;
     }
 
@@ -65,13 +60,13 @@ public final class Quaternion {
      * @param angle the rotation angle
      * @return this
      */
-    public Quaternion set(Vector3 axis, double angle) {
+    public Quaternion set(Vector axis, double angle) {
         //matrixs = null;
         double sin = Math.sin(angle / 2);
         w = Math.cos(angle / 2);
-        x = axis.x() * sin;
-        y = axis.y() * sin;
-        z = axis.z() * sin;
+        x = axis.getX() * sin;
+        y = axis.getY() * sin;
+        z = axis.getZ() * sin;
         return this;
     }
 
@@ -206,11 +201,11 @@ public final class Quaternion {
         return new Quaternion(-x, -y, -z, w);
     }
 
-    public Vector3 toVector() {
-        return new Vector3(x, y, z);
+    public Vector toVector() {
+        return new Vector(x, y, z);
     }
 
-    public Vector3 rotate(Vector3 vec) {
-        return new Quaternion(this).multiply(new Quaternion(vec.x(), vec.y(), vec.z(), 0)).multiply(this.conjugate()).toVector();
+    public Vector rotate(Vector vec) {
+        return new Quaternion(this).multiply(new Quaternion(vec.getX(), vec.getY(), vec.getZ(), 0)).multiply(this.conjugate()).toVector();
     }
 }

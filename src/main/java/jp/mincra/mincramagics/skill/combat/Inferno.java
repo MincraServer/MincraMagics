@@ -14,8 +14,6 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.Random;
-
 public class Inferno extends MagicSkill {
     private PlayerManager playerManager;
     private VfxManager vfxManager;
@@ -40,7 +38,8 @@ public class Inferno extends MagicSkill {
         Location _playerLoc = playerLoc.clone();
         if (vfxManager == null) vfxManager = MincraMagics.getVfxManager();
         vfxManager.getVfx("inferno")
-                .playEffect(_playerLoc.add(new Vector(0, 0.5, 0)), 5);
+                .playEffect(_playerLoc.add(new Vector(0, 0.5, 0)), 5,
+                        new Vector(0, 1, 0), Math.PI * player.getEyeLocation().getYaw() / 180);
 
         Location spawnLoc = playerLoc.add(new Vector(0, 3, 0));
 
@@ -50,17 +49,17 @@ public class Inferno extends MagicSkill {
                     // Spawn fireball
                     Fireball fireball = (Fireball) world.spawnEntity(spawnLoc.add(new Vector(0, 1.5, 0)), EntityType.FIREBALL);
                     // 射程 30 プロパティで変えても良いかも
-                    Vector eyeDirection = player.getTargetBlock(null, 30).getLocation().toVector()
+                    Vector target = player.getTargetBlock(null, 30).getLocation().toVector()
                             // Fireballはプレイヤーの目線より上から飛んでくるので、その分下向きのベクトルを足す。
                             .add(spawnLoc.toVector().clone().multiply(-1)).normalize();
-                    Vector velocity = eyeDirection.multiply(0.7);
+                    Vector velocity = target.multiply(0.9);
                     fireball.setVelocity(velocity);
                     fireball.setShooter(player);
 
                     // Sound;
                     world.playSound(playerLoc, Sound.ENTITY_BLAZE_SHOOT, 1, 1);
                 })
-                .repeat(TickTime.TICK, 5, 7, 5)
+                .repeat(TickTime.TICK, 5, 5, 5)
                 .run();
     }
 }

@@ -3,6 +3,7 @@ package jp.mincra.bkvfx;
 import jp.mincra.bkvfx.particle.SvgParticleVfx;
 import jp.mincra.ezsvg.SvgFactory;
 import org.bukkit.Particle;
+import org.bukkit.util.Vector;
 
 public class BKVfx {
     private static BKVfx instance;
@@ -68,10 +69,11 @@ public class BKVfx {
                 """;
         vfxManager.registerVfx("inferno",
                 new SvgParticleVfx(SvgFactory.fromString(five_pointed_star_dual_circle),
-                        5, Particle.FLAME));
+                        5, Particle.FLAME).setSpeed(0.003f).setOffset(new Vector(0.003, 0.003, 0.003)));
         vfxManager.registerVfx("soul",
                 new SvgParticleVfx(SvgFactory.fromString(six_pointed_star_dual_circle),
-                        5, Particle.SOUL_FIRE_FLAME));
+                        5, Particle.SOUL_FIRE_FLAME).setSpeed(0.003f).setOffset(new Vector(0.003, 0.003, 0.003)));
+
 
         System.out.println("[BKVfx] native vfx registered.");
     }
