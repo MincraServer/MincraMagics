@@ -15,7 +15,6 @@ public class BKVfx {
     private final VfxManager vfxManager;
 
     public BKVfx() {
-        System.out.println("[BKVfx] BKVfx()");
         vfxManager = new VfxManager();
         registerNativeVfx();
     }
@@ -73,12 +72,11 @@ public class BKVfx {
         vfxManager.registerVfx("soul",
                 new SvgParticleVfx(SvgFactory.fromString(six_pointed_star_dual_circle),
                         5, Particle.SOUL_FIRE_FLAME).setSpeed(0.003f).setOffset(new Vector(0.003, 0.003, 0.003)));
-
-
-        System.out.println("[BKVfx] native vfx registered.");
     }
 
     public VfxManager getVfxManager() {
         return vfxManager;
     }
+
+
 }

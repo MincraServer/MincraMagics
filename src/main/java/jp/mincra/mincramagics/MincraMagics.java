@@ -39,13 +39,15 @@ public final class MincraMagics extends JavaPlugin {
 
         skillManager.registerSkill("inferno", new Inferno());
 
-        new CommandManager().registerAll();
+        new CommandRegisterer().registerAll();
 
-        System.out.println("Is it updated?");
+
         MechanicsManager.registerMechanicFactory("magicstuff",
                 MagicStuffMechanicFactory::new);
         MechanicsManager.registerMechanicFactory("durability2",
                 DurabilityMechanicFactory::new);
+
+
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
 
-public class CommandManager {
+public class CommandRegisterer {
     public void registerAll() {
         new CommandAPICommand("mincra")
                 // /mincra mp <type> <amount>

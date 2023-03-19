@@ -131,7 +131,6 @@ public class SvgParticleVfx extends ParticleVfx {
             Location _loc = loc.clone();
             Vector pLoc = particle.getLocation().clone();
             if (axis.length() > 0) {
-                System.out.println("rotate! angle: " + angle + ", axis: " + axis);
                 pLoc = qua.rotate(pLoc);
             }
             loc.getWorld().spawnParticle(particleEffect,
