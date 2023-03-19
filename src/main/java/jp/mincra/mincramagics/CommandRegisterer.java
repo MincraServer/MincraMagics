@@ -70,8 +70,8 @@ public class CommandRegisterer {
                     int strength = (int) args[4];
                     MagicSkill skill = skillManager.getSkill(skillId);
                     skill.onTrigger(caster, new MaterialProperty(
-                            cooldown, consumedMp, strength, skillId
-                    ));
+                            cooldown, consumedMp,skillId, strength
+                            ));
                 });
     }
 
