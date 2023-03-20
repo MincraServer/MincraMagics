@@ -58,4 +58,42 @@ public abstract class ParticleVfx implements Vfx {
             particles.add(particle);
         }
     }
+
+    /**
+     * 四角形を描く
+     * @param upperLeft
+     *      * ↓ Here
+     *      *  ______
+     *      *  \     \
+     *      *   \     \
+     *      *    \     \
+     *      *     -------
+     * @param width width of rectangle
+     * @param height height of rectangle
+     * @param rotate angle of rectangle as degree (-180 ~ 180)
+     */
+    protected void rect(Vector upperLeft, double width, double height, double rotate, Vector origin,
+                        double density) {
+        Vector _upperLeft = upperLeft.clone();
+        Vector upperRight = upperLeft.clone().add(new Vector(width, 0, 0));
+        Vector lowerRight = upperRight.clone().add(new Vector(width, 0, height));
+        Vector lowerLeft = upperLeft.clone().add(new Vector(0, 0, height));
+
+        // Rotate
+        double radian = Math.toRadians(rotate);
+        Vector axis = new Vector(0, 1, 0);
+        _upperLeft = rotate(_upperLeft, origin, axis, radian);
+        upperRight = rotate(upperRight, origin, axis, radian);
+        lowerLeft = rotate(lowerLeft, origin, axis, radian);
+        lowerRight = rotate(lowerRight, origin, axis, radian);
+
+        line(_upperLeft, upperRight, density);
+        line(upperRight, lowerRight, density);
+        line(lowerRight, lowerLeft, density);
+        line(lowerLeft, _upperLeft, density);
+    }
+
+    private Vector rotate(Vector vec, Vector origin, Vector axis, double radian) {
+        return vec.subtract(origin).rotateAroundAxis(axis, radian).add(origin);
+    }
 }

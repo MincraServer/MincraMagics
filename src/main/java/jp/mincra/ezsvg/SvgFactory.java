@@ -1,7 +1,9 @@
 package jp.mincra.ezsvg;
 
+import jp.mincra.ezsvg.attribute.Transform;
 import jp.mincra.ezsvg.element.Circle;
 import jp.mincra.ezsvg.element.Path;
+import jp.mincra.ezsvg.element.Rect;
 import jp.mincra.ezsvg.element.SvgObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,10 +66,11 @@ public class SvgFactory {
         float width = svgParser.parseSizeAsMM(svgElement.getAttribute("width"));
         float height = svgParser.parseSizeAsMM(svgElement.getAttribute("height"));
 
-        // Get <circle/>, <path/> etc
+        // Get <circle/>, <path/>, <rect/>
         NodeList paths = svgElement.getElementsByTagName("path");
         NodeList circles = svgElement.getElementsByTagName("circle");
-        NodeList svgNodes = joinNodeList(paths, circles);
+        NodeList rects = svgElement.getElementsByTagName("rect");
+        NodeList svgNodes = joinNodeList(paths, circles, rects);
 
         SvgObject svgObject = new SvgObject(width, height);
 
@@ -90,7 +93,22 @@ public class SvgFactory {
                     Path path = new Path(strokeColor, svgParser.parsePathD(d));
                     svgObject.addSvgElement(path);
                 }
-                default -> System.out.println("Only <circle/>, <path/> are available.");
+                case "rect" -> {
+                    float rWidth = Float.parseFloat(svgNode.getAttribute("width"));
+                    float rHeight = Float.parseFloat(svgNode.getAttribute("height"));
+                    float x = Float.parseFloat(svgNode.getAttribute("x"));
+                    float y = Float.parseFloat(svgNode.getAttribute("y"));
+                    String transAttr = svgNode.getAttribute("transform");
+                    Transform transform;
+                    if (!transAttr.isEmpty()) {
+                        transform = new Transform(svgParser.parseTransform(transAttr));
+                    } else {
+                        transform = new Transform();
+                    }
+
+                    svgObject.addSvgElement(new Rect(strokeColor, rWidth, rHeight, x, y, transform));
+                }
+                default -> System.out.println("[EZSvg] Only <circle/>, <path/>, <rect/> are available.");
             }
         }
 

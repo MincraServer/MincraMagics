@@ -63,4 +63,19 @@ public class SvgParser {
         }
         return pathElements;
     }
+
+    public Map<String, String> parseTransform(String strTrans) {
+        Map<String, String> mapTrans = new HashMap<>();
+
+        String[] splitStr = strTrans.split(" ");
+
+        for (String str : splitStr) {
+            String key = str.substring(0, str.indexOf('('));
+            String value = str.substring(str.indexOf('(') + 1, str.indexOf(')'));
+//            System.out.println("[EZSvg:SvgParser.#parseTransform()] k: " + key + ", v: " + value);
+            mapTrans.put(key, value);
+        }
+
+        return mapTrans;
+    }
 }

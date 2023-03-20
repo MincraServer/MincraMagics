@@ -1,13 +1,15 @@
 package jp.mincra.bkvfx.particle;
 
-import jp.mincra.bkvfx.Quaternion;
+import jp.mincra.ezsvg.attribute.Transform;
 import jp.mincra.ezsvg.element.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class SvgParticleVfx extends ParticleVfx {
     private final org.bukkit.Particle particleEffect;
@@ -16,10 +18,12 @@ public class SvgParticleVfx extends ParticleVfx {
     private Vector offset;
     private Color color;
 //    private ParticleData particleData;
+    private Vector origin;
 
     private final double density;
     private final List<CircleProperty> circles;
     private final List<LineProperty> lines;
+    private final List<RectProperty> rects;
 
     /**
      *
@@ -27,17 +31,22 @@ public class SvgParticleVfx extends ParticleVfx {
      */
     //TODO: パーティクルの中心を(0,0)に設定する
     public SvgParticleVfx(SvgObject svgObject, double density, org.bukkit.Particle particleEffect) {
+        // Initialize params
         this.density = density;
         this.particleEffect = particleEffect;
         circles = new ArrayList<>();
         lines = new ArrayList<>();
+        rects = new ArrayList<>();
+
         List<SvgElement> svgElements = svgObject.getSvgElements();
         // heightとwidth, 大きい方をsizeにする
-        float size = svgObject.getHeight();
+        float height = svgObject.getHeight();
         float width = svgObject.getWidth();
-        if (width > size) size = width;
+        float size = Math.max(width, height);
         double invSize = 1 / size;
         double halfSize = size / 2;
+
+        this.origin = new Vector(-width / 2, 0, -height / 2);
 
         for (SvgElement svgElement : svgElements) {
             if (svgElement instanceof Circle circle) {
@@ -73,6 +82,13 @@ public class SvgParticleVfx extends ParticleVfx {
                         ));
                     }
                 }
+            } else if (svgElement instanceof Rect rect) {
+                rects.add(new RectProperty(
+                        rect.width() * invSize,
+                        rect.height() * invSize,
+                        (rect.x() - halfSize) * invSize,
+                        (rect.y() - halfSize) * invSize,
+                        rect.transform()));
             }
         }
 
@@ -106,17 +122,29 @@ public class SvgParticleVfx extends ParticleVfx {
 
     @Override
     public void playEffect(Location loc, double scale, Vector axis, double angle) {
-        Quaternion qua = new Quaternion(axis, angle);
-
         for (CircleProperty circle : circles) {
-            circle(circle.center().clone().multiply(scale), circle.radius() * scale, density);
+            circle(circle.center().clone().multiply(scale),
+                    circle.radius() * scale,
+                    density);
+        }
+        for (LineProperty line : lines) {
+            line(line.start().clone().multiply(scale),
+                    line.end().clone().multiply(scale),
+                    density);
+        }
+        for (RectProperty rect : rects) {
+            Bukkit.getLogger().log(Level.INFO, "Draw rect: " + rect.toString());
+            rect(new Vector(rect.x() * scale, 0, rect.y() * scale),
+                    rect.width() * scale,
+                    rect.height() * scale,
+                    rect.transform().rotate(),
+                    origin,
+                    density);
         }
 
-        for (LineProperty line : lines) {
-            line(line.start().clone().multiply(scale), line.end().clone().multiply(scale), density);
-        }
 
         for (Particle particle : particles) {
+            // Set default parameters
             Vector offset = particle.getOffset();
             if (offset == null) offset = this.offset;
             int amount = particle.getAmount();
@@ -128,11 +156,12 @@ public class SvgParticleVfx extends ParticleVfx {
 //            ParticleData particleData = particle.getParticleData();
 //            if (particleData == null) particleData = this.particleData;
 
+            // Rotate
             Location _loc = loc.clone();
             Vector pLoc = particle.getLocation().clone();
-            if (axis.length() > 0) {
-                pLoc = qua.rotate(pLoc);
-            }
+            pLoc = pLoc.rotateAroundAxis(axis, Math.toRadians(angle));
+
+            // Spawn Particle
             loc.getWorld().spawnParticle(particleEffect,
                     _loc.add(pLoc),
                     amount,
@@ -153,13 +182,40 @@ public class SvgParticleVfx extends ParticleVfx {
     @Override
     public String toString() {
         return "{"
-                + "\"particleEffect\":\"" + particleEffect + "\""
-                + ", \"amount\":\"" + amount + "\""
-                + ", \"speed\":\"" + speed + "\""
-                + ", \"particles\":" + particles
+                + "\"circles\":" + circles
+                + ", \"lines\":" + lines
+                + ", \"rects\":" + rects
                 + "}";
     }
 }
 
-record CircleProperty(Vector center, double radius) {}
-record LineProperty(Vector start, Vector end) {}
+record CircleProperty(Vector center, double radius) {
+    @Override
+    public String toString() {
+        return "{"
+                + "\"center\":" + center
+                + ", \"radius\":\"" + radius + "\""
+                + "}";
+    }
+}
+record LineProperty(Vector start, Vector end) {
+    @Override
+    public String toString() {
+        return "{"
+                + "\"start\":" + start
+                + ", \"end\":" + end
+                + "}";
+    }
+}
+record RectProperty(double width, double height, double x, double y, Transform transform) {
+    @Override
+    public String toString() {
+        return "{"
+                + "\"width\":\"" + width + "\""
+                + ", \"height\":\"" + height + "\""
+                + ", \"x\":\"" + x + "\""
+                + ", \"y\":\"" + y + "\""
+                + ", \"transform\":" + transform
+                + "}";
+    }
+}

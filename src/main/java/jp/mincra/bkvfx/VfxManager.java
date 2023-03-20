@@ -16,7 +16,6 @@ public class VfxManager {
     }
 
     public Vfx getVfx(String vfxId) {
-        System.out.println("getVfx() " + vfxId);
         return vfxMap.get(vfxId);
     }
 

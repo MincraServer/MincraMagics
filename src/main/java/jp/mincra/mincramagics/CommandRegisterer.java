@@ -100,7 +100,7 @@ public class CommandRegisterer {
                 .withArguments(new FloatArgument("scale"))
                 .withArguments(new LocationArgument("axis"))
                 .withArguments(new DoubleArgument("angle"))
-                .executesPlayer(((sender, args) -> {
+                .executes(((sender, args) -> {
                     VfxManager vfxManager = MincraMagics.getVfxManager();
                     vfxManager.getVfx((String) args[0]).playEffect((Location) args[1], (float) args[2],
                             ((Location) args[3]).toVector(), Math.PI * ((double) args[4]) / 180);
