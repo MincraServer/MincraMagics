@@ -9,6 +9,7 @@ import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -56,14 +57,14 @@ public class Inferno extends MagicSkill {
                     Location spawnAt = eye.add(eye.getDirection().multiply(1.2)).add(spawnRelativeLoc);
                     Fireball fireball = (Fireball) spawnAt.getWorld()
                             .spawnEntity(spawnAt, EntityType.FIREBALL);
-                    fireball.setVelocity(targetBlock.clone().subtract(spawnAt)
-                            .toVector().normalize());
+                    Vector velocity = targetBlock.clone().subtract(spawnAt).toVector().normalize();
+                    fireball.setVelocity(velocity);
                     fireball.setShooter(player);
 
                     // Sound;
                     world.playSound(playerLoc, Sound.ENTITY_BLAZE_SHOOT, 1, 1);
 
-                    // Vfx
+                    // FIXME: ターゲットブロックにvfxが表示されない
                     vfx.playEffect(targetBlock.add(new Vector(0, 1, 0)), 5);
 
                     // Fireball を上に

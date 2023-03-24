@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.oraxen.mechanic;
+package jp.mincra.mincramagics.oraxen.mechanic.magicstuff;
 
 import io.th0rgal.oraxen.OraxenPlugin;
 import io.th0rgal.oraxen.mechanics.Mechanic;
@@ -17,7 +17,6 @@ public class MagicStuffMechanicFactory extends MechanicFactory {
     public Mechanic parse(ConfigurationSection itemMechanicConfiguration) {
         Mechanic mechanic = new MagicStuffMechanic(this, itemMechanicConfiguration);
         addToImplemented(mechanic);
-        System.out.println("MagicStuffMechanicFactory#.parse()");
         return mechanic;
     }
 }

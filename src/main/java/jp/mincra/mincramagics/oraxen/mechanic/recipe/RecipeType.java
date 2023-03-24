@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.oraxen.mechanic;
+package jp.mincra.mincramagics.oraxen.mechanic.recipe;
 
 public enum RecipeType {
     /**

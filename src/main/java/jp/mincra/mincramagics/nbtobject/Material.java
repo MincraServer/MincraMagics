@@ -17,11 +17,11 @@ public class Material {
         this.id = id;
     }
 
-    public String getSlot() {
+    public String slot() {
         return slot;
     }
 
-    public String getId() {
+    public String id() {
         return id;
     }
 }
