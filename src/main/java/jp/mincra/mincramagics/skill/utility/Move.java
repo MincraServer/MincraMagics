@@ -25,7 +25,7 @@ public class Move extends MagicSkill {
         // Move
         Vector velocity = playerLoc.getDirection().setY(-0.3).normalize().multiply(3);
         player.setVelocity(velocity);
-        Location targetLoc = playerLoc.clone().add(velocity);
+        Location targetLoc = playerLoc.clone().add(velocity.add(new Vector(0, 0.9, 0)).multiply(3));
 
         // Sound
         world.playSound(targetLoc, Sound.ENTITY_WITHER_SHOOT, 0.2F, 1F);

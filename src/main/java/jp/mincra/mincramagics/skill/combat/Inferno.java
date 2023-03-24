@@ -3,19 +3,21 @@ package jp.mincra.mincramagics.skill.combat;
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
 import jp.mincra.bkvfx.Vfx;
-import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.player.MincraPlayer;
-import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.Set;
 
 public class Inferno extends MagicSkill {
     @Override
@@ -38,17 +40,28 @@ public class Inferno extends MagicSkill {
         vfx.playEffect(vfxLoc, 5, offset, Math.toRadians(player.getEyeLocation().getYaw()));
 
         Vector spawnRelativeLoc = new Vector(0, 3, 0);
+        int maxDistance = 50;
 
         // Start repeating
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
-                    // Shoot Fireball
+                    // Get Location
                     Location eye = player.getEyeLocation();
-                    Location targetBlock = player.getTargetBlock(null, 50).getLocation();
+                    Entity targetEntity = player.getTargetEntity(maxDistance);
+                    Location targetLocation;
+                    if (targetEntity != null) {
+                        targetLocation = targetEntity.getLocation();
+                    } else {
+                        targetLocation = player.getTargetBlock(
+                                Set.of(Material.AIR, Material.CAVE_AIR, Material.GRASS, Material.TALL_GRASS),
+                                maxDistance).getLocation();
+                    }
                     Location spawnAt = eye.add(eye.getDirection().multiply(1.2)).add(spawnRelativeLoc);
+
+                    // Spawn Fireball
                     Fireball fireball = (Fireball) spawnAt.getWorld()
                             .spawnEntity(spawnAt, EntityType.FIREBALL);
-                    Vector velocity = targetBlock.clone().subtract(spawnAt).toVector().normalize();
+                    Vector velocity = targetLocation.clone().subtract(spawnAt).toVector().normalize();
                     fireball.setVelocity(velocity);
                     fireball.setShooter(player);
 
@@ -56,7 +69,7 @@ public class Inferno extends MagicSkill {
                     world.playSound(playerLoc, Sound.ENTITY_BLAZE_SHOOT, 1, 1);
 
                     // FIXME: ターゲットブロックにvfxが表示されない
-                    vfx.playEffect(targetBlock.add(new Vector(0, 1, 0)), 5);
+                    vfx.playEffect(targetLocation.add(new Vector(0, 1, 0)), 5);
 
                     // Fireball を上に
 //                    spawnRelativeLoc.add(new Vector(0, 1.5, 0));
