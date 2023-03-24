@@ -3,8 +3,11 @@ package jp.mincra.mincramagics.hud;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
-import jp.mincra.mincramagics.event.PlayerChangedMpEvent;
+import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -13,10 +16,13 @@ import org.bukkit.scheduler.BukkitScheduler;
 import java.util.Collection;
 
 public class HudManager implements Listener {
-    private PlayerManager playerManager;
-    private final MpHudController mpHud = new MpHudController();
+    private final PlayerManager playerManager;
+    private final MpHudController mpHudController = new MpHudController();
+    private final CooldownHudController cooldownHudController = new CooldownHudController();
 
     private Collection<MincraPlayer> players;
+
+    private static final String SHIFT_CODE = "%oraxen_shift_mana%";
 
     public HudManager(PlayerManager playerManager) {
         this.playerManager = playerManager;
@@ -25,7 +31,13 @@ public class HudManager implements Listener {
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         scheduler.scheduleSyncRepeatingTask(MincraMagics.getInstance(), () -> {
             for (MincraPlayer mPlayer : players) {
-                mpHud.displayMpBar(mPlayer.getPlayer(), mPlayer.getMp());
+                String mpHud = mpHudController.generateMpBar(mPlayer.getMp());
+                String cooldownHud = cooldownHudController.generateCooldownHud(mPlayer.getCooldown());
+
+                Player player = mPlayer.getPlayer();
+                TextComponent component = Component
+                        .text(PlaceholderAPI.setPlaceholders(player, cooldownHud + SHIFT_CODE + mpHud));
+                player.sendActionBar(component);
             }
         }, 0L, 1L);
     }
@@ -34,10 +46,4 @@ public class HudManager implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         players = playerManager.getPlayers();
     }
-
-    @EventHandler
-    public void onPlayerChangedMp(PlayerChangedMpEvent e) {
-        mpHud.displayMpBar(e.getPlayer(), e.getMp());
-    }
-
 }

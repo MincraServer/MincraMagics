@@ -6,33 +6,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SkillCooldown {
-    private final Map<String, Integer> skillIdToCooldowntick = new HashMap<>();
+    private final Map<String, Integer> materialIdToCooldownEndTick = new HashMap<>();
 
-    public boolean isCooldown(String skillId) {
-        if (!skillIdToCooldowntick.containsKey(skillId)) {
+    public boolean isCooldown(String materialId) {
+        if (!materialIdToCooldownEndTick.containsKey(materialId)) {
             return false;
         }
-        int cooldownEndTick = skillIdToCooldowntick.get(skillId);
-        long current = Bukkit.getCurrentTick();
+        int cooldownEndTick = materialIdToCooldownEndTick.get(materialId);
+        int current = Bukkit.getCurrentTick();
         boolean isCooldown = current < cooldownEndTick;
         if (!isCooldown) {
-            skillIdToCooldowntick.remove(skillId);
+            materialIdToCooldownEndTick.remove(materialId);
         }
         return isCooldown;
     }
 
     /**
      *
-     * @param skillId
+     * @param materialId
      * @param cooldown Cooldown as second
      */
-    public void setCooldown(String skillId, float cooldown) {
-        if (!isCooldown(skillId)) {
-            skillIdToCooldowntick.remove(skillId);
+    public void setCooldown(String materialId, float cooldown) {
+        if (!isCooldown(materialId)) {
+            materialIdToCooldownEndTick.remove(materialId);
         }
 
         long current = Bukkit.getCurrentTick();
         int cooldownEndTime = (int) (current + (cooldown * 20));
-        skillIdToCooldowntick.put(skillId, cooldownEndTime);
+        materialIdToCooldownEndTick.put(materialId, cooldownEndTime);
+    }
+
+    public Map<String, Integer> materialIdToCooldownEndTick() {
+        return materialIdToCooldownEndTick;
     }
 }
