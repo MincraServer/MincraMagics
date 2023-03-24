@@ -30,9 +30,9 @@ public class Charging extends MagicSkill {
 
         // Play Vfx
         Location vfxLoc = playerLoc.clone().add(new Vector(0, 0.5, 0));
-        Vector offset = new Vector(0, 1, 0);
-        Vfx vfx = vfxManager.getVfx("enchant");
-        vfx.playEffect(vfxLoc, 5, offset, Math.toRadians(player.getEyeLocation().getYaw()));
+        Vector axis = new Vector(0, 1, 0);
+        Vfx vfx = vfxManager.getVfx("charging");
+        vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
 
         AtomicReference<Float> pitch = new AtomicReference<>((float) 1);
         new BKTween(MincraMagics.getInstance())
