@@ -36,6 +36,9 @@ public class BKVfx {
         vfxManager.registerVfx("rect",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("rect")),
                         5, Particle.FLAME));
+        vfxManager.registerVfx("enchant",
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
+                        5, Particle.ENCHANTMENT_TABLE).setSpeed(0.003f).setOffset(new Vector(0.003, 0.003, 0.003)));
     }
 
     public VfxManager getVfxManager() {

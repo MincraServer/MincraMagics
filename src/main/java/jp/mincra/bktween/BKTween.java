@@ -49,7 +49,7 @@ public class BKTween {
         tasks.add(new TweenTask(tmpFunction,
                 multi * delay,
                 multi * interval,
-                multi * attempts));
+                attempts));
         tmpFunction = null;
         return this;
     }
@@ -81,7 +81,7 @@ public class BKTween {
             BukkitTask bkTask = scheduler.runTaskTimer(plugin, () -> {
                 int currentIterate = currentIteration.incrementAndGet();
 
-                if (currentIterate > maxAttempts) {
+                if (currentIterate >= maxAttempts) {
                     Bukkit.getScheduler().cancelTask(processId.get());
                 }
 

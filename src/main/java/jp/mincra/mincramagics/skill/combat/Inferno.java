@@ -9,7 +9,6 @@ import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -19,32 +18,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class Inferno extends MagicSkill {
-    private PlayerManager playerManager;
-    private VfxManager vfxManager;
-
     @Override
     public void onTrigger(Player player, MaterialProperty property) {
-        if (playerManager == null) playerManager = MincraMagics.getPlayerManager();
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-
         // MP, Cooldown
-        if (!canTrigger(mPlayer, property)) {
-            return;
-        }
+        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
+        if (!canTrigger(mPlayer, property)) return;
         consumeMp(mPlayer, property);
         setCooldown(mPlayer, property);
 
         // PlaySound
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
-        world.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.1F, 4F);
+        world.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.1F, 2F);
 
         // Play Vfx
-        Location _playerLoc = playerLoc.clone();
-        if (vfxManager == null) vfxManager = MincraMagics.getVfxManager();
+        Location vfxLoc = playerLoc.clone().add(new Vector(0, 0.5, 0));
+        Vector offset = new Vector(0, 1, 0);
         Vfx vfx = vfxManager.getVfx("inferno");
-        vfx.playEffect(_playerLoc.add(new Vector(0, 0.5, 0)), 5,
-                        new Vector(0, 1, 0), Math.PI * player.getEyeLocation().getYaw() / 180);
+        vfx.playEffect(vfxLoc, 5, offset, Math.toRadians(player.getEyeLocation().getYaw()));
 
         Vector spawnRelativeLoc = new Vector(0, 3, 0);
 
