@@ -91,6 +91,7 @@ public class CooldownHudController {
         }
 
         if (iconCount > 0) {
+            // CooldownHUDだけを1ピクセル左に寄せる
             hudBuilder.insert(0, NEG_SHIFT_1)
                     .append(SHIFT_1);
         }

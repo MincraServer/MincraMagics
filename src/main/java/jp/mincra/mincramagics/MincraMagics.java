@@ -13,6 +13,7 @@ import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.Inferno;
 import jp.mincra.mincramagics.skill.utility.Charging;
+import jp.mincra.mincramagics.skill.utility.Jump;
 import jp.mincra.mincramagics.skill.utility.Move;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -50,6 +51,9 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("inferno", new Inferno());
         skillManager.registerSkill("charging", new Charging());
         skillManager.registerSkill("move", new Move());
+        Jump jumpSkill = new Jump();
+        skillManager.registerSkill("jump", jumpSkill);
+        pluginManager.registerEvents(jumpSkill, this);
     }
 
     @Override
