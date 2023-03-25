@@ -47,9 +47,8 @@ public class Jump extends MagicSkill implements Listener {
         world.playSound(playerLoc, Sound.ENTITY_ENDERMAN_TELEPORT, 0.75F, 1F);
 
         // Vfx
-        Vector axis = new Vector(0, 1, 0);
         vfxManager.getVfx("jump")
-                .playEffect(playerLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
+                .playEffect(playerLoc, 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
     }
 
     @EventHandler

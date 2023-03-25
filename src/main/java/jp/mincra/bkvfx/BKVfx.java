@@ -45,6 +45,9 @@ public class BKVfx {
         vfxManager.registerVfx("jump",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
                         5, Particle.CLOUD).setSpeed(0.1f));
+        vfxManager.registerVfx("wraith",
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
+                        6, Particle.SMOKE_LARGE).setSpeed(0.1f));
     }
 
     public VfxManager getVfxManager() {

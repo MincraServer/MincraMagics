@@ -7,33 +7,44 @@ import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import jp.mincra.mincramagics.skill.SkillManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class MagicStuffMechanicManager implements Listener {
     private final MagicStuffMechanicFactory factory;
     private final MaterialManager materialManager;
     private final SkillManager skillManager;
+    private final Map<UUID, Integer> disableLeftTrigger;
+    private final Server server;
 
     public MagicStuffMechanicManager(MagicStuffMechanicFactory factory) {
         this.factory = factory;
         materialManager = MincraMagics.getMaterialManager();
         skillManager = MincraMagics.getSkillManager();
+        disableLeftTrigger = new HashMap<>();
+        server = Bukkit.getServer();
     }
 
     @EventHandler
     private void onClick(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
-        boolean isLeft = e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK;
+        boolean isLeft = e.getAction().isLeftClick();
+
+        if (isLeft && disableLeftTrigger.get(player.getUniqueId()) > server.getCurrentTick()) {
+            return;
+        }
 
         boolean triggered = triggerMaterial(e.getPlayer(), item, isLeft ? TriggerType.LEFT : TriggerType.RIGHT);
         e.setCancelled(triggered);
@@ -47,7 +58,11 @@ public class MagicStuffMechanicManager implements Listener {
 
     @EventHandler
     private void onDrop(PlayerDropItemEvent e) {
-        boolean triggered = triggerMaterial(e.getPlayer(), e.getItemDrop().getItemStack(), TriggerType.DROP);
+        Player player = e.getPlayer();
+        boolean triggered = triggerMaterial(player, e.getItemDrop().getItemStack(), TriggerType.DROP);
+        if (triggered) {
+            disableLeftTrigger.put(player.getUniqueId(), server.getCurrentTick() + 2);
+        }
         e.setCancelled(triggered);
     }
 

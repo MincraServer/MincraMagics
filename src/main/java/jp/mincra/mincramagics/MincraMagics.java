@@ -15,6 +15,7 @@ import jp.mincra.mincramagics.skill.combat.Inferno;
 import jp.mincra.mincramagics.skill.utility.Charging;
 import jp.mincra.mincramagics.skill.utility.Jump;
 import jp.mincra.mincramagics.skill.utility.Move;
+import jp.mincra.mincramagics.skill.utility.Wraith;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -54,6 +55,8 @@ public final class MincraMagics extends JavaPlugin {
         Jump jumpSkill = new Jump();
         skillManager.registerSkill("jump", jumpSkill);
         pluginManager.registerEvents(jumpSkill, this);
+        skillManager.registerSkill("wraith", new Wraith());
+
     }
 
     @Override
