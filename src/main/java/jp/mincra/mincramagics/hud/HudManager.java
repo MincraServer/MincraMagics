@@ -22,7 +22,7 @@ public class HudManager implements Listener {
 
     private Collection<MincraPlayer> players;
 
-    private static final String SHIFT_CODE = "%oraxen_shift_mana%";
+    private static final String SHIFT_HUD = "%oraxen_shift_hud%";
 
     public HudManager(PlayerManager playerManager) {
         this.playerManager = playerManager;
@@ -36,7 +36,7 @@ public class HudManager implements Listener {
 
                 Player player = mPlayer.getPlayer();
                 TextComponent component = Component
-                        .text(PlaceholderAPI.setPlaceholders(player, cooldownHud + SHIFT_CODE + mpHud));
+                        .text(PlaceholderAPI.setPlaceholders(player, SHIFT_HUD + cooldownHud + mpHud));
                 player.sendActionBar(component);
             }
         }, 0L, 1L);
