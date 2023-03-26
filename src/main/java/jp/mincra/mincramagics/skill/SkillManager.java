@@ -7,6 +7,11 @@ import java.util.Set;
 public class SkillManager {
     private final Map<String, MagicSkill> idToSkill = new HashMap<>();
 
+    /**
+     *
+     * @param skillId スキルのID. 原則スキルクラスをlower caseにしたもの.
+     * @param skill MagicSkillの具象クラス
+     */
     public void registerSkill(String skillId, MagicSkill skill) {
         idToSkill.put(skillId, skill);
     }

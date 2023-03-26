@@ -77,7 +77,6 @@ public class MagicStuffMechanicManager implements Listener {
         String itemId = OraxenItems.getIdByItem(item);
         if (factory.isNotImplementedIn(itemId))
             return false;
-        MagicStuffMechanic magicMec = (MagicStuffMechanic) factory.getMechanic(itemId);
 
         MincraNBT mincraNBT = MincraNBT.getMincraNBT(item);
         if (mincraNBT == null) return false;
