@@ -39,10 +39,12 @@ public class MagicStuffMechanicManager implements Listener {
     @EventHandler
     private void onClick(PlayerInteractEvent e) {
         Player player = e.getPlayer();
+        UUID uuid = player.getUniqueId();
         ItemStack item = player.getInventory().getItemInMainHand();
         boolean isLeft = e.getAction().isLeftClick();
 
-        if (isLeft && disableLeftTrigger.get(player.getUniqueId()) > server.getCurrentTick()) {
+        // Qキーを推した時に左クリックも発動するバグの対策.
+        if (isLeft && disableLeftTrigger.containsKey(uuid) && disableLeftTrigger.get(player.getUniqueId()) > server.getCurrentTick()) {
             return;
         }
 
@@ -69,7 +71,7 @@ public class MagicStuffMechanicManager implements Listener {
     /**
      *
      * @param item A magic stuff item.
-     * @param triggerType
+     * @param triggerType スキルをトリガーしたキーまたはマウス
      * @return Successfully triggered or not.
      */
     private boolean triggerMaterial(Player caster, ItemStack item, TriggerType triggerType) {

@@ -2,7 +2,6 @@ package jp.mincra.mincramagics.nbtobject;
 
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MincraMagics;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public record MincraNBT(List<Material> materials, List<MagicEnchantment> magicEnchantments,
@@ -54,6 +52,8 @@ public record MincraNBT(List<Material> materials, List<MagicEnchantment> magicEn
 
     @Nullable
     public static MincraNBT getMincraNBT(ItemStack item) {
+        if (item == null) return null;
+
         PersistentDataContainer mincramagicsCon = item.getItemMeta().getPersistentDataContainer()
                 .get(MINCRA_MAGICS_KEY, PersistentDataType.TAG_CONTAINER);
 
@@ -81,5 +81,19 @@ public record MincraNBT(List<Material> materials, List<MagicEnchantment> magicEn
     public Map<String, String> getMaterialMap() {
         return materials.stream()
                 .collect(Collectors.toMap(material -> material.slot, material -> material.id));
+    }
+
+    public void setMaterial(String slot, String id) {
+        removeMaterial(slot);
+        materials.add(new Material(slot, id));
+    }
+
+    public void removeMaterial(String slot) {
+        for (int i = 0; i < materials.size(); i++) {
+            Material material = materials.get(i);
+            if (material.slot.equals(slot)) {
+                materials.remove(i);
+            }
+        }
     }
 }

@@ -3,6 +3,8 @@ package jp.mincra.mincramagics;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
 import jp.mincra.bkvfx.VfxManager;
+import jp.mincra.mincramagics.gui.GUIManager;
+import jp.mincra.mincramagics.gui.impl.MaterialEditor;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MagicSkill;
@@ -23,6 +25,7 @@ public class CommandRegisterer {
                 .withSubcommand(skillCommand())
                 .withSubcommand(effectCommand())
                 .withSubcommand(vfxCommand())
+                .withSubcommand(guiCommand())
                 .register();
     }
 
@@ -103,6 +106,24 @@ public class CommandRegisterer {
                     VfxManager vfxManager = MincraMagics.getVfxManager();
                     vfxManager.getVfx((String) args[0]).playEffect((Location) args[1], (float) args[2],
                             ((Location) args[3]).toVector(), Math.PI * ((double) args[4]) / 180);
+                }));
+    }
+
+    private CommandAPICommand guiCommand() {
+        return new CommandAPICommand("gui")
+                .withArguments(new PlayerArgument("target"))
+                .withArguments(new StringArgument("id").replaceSuggestions(ArgumentSuggestions.strings(
+                        "MaterialEditor"
+                )))
+                .executes(((sender, args) -> {
+                    GUIManager guiManager = MincraMagics.getGuiManager();
+                    Player target = (Player) args[0];
+                    switch ((String) args[1]) {
+                        case "MaterialEditor" -> {
+                            guiManager.open(new MaterialEditor(), target);
+                            return;
+                        }
+                    }
                 }));
     }
 
