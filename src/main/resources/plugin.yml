@@ -3,3 +3,4 @@ version: 1.19.3
 main: jp.mincra.mincramagics.MincraMagics
 api-version: 1.19
 authors: [Harineko]
+depend: [NBTAPI]

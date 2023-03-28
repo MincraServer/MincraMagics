@@ -7,6 +7,7 @@ import jp.mincra.bkvfx.BKVfx;
 import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.HudManager;
+import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.magicstuff.MagicStuffMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
 import jp.mincra.mincramagics.player.PlayerManager;
@@ -51,6 +52,7 @@ public final class MincraMagics extends JavaPlugin {
 
         MechanicsManager.registerMechanicFactory("magicstuff", MagicStuffMechanicFactory::new);
         MechanicsManager.registerMechanicFactory("material", MaterialMechanicFactory::new);
+        MechanicsManager.registerMechanicFactory("gui", GUIMechanicFactory::new);
 
         skillManager.registerSkill("inferno", new Inferno());
         skillManager.registerSkill("charging", new Charging());

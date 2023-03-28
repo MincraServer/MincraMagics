@@ -12,6 +12,7 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -61,11 +62,15 @@ public class MagicStuffMechanicManager implements Listener {
     @EventHandler
     private void onDrop(PlayerDropItemEvent e) {
         Player player = e.getPlayer();
+        if (e.getPlayer().getOpenInventory().getType() == InventoryType.PLAYER) {
+            // プレイヤーがインベントリ開いてるときは無視
+            return;
+        }
         boolean triggered = triggerMaterial(player, e.getItemDrop().getItemStack(), TriggerType.DROP);
         if (triggered) {
             disableLeftTrigger.put(player.getUniqueId(), server.getCurrentTick() + 2);
+            e.setCancelled(true);
         }
-        e.setCancelled(triggered);
     }
 
     /**
