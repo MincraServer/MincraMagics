@@ -2,12 +2,13 @@ package jp.mincra.mincramagics.gui.impl;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
+import jp.mincra.bktween.BKTween;
+import jp.mincra.bktween.TickTime;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.InventoryGUI;
 import jp.mincra.mincramagics.nbtobject.MincraNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
-import jp.mincra.nms.gui.ContainerType;
-import jp.mincra.nms.gui.TitleUpdater;
+import jp.mincra.ryseinventory.TitleUpdater;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -21,6 +22,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +40,9 @@ public class MaterialEditor extends InventoryGUI {
 
     private final Inventory inv;
     private final MaterialManager materialManager;
+    private final JavaPlugin mincramagics;
     private Player player;
+    private final ItemStack invisibleItem;
 
     private final static String activeTitle =
             "§f" +
@@ -51,15 +55,16 @@ public class MaterialEditor extends InventoryGUI {
             + PlaceholderAPI.setPlaceholders(null, NEG_64 + NEG_128 + "マテリアル作業台");
 
     public MaterialEditor() {
-        inv = Bukkit.createInventory(null, 27, Component.text(activeTitle));
+        inv = Bukkit.createInventory(null, 27, Component.text(inactiveTitle));
 
-        ItemStack invisibleItem = OraxenItems.getItemById("invisible_item").build();
+        invisibleItem = OraxenItems.getItemById("invisible_item").build();
         for (int i = 0; i < 27; i++) {
             if (!isAvailableSlot(i)) {
                 inv.setItem(i, invisibleItem);
             }
         }
         materialManager = MincraMagics.getMaterialManager();
+        mincramagics = MincraMagics.getInstance();
     }
 
     @EventHandler
@@ -68,48 +73,54 @@ public class MaterialEditor extends InventoryGUI {
         if (!event.getInventory().equals(getInventory())) return;
         int slot = event.getRawSlot();
         InventoryAction action = event.getAction();
+        ItemStack currentItem = event.getCurrentItem();
 
         if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-            if (isTransparentSlot(slot)) {
+            if (isTransparentSlot(slot) || (currentItem != null && currentItem.equals(invisibleItem))) {
                 event.setCancelled(true);
                 return;
             }
+
             if (!isMaterialEditorSlot(event.getRawSlot())) {
                 // プレイヤーインベントリ -> Material作業台
                 int topLeftSlot = getTopLeftEmptySlot();
                 if (isMaterialEditorSlot(topLeftSlot)) {
-                    boolean success = onPlace(topLeftSlot, event.getCurrentItem());
+                    boolean success = onPlace(topLeftSlot, currentItem);
                     event.setCancelled(!success);
                 }
             } else {
                 //  Material作業台 -> プレイヤーインベントリ
                 onPickup(slot);
             }
-            return;
-        }
-
-        // プレイヤーのインベントリのとき
-        if (slot > 26) {
-            return;
-        }
-
-        // 操作可能なスロットじゃないとき
-        if (!isAvailableSlot(slot)) {
-            event.setCancelled(true);
-            return;
-        }
-
-        // Main Code
-        ItemStack item = event.getCursor();
-
-        if (action == InventoryAction.PLACE_ALL || action == InventoryAction.PLACE_ONE) {
-            boolean success = onPlace(slot, item);
-            event.setCancelled(!success);
-        } else if (action == InventoryAction.PICKUP_ALL) {
-            onPickup(slot);
         } else {
-            event.setCancelled(true);
+            // プレイヤーのインベントリのとき
+            if (slot > 26) {
+                return;
+            }
+
+            // 操作可能なスロットじゃないとき
+            if (!isAvailableSlot(slot)) {
+                event.setCancelled(true);
+                return;
+            }
+
+            // Main Code
+            ItemStack cursorItem = event.getCursor();
+
+            if (action == InventoryAction.PLACE_ALL || action == InventoryAction.PLACE_ONE) {
+                event.setCancelled(!onPlace(slot, cursorItem));
+            } else if (action == InventoryAction.PICKUP_ALL) {
+                onPickup(slot);
+            } else if (action == InventoryAction.SWAP_WITH_CURSOR && !isMagicStuffSlot(slot)) {
+                // マテリアルの入れ替えしかできない(magicstuff入れ替えは実装がめんどくさい)
+                onPickup(slot);
+                event.setCancelled(!onPlace(slot, cursorItem));
+            } else {
+                event.setCancelled(true);
+            }
         }
+
+
     }
 
     @EventHandler
@@ -256,7 +267,10 @@ public class MaterialEditor extends InventoryGUI {
     }
 
     private void changeTitle(String title) {
-        TitleUpdater.update(player, title, ContainerType.GENERIC_9X6);
+        new BKTween(mincramagics)
+                .delay(TickTime.TICK, 1)
+                .execute(v -> TitleUpdater.updateInventory(player, title))
+                .run();
     }
 
     private boolean isFullInventory(Player player) {
