@@ -12,6 +12,7 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -39,10 +40,12 @@ public class MagicStuffMechanicManager implements Listener {
     @EventHandler
     private void onClick(PlayerInteractEvent e) {
         Player player = e.getPlayer();
+        UUID uuid = player.getUniqueId();
         ItemStack item = player.getInventory().getItemInMainHand();
         boolean isLeft = e.getAction().isLeftClick();
 
-        if (isLeft && disableLeftTrigger.get(player.getUniqueId()) > server.getCurrentTick()) {
+        // Qキーを推した時に左クリックも発動するバグの対策.
+        if (isLeft && disableLeftTrigger.containsKey(uuid) && disableLeftTrigger.get(player.getUniqueId()) > server.getCurrentTick()) {
             return;
         }
 
@@ -59,17 +62,21 @@ public class MagicStuffMechanicManager implements Listener {
     @EventHandler
     private void onDrop(PlayerDropItemEvent e) {
         Player player = e.getPlayer();
+        if (e.getPlayer().getOpenInventory().getType() == InventoryType.PLAYER) {
+            // プレイヤーがインベントリ開いてるときは無視
+            return;
+        }
         boolean triggered = triggerMaterial(player, e.getItemDrop().getItemStack(), TriggerType.DROP);
         if (triggered) {
             disableLeftTrigger.put(player.getUniqueId(), server.getCurrentTick() + 2);
+            e.setCancelled(true);
         }
-        e.setCancelled(triggered);
     }
 
     /**
      *
      * @param item A magic stuff item.
-     * @param triggerType
+     * @param triggerType スキルをトリガーしたキーまたはマウス
      * @return Successfully triggered or not.
      */
     private boolean triggerMaterial(Player caster, ItemStack item, TriggerType triggerType) {

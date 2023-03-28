@@ -19,6 +19,10 @@ repositories {
     }
 
     maven {
+        url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    }
+
+    maven {
         url = uri("https://mvn.lumine.io/repository/maven-public/")
     }
 
@@ -50,10 +54,12 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("com.github.oraxen:oraxen:1.153.1")
     // ezsvg
-    implementation("javax.xml.bind:jaxb-api:2.2.4")
+    implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     implementation("org.w3c:dom:2.3.0-jaxb-1.0.6")
     // Test
     testImplementation("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    // Spigot and NMS
+    compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
 
 group = "jp.mincra"
