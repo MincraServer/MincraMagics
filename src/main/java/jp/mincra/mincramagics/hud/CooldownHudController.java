@@ -1,31 +1,34 @@
 package jp.mincra.mincramagics.hud;
 
 import jp.mincra.mincramagics.player.SkillCooldown;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class CooldownHudController {
     // region oraxen glyph code
     private static final Map<Integer, String> NUM_TO_IDENTIFIER = Map.of(
-            0, "%oraxen_hud_mini_number_0%",
-            1, "%oraxen_hud_mini_number_1%",
-            2, "%oraxen_hud_mini_number_2%",
-            3, "%oraxen_hud_mini_number_3%",
-            4, "%oraxen_hud_mini_number_4%",
-            5, "%oraxen_hud_mini_number_5%",
-            6, "%oraxen_hud_mini_number_6%",
-            7, "%oraxen_hud_mini_number_7%",
-            8, "%oraxen_hud_mini_number_8%",
-            9, "%oraxen_hud_mini_number_9%"
+            0, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_0%"),
+            1, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_1%"),
+            2, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_2%"),
+            3, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_3%"),
+            4, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_4%"),
+            5, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_5%"),
+            6, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_6%"),
+            7, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_7%"),
+            8, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_8%"),
+            9, PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_9%")
     );
-    private static final String DOT = "%oraxen_hud_mini_number_dot%";
-    private static final String NEG_SHIFT_16 = "%oraxen_neg_shift_16%";
-    private static final String NEG_SHIFT_14 = "%oraxen_neg_shift_14%";
-    private static final String NEG_SHIFT_12 = "%oraxen_neg_shift_12%";
-    private static final String NEG_SHIFT_10 = "%oraxen_neg_shift_10%";
-    private static final String NEG_SHIFT_1 = "%oraxen_neg_shift_1%";
-    private static final String SHIFT_1 = "%oraxen_shift_1%";
+    private static final String DOT = PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_mini_number_dot%");
+    private static final String NEG_SHIFT_16 = PlaceholderAPI.setPlaceholders(null, "%oraxen_neg_shift_16%");
+    private static final String NEG_SHIFT_14 = PlaceholderAPI.setPlaceholders(null, "%oraxen_neg_shift_14%");
+    private static final String NEG_SHIFT_12 = PlaceholderAPI.setPlaceholders(null, "%oraxen_neg_shift_12%");
+    private static final String NEG_SHIFT_10 = PlaceholderAPI.setPlaceholders(null, "%oraxen_neg_shift_10%");
+    private static final String NEG_SHIFT_1 = PlaceholderAPI.setPlaceholders(null, "%oraxen_neg_shift_1%");
+    private static final String SHIFT_1 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%");
+    private static final Map<String, String> MATERIAL_HUD_MAP = new HashMap<>();
     //endregion
 
     public String generateCooldownHud(SkillCooldown skillCooldown) {
@@ -43,7 +46,15 @@ public class CooldownHudController {
                 continue;
             }
 
-            String materialPlaceholder = "%oraxen_hud_material_" + materialId + "%";
+            String materialPlaceholder;
+
+            if (!MATERIAL_HUD_MAP.containsKey(materialId)) {
+                materialPlaceholder = PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_material_" + materialId + "%");
+                MATERIAL_HUD_MAP.put(materialId, materialPlaceholder);
+            } else {
+                materialPlaceholder = MATERIAL_HUD_MAP.get(materialId);
+            }
+
 
             // アイコンが未登録なら表示しない?
 //            if (!PlaceholderAPI.isRegistered(materialPlaceholder)) {
