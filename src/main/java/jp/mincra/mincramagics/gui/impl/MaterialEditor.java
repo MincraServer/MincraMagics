@@ -6,7 +6,7 @@ import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.InventoryGUI;
-import jp.mincra.mincramagics.nbtobject.MincraNBT;
+import jp.mincra.mincramagics.nbtobject.MagicStuffNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.ryseinventory.TitleUpdater;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -164,10 +164,10 @@ public class MaterialEditor extends InventoryGUI {
             }
 
             // 魔法武器スロットに置いたとき
-            MincraNBT mincraNBT = MincraNBT.getMincraNBT(placedItem);
-            if (mincraNBT == null) return false;
+            MagicStuffNBT magicStuffNBT = MagicStuffNBT.getMincraNBT(placedItem);
+            if (magicStuffNBT == null) return false;
 
-            Map<String, String> materialMap = mincraNBT.getMaterialMap();
+            Map<String, String> materialMap = magicStuffNBT.getMaterialMap();
 
             for (int i = 0; i < 4; i++) {
                 String slotId = slotIdList.get(i);
@@ -248,19 +248,19 @@ public class MaterialEditor extends InventoryGUI {
         if (magicStuff == null) return false;
 
         // 魔法武器のNBT入手
-        MincraNBT mincraNBT = MincraNBT.getMincraNBT(magicStuff);
-        if (mincraNBT == null) return false;
+        MagicStuffNBT magicStuffNBT = MagicStuffNBT.getMincraNBT(magicStuff);
+        if (magicStuffNBT == null) return false;
 
         if (materialItem != null) {
             String oraxenMaterialItemId = OraxenItems.getIdByItem(materialItem);
             if (!OraxenItems.exists(materialItem)) return false;
             if (!materialManager.isRegistered(oraxenMaterialItemId)) return false;
-            mincraNBT.setMaterial(slotIdList.get(slot - 12), oraxenMaterialItemId);
+            magicStuffNBT.setMaterial(slotIdList.get(slot - 12), oraxenMaterialItemId);
         } else {
-            mincraNBT.removeMaterial(slotIdList.get(slot - 12));
+            magicStuffNBT.removeMaterial(slotIdList.get(slot - 12));
         }
 
-        ItemStack newItem = mincraNBT.setTag(new ItemBuilder(magicStuff)).build();
+        ItemStack newItem = magicStuffNBT.setNBTTag(new ItemBuilder(magicStuff)).build();
         setMagicStuff(newItem);
 
         return true;
