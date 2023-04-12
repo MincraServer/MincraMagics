@@ -6,6 +6,7 @@ import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.nbtobject.pdc.PersistentDataTypeEx;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -15,6 +16,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * MincraMagics
+ * - Materials
+ * - MaterialFilters
+ * - MagicEnchantments
+ * - DescriptionLore
+ * - MagicStuffProperty
+ *   - Strength
+ *   - Accuracy
+ *   - MPSaver
+ *   - CooldownShorter
+ * @param materials
+ * @param magicEnchantments
+ * @param materialFilters
+ * @param descriptionLore
+ */
 public record MagicStuffNBT(List<Material> materials,
                             List<MagicEnchantment> magicEnchantments,
                             List<MaterialFilter> materialFilters,
