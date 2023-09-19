@@ -1,9 +1,26 @@
-package jp.mincra.ryseinventory;
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2023 Crypto Morin
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+ * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+package jp.mincra.titleupdater;
 
-import com.google.gson.Gson;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -12,11 +29,12 @@ import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <b>ReflectionUtils</b> - Reflection handler for NMS and CraftBukkit.<br>
@@ -32,7 +50,7 @@ import java.util.logging.Level;
  * A useful resource used to compare mappings is <a href="https://minidigger.github.io/MiniMappingViewer/#/spigot">Mini's Mapping Viewer</a>
  *
  * @author Crypto Morin
- * @version 6.0.1
+ * @version 7.0.0
  */
 public final class ReflectionUtils {
     /**
@@ -44,8 +62,10 @@ public final class ReflectionUtils {
      * In order to maintain cross-version compatibility we cannot import these classes.
      * <p>
      * Performance is not a concern for these specific statically initialized values.
+     * <p>
+     * <a href="https://www.spigotmc.org/wiki/spigot-nms-and-minecraft-versions-legacy/">Versions Legacy</a>
      */
-    public static final String VERSION;
+    public static final String NMS_VERSION;
 
     static { // This needs to be right below VERSION because of initialization order.
         // This package loop is used to avoid implementation-dependant strings like Bukkit.getVersion() or Bukkit.getBukkitVersion()
@@ -53,15 +73,16 @@ public final class ReflectionUtils {
         String found = null;
         for (Package pack : Package.getPackages()) {
             String name = pack.getName();
-            if (name.startsWith("org.bukkit.craftbukkit.v") // .v because there are other packages.
-                    // As a protection for forge+bukkit implementation that tend to mix versions.
-                    // The real CraftPlayer should exist in the package.
-                    // Note: Doesn't seem to function properly. Will need to separate the version
-                    // handler for NMS and CraftBukkit for softwares like catmc.
-                    && name.endsWith("entity")) {
+
+            // .v because there are other packages.
+            if (name.startsWith("org.bukkit.craftbukkit.v")) {
                 found = pack.getName().split("\\.")[3];
 
                 // Just a final guard to make sure it finds this important class.
+                // As a protection for forge+bukkit implementation that tend to mix versions.
+                // The real CraftPlayer should exist in the package.
+                // Note: Doesn't seem to function properly. Will need to separate the version
+                // handler for NMS and CraftBukkit for softwares like catmc.
                 try {
                     Class.forName("org.bukkit.craftbukkit." + found + ".entity.CraftPlayer");
                     break;
@@ -72,23 +93,119 @@ public final class ReflectionUtils {
         }
         if (found == null)
             throw new IllegalArgumentException("Failed to parse server version. Could not find any package starting with name: 'org.bukkit.craftbukkit.v'");
-        VERSION = found;
+        NMS_VERSION = found;
     }
 
     /**
      * The raw minor version number.
      * E.g. {@code v1_17_R1} to {@code 17}
      *
+     * @see #supports(int)
      * @since 4.0.0
      */
-    public static final int VER = Integer.parseInt(VERSION.substring(1).split("_")[1]);
+    public static final int MINOR_NUMBER;
     /**
-     * Mojang remapped their NMS in 1.17 https://www.spigotmc.org/threads/spigot-bungeecord-1-17.510208/#post-4184317
+     * The raw patch version number.
+     * E.g. {@code v1_17_R1} to {@code 1}
+     * <p>
+     * I'd not recommend developers to support individual patches at all. You should always support the latest patch.
+     * For example, between v1.14.0, v1.14.1, v1.14.2, v1.14.3 and v1.14.4 you should only support v1.14.4
+     * <p>
+     * This can be used to warn server owners when your plugin will break on older patches.
+     *
+     * @see #supportsPatch(int)
+     * @since 7.0.0
+     */
+    public static final int PATCH_NUMBER;
+
+    static {
+        String[] split = NMS_VERSION.substring(1).split("_");
+        if (split.length < 1) {
+            throw new IllegalStateException("Version number division error: " + Arrays.toString(split) + ' ' + getVersionInformation());
+        }
+
+        String minorVer = split[1];
+        try {
+            MINOR_NUMBER = Integer.parseInt(minorVer);
+            if (MINOR_NUMBER < 0)
+                throw new IllegalStateException("Negative minor number? " + minorVer + ' ' + getVersionInformation());
+        } catch (Throwable ex) {
+            throw new RuntimeException("Failed to parse minor number: " + minorVer + ' ' + getVersionInformation(), ex);
+        }
+
+        // Bukkit.getBukkitVersion() = "1.12.2-R0.1-SNAPSHOT"
+        Matcher bukkitVer = Pattern.compile("^\\d+\\.\\d+\\.(\\d+)").matcher(Bukkit.getBukkitVersion());
+        if (bukkitVer.find()) { // matches() won't work, we just want to match the start using "^"
+            try {
+                // group(0) gives the whole matched string, we just want the captured group.
+                PATCH_NUMBER = Integer.parseInt(bukkitVer.group(1));
+            } catch (Throwable ex) {
+                throw new RuntimeException("Failed to parse minor number: " + bukkitVer + ' ' + getVersionInformation(), ex);
+            }
+        } else {
+            // 1.8-R0.1-SNAPSHOT
+            PATCH_NUMBER = 0;
+        }
+    }
+
+    /**
+     * Gets the full version information of the server. Useful for including in errors.
+     * @since 7.0.0
+     */
+    public static String getVersionInformation() {
+        return "(NMS: " + NMS_VERSION + " | " +
+                "Minecraft: " + Bukkit.getVersion() + " | " +
+                "Bukkit: " + Bukkit.getBukkitVersion() + ')';
+    }
+
+    /**
+     * Gets the latest known patch number of the given minor version.
+     * For example: 1.14 -> 4, 1.17 -> 10
+     * The latest version is expected to get newer patches, so make sure to account for unexpected results.
+     *
+     * @param minorVersion the minor version to get the patch number of.
+     * @return the patch number of the given minor version if recognized, otherwise null.
+     * @since 7.0.0
+     */
+    public static Integer getLatestPatchNumberOf(int minorVersion) {
+        if (minorVersion <= 0) throw new IllegalArgumentException("Minor version must be positive: " + minorVersion);
+
+        // https://minecraft.fandom.com/wiki/Java_Edition_version_history
+        // There are many ways to do this, but this is more visually appealing.
+        int[] patches = {
+                /* 1 */ 1,
+                /* 2 */ 5,
+                /* 3 */ 2,
+                /* 4 */ 7,
+                /* 5 */ 2,
+                /* 6 */ 4,
+                /* 7 */ 10,
+                /* 8 */ 8, // I don't think they released a server version for 1.8.9
+                /* 9 */ 4,
+
+                /* 10 */ 2,//          ,_  _  _,
+                /* 11 */ 2,//            \o-o/
+                /* 12 */ 2,//           ,(.-.),
+                /* 13 */ 2,//         _/ |) (| \_
+                /* 14 */ 4,//           /\=-=/\
+                /* 15 */ 2,//          ,| \=/ |,
+                /* 16 */ 5,//        _/ \  |  / \_
+                /* 17 */ 1,//            \_!_/
+                /* 18 */ 2,
+                /* 19 */ 4,
+                /* 20 */ 0,
+        };
+
+        if (minorVersion > patches.length) return null;
+        return patches[minorVersion - 1];
+    }
+
+    /**
+     * Mojang remapped their NMS in 1.17: <a href="https://www.spigotmc.org/threads/spigot-bungeecord-1-17.510208/#post-4184317">Spigot Thread</a>
      */
     public static final String
-            STRING = "net.minecraft.server." + VERSION + '.',
-            CRAFTBUKKIT = "org.bukkit.craftbukkit." + VERSION + '.',
-            NMS = v(17, "net.minecraft.").orElse("net.minecraft.server." + VERSION + '.');
+            CRAFTBUKKIT_PACKAGE = "org.bukkit.craftbukkit." + NMS_VERSION + '.',
+            NMS_PACKAGE = v(17, "net.minecraft.").orElse("net.minecraft.server." + NMS_VERSION + '.');
     /**
      * A nullable public accessible field only available in {@code EntityPlayer}.
      * This can be null if the player is offline.
@@ -118,13 +235,13 @@ public final class ReflectionUtils {
 
         try {
             connection = lookup.findGetter(entityPlayer,
-                    v(17, "b").orElse("playerConnection"), playerConnection);
+                    v(20, "c").v(17, "b").orElse("playerConnection"), playerConnection);
             getHandle = lookup.findVirtual(craftPlayer, "getHandle", MethodType.methodType(entityPlayer));
             sendPacket = lookup.findVirtual(playerConnection,
                     v(18, "a").orElse("sendPacket"),
                     MethodType.methodType(void.class, getNMSClass("network.protocol", "Packet")));
         } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error while finding getter", ex);
+            ex.printStackTrace();
         }
 
         PLAYER_CONNECTION = connection;
@@ -135,47 +252,10 @@ public final class ReflectionUtils {
     private ReflectionUtils() {
     }
 
-    public static Method getMethod(final Class<?> clazz, final String methodName, final Class<?>... args) {
-        for (final Method method : clazz.getMethods())
-            if (method.getName().equals(methodName) && isClassListEqual(args, method.getParameterTypes())) {
-                method.setAccessible(true);
-
-                return method;
-            }
-
-        return null;
-    }
-
-    public static <T> T invoke(final Method method, final Object instance, final Object... params) {
-
-        try {
-            return (T) method.invoke(instance, params);
-
-        } catch (final ReflectiveOperationException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error during method call", ex);
-        }
-        return null;
-    }
-
-    private static boolean isClassListEqual(final Class<?>[] first, final Class<?>[] second) {
-        if (first.length != second.length)
-            return false;
-
-        for (int i = 0; i < first.length; i++)
-            if (first[i] != second[i])
-                return false;
-
-        return true;
-    }
-
     /**
      * This method is purely for readability.
      * No performance is gained.
      *
-     * @param <T>     The type of the class.
-     * @param handle  The handle to get the class from.
-     * @param version The version to get the class from.
-     * @return The class.
      * @since 5.0.0
      */
     public static <T> VersionHandler<T> v(int version, T handle) {
@@ -189,12 +269,25 @@ public final class ReflectionUtils {
     /**
      * Checks whether the server version is equal or greater than the given version.
      *
-     * @param version the version to compare the server version with.
+     * @param minorNumber the version to compare the server version with.
      * @return true if the version is equal or newer, otherwise false.
+     * @see #MINOR_NUMBER
      * @since 4.0.0
      */
-    public static boolean supports(int version) {
-        return VER >= version;
+    public static boolean supports(int minorNumber) {
+        return MINOR_NUMBER >= minorNumber;
+    }
+
+    /**
+     * Checks whether the server version is equal or greater than the given version.
+     *
+     * @param patchNumber the version to compare the server version with.
+     * @return true if the version is equal or newer, otherwise false.
+     * @see #PATCH_NUMBER
+     * @since 7.0.0
+     */
+    public static boolean supportsPatch(int patchNumber) {
+        return PATCH_NUMBER >= patchNumber;
     }
 
     /**
@@ -221,20 +314,9 @@ public final class ReflectionUtils {
     @Nullable
     public static Class<?> getNMSClass(@Nonnull String name) {
         try {
-            return Class.forName(NMS + name);
+            return Class.forName(NMS_PACKAGE + name);
         } catch (ClassNotFoundException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error finding NMS class.", ex);
-            return null;
-        }
-    }
-
-    @Nullable
-
-    public static Class<?> getNMSClassWithFixed(@Nonnull String name) {
-        try {
-            return Class.forName(STRING + name);
-        } catch (ClassNotFoundException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error finding fixed NMS class", ex);
+            ex.printStackTrace();
             return null;
         }
     }
@@ -253,7 +335,7 @@ public final class ReflectionUtils {
     public static CompletableFuture<Void> sendPacket(@Nonnull Player player, @Nonnull Object... packets) {
         return CompletableFuture.runAsync(() -> sendPacketSync(player, packets))
                 .exceptionally(ex -> {
-                    Bukkit.getLogger().log(Level.SEVERE, "Error sending a packet.", ex);
+                    ex.printStackTrace();
                     return null;
                 });
     }
@@ -276,7 +358,7 @@ public final class ReflectionUtils {
                 for (Object packet : packets) SEND_PACKET.invoke(connection, packet);
             }
         } catch (Throwable throwable) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error sending a packet.", throwable);
+            throwable.printStackTrace();
         }
     }
 
@@ -286,62 +368,9 @@ public final class ReflectionUtils {
         try {
             return GET_HANDLE.invoke(player);
         } catch (Throwable throwable) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error while getting the object.", throwable);
+            throwable.printStackTrace();
             return null;
         }
-    }
-
-
-    /**
-     * @param text the text to colorize
-     * @return the colorized text
-     * <p>
-     * <a href="https://github.com/kangarko/Foundation">...</a>
-     */
-    public static Object toIChatBaseComponentPlain(String text) {
-        return toIChatBaseComponent(TextComponent.fromLegacyText(text));
-    }
-
-    /**
-     * @param baseComponents the base components to convert.
-     * @return the converted object.
-     * <p>
-     * <a href="https://github.com/kangarko/Foundation">...</a>
-     */
-    public static Object toIChatBaseComponent(BaseComponent[] baseComponents) {
-        return toIChatBaseComponent(toJson(baseComponents));
-    }
-
-    /**
-     * @param comps the components to convert
-     * @return the json string
-     * <p>
-     * <a href="https://github.com/kangarko/Foundation">...</a>
-     */
-    public static String toJson(final BaseComponent... comps) {
-        String json;
-
-        try {
-            json = ComponentSerializer.toString(comps);
-
-        } catch (final Throwable t) {
-            json = new Gson().toJson(new TextComponent(comps).toLegacyText());
-        }
-
-        return json;
-    }
-
-    /**
-     * @param json the json to convert to IChatBaseComponent
-     * @return the IChatBaseComponent
-     * <p>
-     * <a href="https://github.com/kangarko/Foundation">...</a>
-     */
-    public static Object toIChatBaseComponent(String json) {
-        final Class<?> chatSerializer = ReflectionUtils.getNMSClass("network.chat", "IChatBaseComponent$ChatSerializer");
-        final Method a = ReflectionUtils.getMethod(chatSerializer, "a", String.class);
-
-        return ReflectionUtils.invoke(a, null, json);
     }
 
     @Nullable
@@ -351,7 +380,7 @@ public final class ReflectionUtils {
             Object handle = GET_HANDLE.invoke(player);
             return PLAYER_CONNECTION.invoke(handle);
         } catch (Throwable throwable) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error while getting the connection.", throwable);
+            throwable.printStackTrace();
             return null;
         }
     }
@@ -366,19 +395,19 @@ public final class ReflectionUtils {
     @Nullable
     public static Class<?> getCraftClass(@Nonnull String name) {
         try {
-            return Class.forName(CRAFTBUKKIT + name);
+            return Class.forName(CRAFTBUKKIT_PACKAGE + name);
         } catch (ClassNotFoundException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error while getting the craftclass.", ex);
+            ex.printStackTrace();
             return null;
         }
     }
 
     public static Class<?> getArrayClass(String clazz, boolean nms) {
-        clazz = "[L" + (nms ? NMS : CRAFTBUKKIT) + clazz + ';';
+        clazz = "[L" + (nms ? NMS_PACKAGE : CRAFTBUKKIT_PACKAGE) + clazz + ';';
         try {
             return Class.forName(clazz);
         } catch (ClassNotFoundException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error while getting the array class.", ex);
+            ex.printStackTrace();
             return null;
         }
     }
@@ -387,7 +416,7 @@ public final class ReflectionUtils {
         try {
             return Class.forName("[L" + clazz.getName() + ';');
         } catch (ClassNotFoundException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Error while getting the array class.", ex);
+            ex.printStackTrace();
             return null;
         }
     }
@@ -443,7 +472,7 @@ public final class ReflectionUtils {
             try {
                 return (this.version == 0 ? handle : this.handle).call();
             } catch (Exception e) {
-                Bukkit.getLogger().log(Level.SEVERE, "Error while getting the generic.", e);
+                e.printStackTrace();
                 return null;
             }
         }

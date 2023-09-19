@@ -8,7 +8,7 @@ import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.InventoryGUI;
 import jp.mincra.mincramagics.nbtobject.MagicStuffNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
-import jp.mincra.ryseinventory.TitleUpdater;
+import jp.mincra.titleupdater.InventoryUpdate;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -269,7 +269,7 @@ public class MaterialEditor extends InventoryGUI {
     private void changeTitle(String title) {
         new BKTween(mincramagics)
                 .delay(TickTime.TICK, 1)
-                .execute(v -> TitleUpdater.updateInventory(player, title))
+                .execute(v -> InventoryUpdate.updateInventory(player, title))
                 .run();
     }
 
