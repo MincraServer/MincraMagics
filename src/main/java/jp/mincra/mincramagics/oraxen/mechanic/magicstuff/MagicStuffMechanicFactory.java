@@ -7,9 +7,9 @@ import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class MagicStuffMechanicFactory extends MechanicFactory {
-    public MagicStuffMechanicFactory(ConfigurationSection section) {
-        super(section);
-        MechanicsManager.registerListeners(OraxenPlugin.get(),
+    public MagicStuffMechanicFactory(String mechanicId) {
+        super(mechanicId);
+        MechanicsManager.registerListeners(OraxenPlugin.get(), mechanicId,
                 new MagicStuffMechanicManager(this));
     }
 

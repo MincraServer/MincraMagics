@@ -50,9 +50,9 @@ public final class MincraMagics extends JavaPlugin {
 
         new CommandRegisterer().registerAll();
 
-        MechanicsManager.registerMechanicFactory("magicstuff", MagicStuffMechanicFactory::new);
-        MechanicsManager.registerMechanicFactory("material", MaterialMechanicFactory::new);
-        MechanicsManager.registerMechanicFactory("gui", GUIMechanicFactory::new);
+        MechanicsManager.registerMechanicFactory("magicstuff", new MagicStuffMechanicFactory("magicstuff"), true);
+        MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
+        MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
 
         skillManager.registerSkill("inferno", new Inferno());
         skillManager.registerSkill("charging", new Charging());

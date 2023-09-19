@@ -8,9 +8,9 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class GUIMechanicFactory extends MechanicFactory {
 
-    public GUIMechanicFactory(ConfigurationSection section) {
-        super(section);
-        MechanicsManager.registerListeners(OraxenPlugin.get(),
+    public GUIMechanicFactory(String mechanicId) {
+        super(mechanicId);
+        MechanicsManager.registerListeners(OraxenPlugin.get(), mechanicId,
                 new GUIMechanicsManager(this));
     }
 

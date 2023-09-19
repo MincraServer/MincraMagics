@@ -45,12 +45,12 @@ repositories {
 
 dependencies {
     // mincramagics
-    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
-    implementation("xyz.xenondevs:particle:1.8.3")
-    implementation("de.tr7zw:item-nbt-api-plugin:2.11.1")
+    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    implementation("xyz.xenondevs:particle:1.8.4")
+    implementation("de.tr7zw:item-nbt-api-plugin:2.11.3")
     compileOnly("io.lumine:Mythic-Dist:5.2.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
-    compileOnly("dev.jorel:commandapi-core:8.7.0")
+    compileOnly("dev.jorel:commandapi-bukkit-core:9.1.0")
     compileOnly("me.clip:placeholderapi:2.11.2")
 //    compileOnly("com.github.oraxen:oraxen:1.153.1")
     // ezsvg

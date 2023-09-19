@@ -38,8 +38,8 @@ public class CommandRegisterer {
                     PlayerManager playerManager = MincraMagics.getPlayerManager();
                     MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
 
-                    String type = (String) args[0];
-                    float amount = (float) args[1];
+                    String type = (String) args.get(0);
+                    float amount = (float) args.get(1);
 
                     switch (type) {
                         case "add" -> mPlayer.getMp().addMp(amount, true);
@@ -60,17 +60,17 @@ public class CommandRegisterer {
                 .withArguments(new IntegerArgument("strength"))
                 .executesPlayer((sender, args) -> {
                     SkillManager skillManager = MincraMagics.getSkillManager();
-                    Player caster = (Player) args[0];
-                    String skillId = (String) args[1];
+                    Player caster = (Player) args.get(0);
+                    String skillId = (String) args.get(1);
 
                     if (!skillManager.isRegistered(skillId)) {
                         error(caster, "Skill not found.");
                         return;
                     }
 
-                    float cooldown = (float) args[2];
-                    int consumedMp = (int) args[3];
-                    int strength = (int) args[4];
+                    float cooldown = (float) args.get(2);
+                    int consumedMp = (int) args.get(3);
+                    int strength = (int) args.get(4);
                     MagicSkill skill = skillManager.getSkill(skillId);
                     skill.onTrigger(caster, new MaterialProperty(skillId, skillId, cooldown, consumedMp)
                             .setStrength(strength));
@@ -85,10 +85,16 @@ public class CommandRegisterer {
                 .withArguments(new FloatArgument("speed"))
                 .withArguments(new IntegerArgument("count"))
                 .executesPlayer((sender, args) -> {
-                    new ParticleBuilder(ParticleEffect.valueOf((String) args[0]), (Location) args[1])
-                            .setOffset(((Location) args[2]).toVector())
-                            .setSpeed(((Float) args[3]))
-                            .setAmount((Integer) args[4])
+                    String effectId = (String) args.get(0);
+                    Location location = (Location) args.get(1);
+                    Location offset = (Location) args.get(2);
+                    Float speed = (Float) args.get(3);
+                    Integer amount = (Integer) args.get(4);
+
+                    new ParticleBuilder(ParticleEffect.valueOf(effectId), location)
+                            .setOffset(offset.toVector())
+                            .setSpeed(speed)
+                            .setAmount(amount)
                             .display();
                 });
     }
@@ -103,9 +109,15 @@ public class CommandRegisterer {
                 .withArguments(new LocationArgument("axis"))
                 .withArguments(new DoubleArgument("angle"))
                 .executes(((sender, args) -> {
+                    String vfxId = (String) args.get(0);
+                    Location location = (Location) args.get(1);
+                    float scale = (float) args.get(2);
+                    Location axis = (Location) args.get(3);
+                    double yaw = (double) args.get(4);
+
                     VfxManager vfxManager = MincraMagics.getVfxManager();
-                    vfxManager.getVfx((String) args[0]).playEffect((Location) args[1], (float) args[2],
-                            ((Location) args[3]).toVector(), Math.PI * ((double) args[4]) / 180);
+                    vfxManager.getVfx(vfxId).playEffect(location, scale,
+                            axis.toVector(), Math.PI * yaw / 180);
                 }));
     }
 
@@ -117,8 +129,10 @@ public class CommandRegisterer {
                 )))
                 .executes(((sender, args) -> {
                     GUIManager guiManager = MincraMagics.getGuiManager();
-                    Player target = (Player) args[0];
-                    switch ((String) args[1]) {
+                    Player target = (Player) args.get(0);
+                    String guiId = (String) args.get(1);
+
+                    switch (guiId) {
                         case "MaterialEditor" -> {
                             guiManager.open(new MaterialEditor(), target);
                             return;
