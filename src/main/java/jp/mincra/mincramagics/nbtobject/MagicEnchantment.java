@@ -8,7 +8,7 @@ public enum MagicEnchantment {
         // クールダウン減
         MAGIC_EXPERT("magic_expert");
         private final String id;
-        ID(String id) {
+        Enchantment(String id) {
             this.id = id;
         }
         public String getId() {
