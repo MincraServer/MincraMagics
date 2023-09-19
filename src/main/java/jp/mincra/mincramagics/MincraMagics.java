@@ -2,6 +2,7 @@ package jp.mincra.mincramagics;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import jp.mincra.bkvfx.BKVfx;
 import jp.mincra.bkvfx.VfxManager;
@@ -53,6 +54,7 @@ public final class MincraMagics extends JavaPlugin {
         MechanicsManager.registerMechanicFactory("magicstuff", new MagicStuffMechanicFactory("magicstuff"), true);
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
+        OraxenItems.loadItems();
 
         skillManager.registerSkill("inferno", new Inferno());
         skillManager.registerSkill("charging", new Charging());
