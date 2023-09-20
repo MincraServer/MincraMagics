@@ -207,7 +207,7 @@ public final class InventoryUpdate {
         return null;
     }
 
-    private static String @NotNull [] removeFirst(String @NotNull [] array) {
+    private static String[] removeFirst(String[] array) {
         int length = array.length;
 
         String[] result = new String[length - 1];
