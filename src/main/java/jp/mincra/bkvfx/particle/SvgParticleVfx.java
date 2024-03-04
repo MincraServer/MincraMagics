@@ -143,7 +143,7 @@ public class SvgParticleVfx extends ParticleVfx {
         }
 
 
-        for (Particle particle : particles) {
+        for (ParticleData particle : particles) {
             // Set default parameters
             Vector offset = particle.getOffset();
             if (offset == null) offset = this.offset;

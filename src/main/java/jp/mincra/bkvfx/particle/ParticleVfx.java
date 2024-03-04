@@ -11,7 +11,7 @@ import java.util.List;
  *
  */
 public abstract class ParticleVfx implements Vfx {
-    protected List<Particle> particles = new ArrayList<>();
+    protected List<ParticleData> particles = new ArrayList<>();
 
     /**
      * 直線を描画する
@@ -30,7 +30,7 @@ public abstract class ParticleVfx implements Vfx {
             Vector _diff = diff.clone();
             Vector _start = start.clone();
             Vector p = _start.add(_diff.multiply((float) i / (float) amount));
-            Particle particle = new Particle();
+            ParticleData particle = new ParticleData();
             particle.setLocation(p);
             particles.add(particle);
         }
@@ -53,7 +53,7 @@ public abstract class ParticleVfx implements Vfx {
             double z = Math.sin(i * radianPerI) * radius;
             Vector _center = center.clone();
             Vector p = _center.add(new Vector(x, 0, z));
-            Particle particle = new Particle();
+            ParticleData particle = new ParticleData();
             particle.setLocation(p);
             particles.add(particle);
         }

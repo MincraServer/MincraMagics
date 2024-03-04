@@ -1,5 +1,6 @@
 package jp.mincra.mincramagics;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
 import jp.mincra.bkvfx.VfxManager;
@@ -13,9 +14,8 @@ import jp.mincra.mincramagics.skill.SkillManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import xyz.xenondevs.particle.ParticleBuilder;
-import xyz.xenondevs.particle.ParticleEffect;
 
 public class CommandRegisterer {
     public void registerAll() {
@@ -91,11 +91,12 @@ public class CommandRegisterer {
                     Float speed = (Float) args.get(3);
                     Integer amount = (Integer) args.get(4);
 
-                    new ParticleBuilder(ParticleEffect.valueOf(effectId), location)
-                            .setOffset(offset.toVector())
-                            .setSpeed(speed)
-                            .setAmount(amount)
-                            .display();
+                    new ParticleBuilder(Particle.valueOf(effectId))
+                            .location(location)
+                            .offset(offset.x(), offset.y(), offset.z())
+                            .extra(speed)
+                            .count(amount)
+                            .spawn();
                 });
     }
 
