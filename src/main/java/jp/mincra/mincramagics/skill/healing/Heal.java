@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.skill.utility;
+package jp.mincra.mincramagics.skill.healing;
 
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
@@ -12,7 +12,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class Charge extends MagicSkill {
+public class Heal extends MagicSkill {
     @Override
     public void onTrigger(Player player, MaterialProperty property) {
         // MP, Cooldown
@@ -23,25 +23,22 @@ public class Charge extends MagicSkill {
 
         Location playerLoc = player.getLocation();
 
-        // Play Vfx
-        Location vfxLoc = playerLoc.clone().add(new Vector(0, 0.5, 0));
-        Vector axis = new Vector(0, 1, 0);
-        Vfx vfx = vfxManager.getVfx("charging");
-        vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
-
         // Play Sound
         player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
 
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
-                    // 最大で6までしか回復しない
-                    if (mPlayer.getMp().getMp() < 6) {
-                        // Add MP
-                        mPlayer.getMp().addMp(1, false);
-                    }
+                    // 回復
+                    player.setHealth(player.getHealth() + 6);
+                    // Play Sound
+                    player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1, 1.1F);
+                    // Play Vfx
+                    Location vfxLoc = playerLoc.clone().add(new Vector(0, 0.5, 0));
+                    Vector axis = new Vector(0, 1, 0);
+                    Vfx vfx = vfxManager.getVfx("healing");
+                    vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
                 })
-                // spends 60 tick
-                .repeat(TickTime.TICK, 10, 0, 6)
+                .delay(TickTime.TICK, 20)
                 .run();
     }
 }

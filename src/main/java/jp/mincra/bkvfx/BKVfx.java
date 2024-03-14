@@ -64,6 +64,10 @@ public class BKVfx {
                                         1
                                 )
                         ));
+        vfxManager.registerVfx("healing",
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
+                        5, Particle.VILLAGER_HAPPY)
+                        .setSpeed(0.1f));
     }
 
     public VfxManager getVfxManager() {

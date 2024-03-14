@@ -16,6 +16,7 @@ import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.Inferno;
 import jp.mincra.mincramagics.skill.combat.Scorch;
+import jp.mincra.mincramagics.skill.healing.Heal;
 import jp.mincra.mincramagics.skill.utility.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,6 +64,7 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("wraith", new Wraith());
         skillManager.registerSkill("scorch", new Scorch());
         skillManager.registerSkill("charge", new Charge());
+        skillManager.registerSkill("heal", new Heal());
 
     }
 
