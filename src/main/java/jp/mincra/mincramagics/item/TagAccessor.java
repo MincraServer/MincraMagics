@@ -201,8 +201,8 @@ public class TagAccessor {
                 return Tag.RAILS;
             case "redstone_ores":
                 return Tag.REDSTONE_ORES;
-            case "replaceable_plants":
-                return Tag.REPLACEABLE_PLANTS;
+//            case "replaceable_plants":
+//                return Tag.REPLACEABLE_PLANTS;
             case "sand":
                 return Tag.SAND;
             case "saplings":

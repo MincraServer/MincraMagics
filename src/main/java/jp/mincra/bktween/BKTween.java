@@ -5,9 +5,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -70,7 +70,8 @@ public class BKTween {
         long interval = task.interval();
         if (interval == 0) {
             scheduler.runTaskLater(plugin, () -> {
-                task.func().accept(null);
+                var func = task.func();
+                if (func != null) func.accept(null);
                 run();
             }, task.delay());
         } else {

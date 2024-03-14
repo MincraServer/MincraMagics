@@ -1,25 +1,23 @@
 package jp.mincra.bkvfx.particle;
 
+import org.bukkit.Particle;
 import org.bukkit.util.Vector;
-import xyz.xenondevs.particle.ParticleEffect;
-import xyz.xenondevs.particle.data.ParticleData;
 
 import java.awt.*;
 
-public class Particle {
-    private ParticleEffect particle;
+public class ParticleData {
+    private Particle particle;
     private Vector location;
     private Vector offset;
     private int amount;
     private float speed;
     private Color color;
-    private ParticleData particleData;
 
-    public ParticleEffect getParticle() {
+    public Particle getParticle() {
         return particle;
     }
 
-    public void setParticle(ParticleEffect particle) {
+    public void setParticle(Particle particle) {
         this.particle = particle;
     }
 
@@ -61,14 +59,6 @@ public class Particle {
 
     public void setColor(Color color) {
         this.color = color;
-    }
-
-    public ParticleData getParticleData() {
-        return particleData;
-    }
-
-    public void setParticleData(ParticleData particleData) {
-        this.particleData = particleData;
     }
 
     @Override

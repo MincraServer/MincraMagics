@@ -53,7 +53,7 @@ public class Inferno extends MagicSkill {
                         targetLocation = targetEntity.getLocation();
                     } else {
                         targetLocation = player.getTargetBlock(
-                                Set.of(Material.AIR, Material.CAVE_AIR, Material.GRASS, Material.TALL_GRASS),
+                                Set.of(Material.AIR, Material.CAVE_AIR, Material.SHORT_GRASS, Material.TALL_GRASS),
                                 maxDistance).getLocation();
                     }
                     Location spawnAt = eye.add(eye.getDirection().multiply(1.2)).add(spawnRelativeLoc);

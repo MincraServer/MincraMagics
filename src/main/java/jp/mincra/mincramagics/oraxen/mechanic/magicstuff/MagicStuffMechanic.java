@@ -1,10 +1,9 @@
 package jp.mincra.mincramagics.oraxen.mechanic.magicstuff;
 
-import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.MechanicFactory;
 import jp.mincra.mincramagics.nbtobject.Material;
-import jp.mincra.mincramagics.nbtobject.MincraNBT;
+import jp.mincra.mincramagics.nbtobject.MagicStuffNBT;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
@@ -35,9 +34,13 @@ public class MagicStuffMechanic extends Mechanic {
             }
 
             //TODO: Implement MaterialFilters and MagicEnchantments
-            MincraNBT mincraNBT = new MincraNBT(materials, null, null);
+            MagicStuffNBT magicStuffNBT = new MagicStuffNBT(
+                    materials,
+                    null,
+                    null,
+                    itemBuilder.getLore());
 
-            return mincraNBT.setTag(itemBuilder);
+            return magicStuffNBT.setNBTTag(itemBuilder);
         });
     }
 }

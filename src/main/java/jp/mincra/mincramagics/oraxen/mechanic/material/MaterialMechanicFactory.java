@@ -6,8 +6,8 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class MaterialMechanicFactory extends MechanicFactory {
 
-    public MaterialMechanicFactory(ConfigurationSection section) {
-        super(section);
+    public MaterialMechanicFactory(String mechanicId) {
+        super(mechanicId);
     }
 
     @Override
