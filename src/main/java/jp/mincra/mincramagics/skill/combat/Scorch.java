@@ -38,7 +38,7 @@ public class Scorch extends MagicSkill {
         vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
 
         // Sound
-        world.playSound(playerLoc, Sound.BLOCK_CANDLE_EXTINGUISH, 0.9F, 1F);
+        world.playSound(playerLoc, Sound.BLOCK_CANDLE_EXTINGUISH, 1F, 0.9F);
 
         // 5秒着火
         target.setFireTicks(FIRE_TICK_DURATION);

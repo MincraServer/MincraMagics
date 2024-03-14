@@ -41,7 +41,7 @@ public class Charge extends MagicSkill {
                     }
                 })
                 // spends 60 tick
-                .repeat(TickTime.TICK, 10, 10, 6)
+                .repeat(TickTime.TICK, 10, 0, 6)
                 .run();
     }
 }
