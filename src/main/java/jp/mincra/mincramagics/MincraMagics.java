@@ -15,6 +15,7 @@ import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.Inferno;
+import jp.mincra.mincramagics.skill.combat.Scorch;
 import jp.mincra.mincramagics.skill.utility.Charging;
 import jp.mincra.mincramagics.skill.utility.Jump;
 import jp.mincra.mincramagics.skill.utility.Move;
@@ -63,6 +64,7 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("jump", jumpSkill);
         pluginManager.registerEvents(jumpSkill, this);
         skillManager.registerSkill("wraith", new Wraith());
+        skillManager.registerSkill("scorch", new Scorch());
 
     }
 
