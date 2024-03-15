@@ -32,9 +32,10 @@ public class Jump extends MagicSkill implements Listener {
         setCooldown(mPlayer, property);
 
         // Jump
+        float strength = property.strength();
         Vector velocity = player.getVelocity();
         if (velocity.getY() > 0) {
-            velocity.setY(1.3);
+            velocity.setY(0.4 * strength);
         } else {
             velocity.setY(0.3);
         }
@@ -44,7 +45,8 @@ public class Jump extends MagicSkill implements Listener {
         // Sound
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
-        world.playSound(playerLoc, Sound.ENTITY_ENDERMAN_TELEPORT, 0.75F, 1F);
+        world.playSound(playerLoc, Sound.ENTITY_ENDERMAN_TELEPORT, 0.15F, 1F);
+        world.playSound(playerLoc, Sound.ENTITY_BREEZE_JUMP, 1F, 1.1F);
 
         // Vfx
         vfxManager.getVfx("jump")
