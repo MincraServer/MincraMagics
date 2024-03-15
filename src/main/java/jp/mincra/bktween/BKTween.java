@@ -69,15 +69,16 @@ public class BKTween {
         BukkitScheduler scheduler = Bukkit.getScheduler();
         long interval = task.interval();
         if (interval == 0) {
+            // 遅延実行
             scheduler.runTaskLater(plugin, () -> {
                 var func = task.func();
                 if (func != null) {
-                    boolean shouldContinues = func.apply(null);
-                    if (!shouldContinues) return;
+                    func.apply(null);
                 }
                 run();
             }, task.delay());
         } else {
+            // 繰り返し実行
             AtomicInteger currentIteration = new AtomicInteger(0);
             AtomicInteger processId = new AtomicInteger();
             int maxAttempts = task.attempts();
@@ -90,7 +91,9 @@ public class BKTween {
                 }
 
                 boolean shouldContinues = task.func().apply(null);
-                if (!shouldContinues) return;
+                if (!shouldContinues) {
+                    Bukkit.getScheduler().cancelTask(processId.get());
+                }
             }, task.delay(), interval);
             processId.set(bkTask.getTaskId());
         }

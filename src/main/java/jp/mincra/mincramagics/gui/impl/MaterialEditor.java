@@ -269,7 +269,10 @@ public class MaterialEditor extends InventoryGUI {
     private void changeTitle(String title) {
         new BKTween(mincramagics)
                 .delay(TickTime.TICK, 1)
-                .execute(v -> InventoryUpdate.updateInventory(player, title))
+                .execute(v -> {
+                    InventoryUpdate.updateInventory(player, title);
+                    return true;
+                })
                 .run();
     }
 
