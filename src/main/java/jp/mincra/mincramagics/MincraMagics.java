@@ -14,6 +14,7 @@ import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
+import jp.mincra.mincramagics.skill.combat.Freeze;
 import jp.mincra.mincramagics.skill.combat.Inferno;
 import jp.mincra.mincramagics.skill.combat.Scorch;
 import jp.mincra.mincramagics.skill.healing.Heal;
@@ -55,16 +56,22 @@ public final class MincraMagics extends JavaPlugin {
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
         OraxenItems.loadItems();
 
+        // Combat
+        skillManager.registerSkill("freeze", new Freeze());
         skillManager.registerSkill("inferno", new Inferno());
+        skillManager.registerSkill("scorch", new Scorch());
+
+        // Healing
+        skillManager.registerSkill("heal", new Heal());
+
+        // Utility
+        skillManager.registerSkill("charge", new Charge());
         skillManager.registerSkill("charging", new Charging());
-        skillManager.registerSkill("move", new Move());
         Jump jumpSkill = new Jump();
         skillManager.registerSkill("jump", jumpSkill);
         pluginManager.registerEvents(jumpSkill, this);
+        skillManager.registerSkill("move", new Move());
         skillManager.registerSkill("wraith", new Wraith());
-        skillManager.registerSkill("scorch", new Scorch());
-        skillManager.registerSkill("charge", new Charge());
-        skillManager.registerSkill("heal", new Heal());
 
     }
 
