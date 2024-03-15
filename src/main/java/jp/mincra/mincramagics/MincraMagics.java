@@ -17,6 +17,7 @@ import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.Freeze;
 import jp.mincra.mincramagics.skill.combat.Inferno;
 import jp.mincra.mincramagics.skill.combat.Scorch;
+import jp.mincra.mincramagics.skill.combat.Snowbomb;
 import jp.mincra.mincramagics.skill.healing.Heal;
 import jp.mincra.mincramagics.skill.utility.*;
 import org.bukkit.plugin.PluginManager;
@@ -60,6 +61,9 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("freeze", new Freeze());
         skillManager.registerSkill("inferno", new Inferno());
         skillManager.registerSkill("scorch", new Scorch());
+        Snowbomb snowbomb = new Snowbomb();
+        skillManager.registerSkill("snowbomb", snowbomb);
+        pluginManager.registerEvents(snowbomb, this);
 
         // Healing
         skillManager.registerSkill("heal", new Heal());

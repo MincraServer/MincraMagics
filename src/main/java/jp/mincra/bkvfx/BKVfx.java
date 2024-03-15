@@ -53,6 +53,9 @@ public class BKVfx {
         vfxManager.registerVfx("scorch",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
                         6, Particle.SMOKE_LARGE).setSpeed(0.1f));
+        vfxManager.registerVfx("snowbomb",
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
+                        6, Particle.SNOWBALL).setSpeed(0.1f));
         vfxManager.registerVfx("ice",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
                         5, Particle.DUST_COLOR_TRANSITION)
