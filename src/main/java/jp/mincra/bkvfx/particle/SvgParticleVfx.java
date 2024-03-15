@@ -186,7 +186,7 @@ public class SvgParticleVfx extends ParticleVfx {
                         speed,
                         dustOptions);
             } else if (particleEffect == Particle.DUST_COLOR_TRANSITION) {
-                loc.getWorld().spawnParticle(Particle.DUST_PLUME,
+                loc.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION,
                         addedLoc,
                         amount,
                         offset.getX(),

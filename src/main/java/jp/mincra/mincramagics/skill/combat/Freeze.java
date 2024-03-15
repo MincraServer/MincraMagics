@@ -7,10 +7,7 @@ import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -40,7 +37,9 @@ public class Freeze extends MagicSkill implements Listener {
         Location vfxLoc = playerLoc.clone().add(new Vector(0, 0.5, 0));
         Vector axis = new Vector(0, 1, 0);
         Vfx vfx = vfxManager.getVfx("ice");
-        vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
+        Location eyeLoc = player.getEyeLocation();
+        double vfxAngle =  Math.toRadians(eyeLoc.getYaw());
+        vfx.playEffect(vfxLoc, 5, axis, vfxAngle);
 
         World world = player.getWorld();
 
@@ -48,27 +47,39 @@ public class Freeze extends MagicSkill implements Listener {
         world.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.1F, 2);
 
         // 2ブロック間隔で探索する
-        Vector gap = player.getLocation().getDirection().setY(0).multiply(2);
+        Vector gap = player.getLocation().getDirection().multiply(2);
+        AtomicReference<Location> atomicSearchLoc = new AtomicReference<>(eyeLoc.clone().add(gap));
+        UUID playerUuid = player.getUniqueId();
+        float strength = property.strength();
 
         // 前方に地面に沿ってターゲットを探索する
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
-                    Location searchLoc = playerLoc.add(gap);
-                    // 5ブロック下まで地面を探索する
-                    Location groundLoc = getHighestLocationBelow(searchLoc, 5);
+                    Location searchLoc = atomicSearchLoc.updateAndGet(loc -> {
+                        Location updatedLoc = loc.add(gap);
 
-                    // 地面が見つかった
-                    if (groundLoc != null) {
-                        searchLoc.setY(groundLoc.getY());
-                    }
+                        // 5ブロック下まで地面を探索する
+                         Location groundLoc = getHighestLocationBelow(updatedLoc, 5);
+                        // 地面が見つかった
+                        if (groundLoc != null) {
+                            updatedLoc.setY(groundLoc.getY() + 1);
+                        }
+                        return updatedLoc;
+                    });
 
-                    Collection<LivingEntity> entities = searchLoc.getNearbyLivingEntities(1);
+                    // 実行したプレイヤーは除く
+                    Collection<LivingEntity> entities = searchLoc.getNearbyLivingEntities(2, e -> e.getUniqueId() != playerUuid);
 
                     // エンティティが見つからなかったら終わり
-                    if (entities.size() == 0) return true;
+                    if (entities.size() == 0) {
+                        vfx.playEffect(searchLoc.clone().add(0, - 0.5, 0), 5, axis, vfxAngle);
+                        return true;
+                    }
 
                     // 1体だけ
                     LivingEntity target = entities.iterator().next();
+                    // 0ダメージを与えて Player を DamageSource に設定する
+                    target.damage(0, player);
                     // 凍らせる
                     List<LocationAndOldType> placedIcePos = fillWithIce(target);
 
@@ -84,13 +95,13 @@ public class Freeze extends MagicSkill implements Listener {
                                 return true;
                             })
                             // 5秒凍結
-                            .delay(TickTime.SECOND, 5)
+                            .delay(TickTime.SECOND, (int) strength * 5L)
                             .run();
 
                     // false を返して Tween を終える
                     return false;
                 })
-                .repeat(TickTime.TICK, 1, 0, 5)
+                .repeat(TickTime.TICK, 1, 0, ((int) strength) * 2)
                 .run();
     }
 
@@ -99,16 +110,17 @@ public class Freeze extends MagicSkill implements Listener {
 
         icePositions = new ArrayList<>();
 
-        for (int y = 0; y < 5; y++) {
-            int max = 2 - (int) Math.ceil((double) y / 2);
+        for (int y = -5; y < 5; y++) {
+            int max = 2 - (int) Math.ceil((double) Math.abs(y) / 2);
 
-            for (int x = 0; x < max; x++) {
-                for (int z = 0; z < max; z++) {
-                    if (x + z > max) continue;
+            for (int x = -max; x < max + 1; x++) {
+                for (int z = -max; z < max + 1; z++) {
+                    if (Math.abs(x) + Math.abs(z) > max) continue;
                     icePositions.add(new Vector(x, y, z));
                 }
             }
         }
+
 
         return icePositions;
     }
@@ -118,10 +130,10 @@ public class Freeze extends MagicSkill implements Listener {
         Location newLoc = location.clone();
 
         for (int i = 0; i < maxSearchY; i++) {
-            newLoc.setY(newLoc.y() - 1);
-
             // 空気じゃなかったらそれが HighestLocation
             if (!newLoc.getBlock().getType().isAir()) return newLoc;
+
+            newLoc.setY(newLoc.y() - 1);
         }
 
         return null;
@@ -133,7 +145,7 @@ public class Freeze extends MagicSkill implements Listener {
         List<LocationAndOldType> placedIcePos = new ArrayList<>();
 
         for (Vector icePos : icePositions) {
-            Location placeLoc = targetLoc.add(icePos);
+            Location placeLoc = targetLoc.clone().add(icePos);
             Block block = placeLoc.getBlock();
             Material blockType = block.getType();
 
