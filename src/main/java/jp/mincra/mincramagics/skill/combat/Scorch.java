@@ -16,14 +16,14 @@ public class Scorch extends MagicSkill {
     final private int FIRE_TICK_DURATION = 100;
 
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
+    public boolean onTrigger(Player player, MaterialProperty property) {
         Entity target = player.getTargetEntity(MAX_DISTANCE);
 
         // ターゲットがいなければ終わり
-        if (target == null) return;
+        if (target == null) return false;
 
         // MP, Cooldown
-        super.onTrigger(player, property);
+        if (!super.onTrigger(player, property)) return false;
 
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
@@ -39,5 +39,7 @@ public class Scorch extends MagicSkill {
 
         // 5秒着火
         target.setFireTicks(FIRE_TICK_DURATION);
+
+        return true;
     }
 }

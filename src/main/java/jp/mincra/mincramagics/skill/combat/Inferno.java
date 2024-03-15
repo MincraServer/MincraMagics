@@ -21,8 +21,8 @@ import java.util.Set;
 
 public class Inferno extends MagicSkill {
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        super.onTrigger(player, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         // PlaySound
         Location playerLoc = player.getLocation();
@@ -74,5 +74,7 @@ public class Inferno extends MagicSkill {
                 })
                 .repeat(TickTime.TICK, 5, 5, 5)
                 .run();
+
+        return true;
     }
 }

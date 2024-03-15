@@ -24,8 +24,8 @@ public class Freeze extends MagicSkill implements Listener {
     private List<Vector> icePositions = null;
 
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        super.onTrigger(player, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         Location playerLoc = player.getLocation();
 
@@ -74,10 +74,10 @@ public class Freeze extends MagicSkill implements Listener {
 
                     // 1体だけ
                     LivingEntity target = entities.iterator().next();
-                    // 0ダメージを与えて Player を DamageSource に設定する
-                    target.damage(0, player);
                     // 凍らせる
                     List<LocationAndOldType> placedIcePos = fillWithIce(target);
+                    // 0ダメージを与えて Player を DamageSource に設定する
+                    target.damage(0, player);
 
                     // PlaySound
                     world.playSound(target.getLocation(), Sound.BLOCK_GLASS_BREAK, 0.5F, 1F);
@@ -91,7 +91,7 @@ public class Freeze extends MagicSkill implements Listener {
                                 return true;
                             })
                             // 5秒凍結
-                            .delay(TickTime.SECOND, (int) strength * 5L)
+                            .delay(TickTime.SECOND, ((int) strength) * 5L)
                             .run();
 
                     // false を返して Tween を終える
@@ -99,6 +99,8 @@ public class Freeze extends MagicSkill implements Listener {
                 })
                 .repeat(TickTime.TICK, 1, 0, ((int) strength) * 2)
                 .run();
+
+        return true;
     }
 
     private List<Vector> getIcePositions() {

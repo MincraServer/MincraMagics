@@ -14,8 +14,8 @@ import org.bukkit.util.Vector;
 
 public class Charge extends MagicSkill {
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        super.onTrigger(player, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         Location playerLoc = player.getLocation();
 
@@ -29,17 +29,21 @@ public class Charge extends MagicSkill {
         player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
         MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
 
+        final int maxMp = (int) property.strength() * 7;
+
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
-                    // 最大で6までしか回復しない
-                    if (mPlayer.getMp().getMp() < 6) {
+                    // 10まで回復
+                    if (mPlayer.getMp().getMp() < maxMp) {
                         // Add MP
                         mPlayer.getMp().addMp(1, false);
                     }
                     return true;
                 })
                 // spends 60 tick
-                .repeat(TickTime.TICK, 10, 0, 6)
+                .repeat(TickTime.TICK, 10, 0, maxMp)
                 .run();
+
+        return true;
     }
 }

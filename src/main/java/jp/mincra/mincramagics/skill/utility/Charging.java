@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Charging extends MagicSkill {
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        super.onTrigger(player, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
@@ -47,5 +47,6 @@ public class Charging extends MagicSkill {
                 })
                 .repeat(TickTime.TICK, 15, 10, 3)
                 .run();
+        return true;
     }
 }

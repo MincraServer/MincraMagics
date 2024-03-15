@@ -24,29 +24,30 @@ public class Jump extends MagicSkill implements Listener {
     private final Map<UUID, Integer> soundInterval = new HashMap<>();
 
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        super.onTrigger(player, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         // Jump
         float strength = property.strength();
-        Vector velocity = player.getVelocity();
-        if (velocity.getY() > 0) {
-            velocity.setY(0.4 * strength);
+        Vector playerVelocity = player.getVelocity();
+        if (playerVelocity.getY() > 0) {
+            playerVelocity.add(new Vector(0, 0.4 * strength, 0));
         } else {
-            velocity.setY(0.3);
+            playerVelocity.setY(0.5);
         }
-        player.setVelocity(velocity);
+        player.setVelocity(playerVelocity);
         castedPlayer.add(player.getUniqueId());
 
         // Sound
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
-        world.playSound(playerLoc, Sound.ENTITY_ENDERMAN_TELEPORT, 0.15F, 1F);
-        world.playSound(playerLoc, Sound.ENTITY_BREEZE_JUMP, 1F, 1.1F);
+        world.playSound(playerLoc, Sound.ENTITY_ENDERMAN_TELEPORT, 0.5F, 1F);
 
         // Vfx
         vfxManager.getVfx("jump")
                 .playEffect(playerLoc, 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
+
+        return true;
     }
 
     @EventHandler

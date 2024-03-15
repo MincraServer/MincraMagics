@@ -20,8 +20,8 @@ public class Heal extends MagicSkill {
     final private int MAX_DISTANCE = 10;
 
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        super.onTrigger(player, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         Location playerLoc = player.getLocation();
 
@@ -48,5 +48,7 @@ public class Heal extends MagicSkill {
                 })
                 .delay(TickTime.TICK, 20)
                 .run();
+
+        return true;
     }
 }

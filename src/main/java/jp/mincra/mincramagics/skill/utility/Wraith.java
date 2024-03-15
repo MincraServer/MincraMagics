@@ -12,8 +12,8 @@ import org.bukkit.util.Vector;
 
 public class Wraith extends MagicSkill {
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        super.onTrigger(player, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         // Change Gamemode
         GameMode gameMode = player.getGameMode();
@@ -46,5 +46,7 @@ public class Wraith extends MagicSkill {
                 })
                 .delay(TickTime.TICK, 30)
                 .run();
+
+        return true;
     }
 }

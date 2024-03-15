@@ -25,8 +25,8 @@ public class Snowbomb extends MagicSkill implements Listener {
     private record MagicSnowball(Snowball snowball, double damage) {}
 
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        super.onTrigger(player, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (super.onTrigger(player, property)) return false;
 
         Location playerLoc = player.getLocation();
 
@@ -48,6 +48,7 @@ public class Snowbomb extends MagicSkill implements Listener {
         snowball.setVelocity(playerLoc.getDirection().multiply(1.5));
         // リスナー用にMapに入れる
         summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, property.strength() * 3));
+        return true;
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

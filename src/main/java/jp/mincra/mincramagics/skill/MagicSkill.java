@@ -15,10 +15,10 @@ public abstract class MagicSkill {
     protected PlayerManager playerManager = MincraMagics.getPlayerManager();
     protected VfxManager vfxManager = MincraMagics.getVfxManager();
 
-    public void onTrigger(Player player, MaterialProperty property) {
+    public boolean onTrigger(Player player, MaterialProperty property) {
         // MP, Cooldown
         MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
+        if (!canTrigger(mPlayer, property)) return false;
         consumeMp(mPlayer, property);
         setCooldown(mPlayer, property);
 
@@ -28,9 +28,12 @@ public abstract class MagicSkill {
         if (meta instanceof Damageable damageable) {
             if (damageable.hasDamage()) {
                 damageable.setDamage(damageable.getDamage() + 1);
+                item.setItemMeta(damageable);
+                player.getInventory().setItemInMainHand(item);
             }
-            item.setItemMeta(damageable);
         }
+
+        return true;
     }
 
     protected void consumeMp(MincraPlayer player, MaterialProperty property) {
