@@ -19,11 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Charging extends MagicSkill {
     @Override
     public void onTrigger(Player player, MaterialProperty property) {
-        // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+        super.onTrigger(player, property);
 
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
@@ -33,6 +29,7 @@ public class Charging extends MagicSkill {
         Vector axis = new Vector(0, 1, 0);
         Vfx vfx = vfxManager.getVfx("charging");
         vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
+        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
 
         AtomicReference<Float> pitch = new AtomicReference<>((float) 1);
         new BKTween(MincraMagics.getInstance())

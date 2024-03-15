@@ -23,10 +23,7 @@ public class Scorch extends MagicSkill {
         if (target == null) return;
 
         // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+        super.onTrigger(player, property);
 
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();

@@ -25,11 +25,7 @@ public class Jump extends MagicSkill implements Listener {
 
     @Override
     public void onTrigger(Player player, MaterialProperty property) {
-        // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+        super.onTrigger(player, property);
 
         // Jump
         float strength = property.strength();

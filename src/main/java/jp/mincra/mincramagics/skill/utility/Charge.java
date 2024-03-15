@@ -15,11 +15,7 @@ import org.bukkit.util.Vector;
 public class Charge extends MagicSkill {
     @Override
     public void onTrigger(Player player, MaterialProperty property) {
-        // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+        super.onTrigger(player, property);
 
         Location playerLoc = player.getLocation();
 
@@ -31,6 +27,7 @@ public class Charge extends MagicSkill {
 
         // Play Sound
         player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
+        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
 
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {

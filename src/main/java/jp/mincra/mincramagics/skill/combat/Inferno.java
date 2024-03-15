@@ -22,11 +22,7 @@ import java.util.Set;
 public class Inferno extends MagicSkill {
     @Override
     public void onTrigger(Player player, MaterialProperty property) {
-        // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+        super.onTrigger(player, property);
 
         // PlaySound
         Location playerLoc = player.getLocation();

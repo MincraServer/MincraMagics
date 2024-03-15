@@ -9,6 +9,7 @@ import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
@@ -20,11 +21,7 @@ public class Heal extends MagicSkill {
 
     @Override
     public void onTrigger(Player player, MaterialProperty property) {
-        // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+        super.onTrigger(player, property);
 
         Location playerLoc = player.getLocation();
 
@@ -38,7 +35,7 @@ public class Heal extends MagicSkill {
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     // 回復
-                    target.setHealth(target.getHealth() + 6);
+                    target.setHealth(Math.min(target.getHealth() + 6, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
                     Location targetLoc = target.getLocation();
                     // Play Sound
                     playerLoc.getWorld().playSound(targetLoc, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1, 1.1F);
