@@ -58,7 +58,7 @@ dependencies {
     implementation("org.w3c:dom:2.3.0-jaxb-1.0.6")
     // Test
     testImplementation("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    implementation(files("libs/oraxen-1.170.0.jar"))
+    implementation(files("libs/oraxen-1.171.0.jar"))
     // Spigot and NMS
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }

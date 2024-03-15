@@ -75,6 +75,7 @@ public record MagicStuffNBT(List<Material> materials,
     public ItemBuilder setNBTTag(ItemBuilder builder) {
         ItemStack item = builder.build();
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+
         PersistentDataContainer newMincraMagicsContainer = container.getAdapterContext().newPersistentDataContainer();
 
         // Set Materials Container
@@ -121,8 +122,8 @@ public record MagicStuffNBT(List<Material> materials,
 
         builder.setLore(newLore);
 
-        // 既にbuild()したのでregen()しないとTagが付与されない
-        builder.regen();
+        // 既にbuild()したので clearItemStack()しないとTagが付与されない
+        builder.clearItemStack();
         return builder;
     }
 

@@ -17,8 +17,9 @@ public class MaterialMechanic extends Mechanic {
         String skillId = section.getString("skillId");
         double cooldown = section.getDouble("cooldown");
         double mp = section.getDouble("mp");
+        double strength = section.getDouble("strength");
 
-        MaterialProperty materialProperty = new MaterialProperty(materialId, skillId, (float) cooldown, (float) mp);
+        MaterialProperty materialProperty = new MaterialProperty(materialId, skillId, (float) cooldown, (float) mp, (float) strength);
         MincraMagics.getMaterialManager().registerMaterial(materialId, materialProperty);
     }
 }
