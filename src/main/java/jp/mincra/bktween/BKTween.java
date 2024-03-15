@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * BKTween(BukkitTween).
@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  *      .run();
  */
 public class BKTween {
-    private Consumer<Void> tmpFunction;
+    private Function<Void, Boolean> tmpFunction;
     private final Queue<TweenTask> tasks;
     private final Plugin plugin;
 
@@ -28,11 +28,11 @@ public class BKTween {
         this.plugin = plugin;
     }
 
-    public BKTween execute(Consumer<Void> func) {
+    public BKTween execute(Function<Void, Boolean> func) {
         if (tmpFunction == null) {
             tmpFunction = func;
         } else {
-            tmpFunction = tmpFunction.andThen(func);
+            tmpFunction = tmpFunction.andThen(v -> func.apply(null));
         }
         return this;
     }
@@ -71,7 +71,10 @@ public class BKTween {
         if (interval == 0) {
             scheduler.runTaskLater(plugin, () -> {
                 var func = task.func();
-                if (func != null) func.accept(null);
+                if (func != null) {
+                    boolean shouldContinues = func.apply(null);
+                    if (!shouldContinues) return;
+                }
                 run();
             }, task.delay());
         } else {
@@ -86,12 +89,13 @@ public class BKTween {
                     Bukkit.getScheduler().cancelTask(processId.get());
                 }
 
-                task.func().accept(null);
+                boolean shouldContinues = task.func().apply(null);
+                if (!shouldContinues) return;
             }, task.delay(), interval);
             processId.set(bkTask.getTaskId());
         }
     }
 }
 
-record TweenTask(Consumer<Void> func, long delay, long interval, int attempts) {
+record TweenTask(Function<Void, Boolean> func, long delay, long interval, int attempts) {
 }

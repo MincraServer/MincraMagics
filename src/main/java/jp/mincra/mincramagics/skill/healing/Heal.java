@@ -37,6 +37,7 @@ public class Heal extends MagicSkill {
                     Vector axis = new Vector(0, 1, 0);
                     Vfx vfx = vfxManager.getVfx("healing");
                     vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
+                    return true;
                 })
                 .delay(TickTime.TICK, 20)
                 .run();

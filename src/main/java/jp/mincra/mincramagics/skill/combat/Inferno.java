@@ -73,6 +73,8 @@ public class Inferno extends MagicSkill {
 
                     // Fireball を上に
 //                    spawnRelativeLoc.add(new Vector(0, 1.5, 0));
+
+                    return true;
                 })
                 .repeat(TickTime.TICK, 5, 5, 5)
                 .run();

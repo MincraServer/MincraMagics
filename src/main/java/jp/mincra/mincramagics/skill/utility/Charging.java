@@ -46,6 +46,7 @@ public class Charging extends MagicSkill {
                     pitch.updateAndGet(p -> p + 0.1f);
                     // Particle
                     world.spawnParticle(Particle.SCRAPE, newPlayerLoc, 10, 0.6, 0.6, 0.6, 1);
+                    return true;
                 })
                 .repeat(TickTime.TICK, 15, 10, 3)
                 .run();

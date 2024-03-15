@@ -39,6 +39,7 @@ public class Charge extends MagicSkill {
                         // Add MP
                         mPlayer.getMp().addMp(1, false);
                     }
+                    return true;
                 })
                 // spends 60 tick
                 .repeat(TickTime.TICK, 10, 0, 6)
