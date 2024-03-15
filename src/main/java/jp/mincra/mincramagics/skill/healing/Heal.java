@@ -9,10 +9,15 @@ import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class Heal extends MagicSkill {
+    final private int MAX_DISTANCE = 10;
+
     @Override
     public void onTrigger(Player player, MaterialProperty property) {
         // MP, Cooldown
@@ -26,17 +31,22 @@ public class Heal extends MagicSkill {
         // Play Sound
         player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
 
+        Entity maybeTarget = player.getTargetEntity(MAX_DISTANCE);
+        // モンスター以外
+        LivingEntity target = maybeTarget instanceof LivingEntity && !(maybeTarget instanceof Monster) ? (LivingEntity) maybeTarget : player;
+
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     // 回復
-                    player.setHealth(player.getHealth() + 6);
+                    target.setHealth(target.getHealth() + 6);
+                    Location targetLoc = target.getLocation();
                     // Play Sound
-                    player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1, 1.1F);
+                    playerLoc.getWorld().playSound(targetLoc, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1, 1.1F);
                     // Play Vfx
-                    Location vfxLoc = playerLoc.clone().add(new Vector(0, 0.5, 0));
+                    Location vfxLoc = targetLoc.clone().add(new Vector(0, 0.5, 0));
                     Vector axis = new Vector(0, 1, 0);
                     Vfx vfx = vfxManager.getVfx("healing");
-                    vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
+                    vfx.playEffect(vfxLoc, 5, axis, 0);
                     return true;
                 })
                 .delay(TickTime.TICK, 20)
