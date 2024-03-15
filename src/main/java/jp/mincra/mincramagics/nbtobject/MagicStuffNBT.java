@@ -3,10 +3,10 @@ package jp.mincra.mincramagics.nbtobject;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MincraMagics;
+import jp.mincra.mincramagics.nbtobject.components.Divider;
 import jp.mincra.mincramagics.nbtobject.pdc.PersistentDataTypeEx;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -69,7 +69,6 @@ public record MagicStuffNBT(List<Material> materials,
         return glyph;
     }
     private static final String COLOR_GRAY = "§7";
-    private static final String COLOR_DARK_GRAY = "§8";
     private static final String COLOR_WHITE = "§f";
     // endregion
 
@@ -95,10 +94,7 @@ public record MagicStuffNBT(List<Material> materials,
         List<String> newLore = new ArrayList<>(descriptionLore);
 
         // Loreの横線
-        int descriptionLength = descriptionLore.size() > 0
-                ? descriptionLore.stream().sorted(Comparator.comparingInt(String::length)).toList().get(0).length()
-                : 6;
-        String divider = COLOR_DARK_GRAY + "･".repeat((int)(descriptionLength * 4.4545));
+        String divider = Divider.toString(descriptionLore);
         newLore.add(divider);
 
         // 各スロットに装備されたマテリアルのリスト
