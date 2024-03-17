@@ -18,8 +18,19 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 public class CommandRegisterer {
+    private enum Permission {
+        MINCRA_ADMIN("mincra.admin");
+
+        private final String value;
+
+        Permission(String value) {
+            this.value = value;
+        }
+    }
+
     public void registerAll() {
         new CommandAPICommand("mincra")
+                .withPermission(Permission.MINCRA_ADMIN.value)
                 // /mincra mp <type> <amount>
                 .withSubcommand(mpCommand())
                 .withSubcommand(skillCommand())
