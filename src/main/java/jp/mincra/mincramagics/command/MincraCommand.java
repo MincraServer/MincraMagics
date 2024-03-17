@@ -1,9 +1,10 @@
-package jp.mincra.mincramagics;
+package jp.mincra.mincramagics.command;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
 import jp.mincra.bkvfx.VfxManager;
+import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.gui.impl.MaterialEditor;
 import jp.mincra.mincramagics.player.MincraPlayer;
@@ -17,7 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
-public class CommandRegisterer {
+public class MincraCommand {
     private enum Permission {
         MINCRA_ADMIN("mincra.admin");
 

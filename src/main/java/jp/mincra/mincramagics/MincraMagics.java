@@ -6,6 +6,8 @@ import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import jp.mincra.bkvfx.BKVfx;
 import jp.mincra.bkvfx.VfxManager;
+import jp.mincra.mincramagics.command.GuardCommand;
+import jp.mincra.mincramagics.command.MincraCommand;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
@@ -50,7 +52,8 @@ public final class MincraMagics extends JavaPlugin {
         pluginManager.registerEvents(playerManager, this);
         pluginManager.registerEvents(hudManager, this);
 
-        new CommandRegisterer().registerAll();
+        new MincraCommand().registerAll();
+        new GuardCommand(getServer()).registerAll();
 
         MechanicsManager.registerMechanicFactory("magicstuff", new MagicStuffMechanicFactory("magicstuff"), true);
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);

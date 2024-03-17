@@ -41,6 +41,8 @@ repositories {
     maven {
         url = uri("https://repo.maven.apache.org/maven2/")
     }
+
+    maven { url = uri("https://maven.enginehub.org/repo/") }
 }
 
 dependencies {
@@ -61,6 +63,8 @@ dependencies {
     implementation(files("libs/oraxen-1.171.0.jar"))
     // Spigot and NMS
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    // WorldGuard
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
 }
 
 group = "jp.mincra"
