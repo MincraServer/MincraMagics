@@ -26,7 +26,7 @@ public class Snowbomb extends MagicSkill implements Listener {
 
     @Override
     public boolean onTrigger(Player player, MaterialProperty property) {
-        if (super.onTrigger(player, property)) return false;
+        if (!super.onTrigger(player, property)) return false;
 
         Location playerLoc = player.getLocation();
 
