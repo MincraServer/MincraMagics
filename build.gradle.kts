@@ -45,9 +45,9 @@ repositories {
     maven { url = uri("https://maven.enginehub.org/repo/") }
 }
 
-val pluginVersion = project.properties["pluginVersion"];
-val paperVersion = project.properties["paperVersion"];
-val oraxenVersion = project.properties["oraxenVersion"];
+val pluginVersion = project.properties["pluginVersion"]
+val paperVersion = project.properties["paperVersion"]
+val oraxenVersion = project.properties["oraxenVersion"]
 
 dependencies {
     // mincramagics
@@ -69,6 +69,8 @@ dependencies {
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     // WorldGuard
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
+    // GSit
+    compileOnly(files("libs/GSit-1.8.0.jar"))
 }
 
 group = "jp.mincra"

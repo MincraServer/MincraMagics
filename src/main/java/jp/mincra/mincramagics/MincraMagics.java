@@ -13,6 +13,7 @@ import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.magicstaff.MagicStaffMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
+import jp.mincra.mincramagics.player.MPRecoverer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
@@ -54,6 +55,7 @@ public final class MincraMagics extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(playerManager, this);
         pluginManager.registerEvents(hudManager, this);
+        pluginManager.registerEvents(new MPRecoverer(this, playerManager), this);
 
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
