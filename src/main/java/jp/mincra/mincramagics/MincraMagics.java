@@ -17,10 +17,7 @@ import jp.mincra.mincramagics.player.MPRecoverer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
-import jp.mincra.mincramagics.skill.combat.Freeze;
-import jp.mincra.mincramagics.skill.combat.Inferno;
-import jp.mincra.mincramagics.skill.combat.Scorch;
-import jp.mincra.mincramagics.skill.combat.Snowbomb;
+import jp.mincra.mincramagics.skill.combat.*;
 import jp.mincra.mincramagics.skill.healing.Heal;
 import jp.mincra.mincramagics.skill.utility.*;
 import org.bukkit.plugin.PluginManager;
@@ -65,6 +62,7 @@ public final class MincraMagics extends JavaPlugin {
 
         // Combat
         skillManager.registerSkill("freeze", new Freeze());
+        skillManager.registerSkill("icetree", new IceTree());
         skillManager.registerSkill("inferno", new Inferno());
         skillManager.registerSkill("scorch", new Scorch());
         Snowbomb snowbomb = new Snowbomb();
