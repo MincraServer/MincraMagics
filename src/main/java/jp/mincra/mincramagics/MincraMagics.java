@@ -84,6 +84,7 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("speeden", speeden);
         pluginManager.registerEvents(speeden, this);
         skillManager.registerSkill("wraith", new Wraith());
+        skillManager.registerSkill("luminous", new Luminous(this));
 
     }
 
