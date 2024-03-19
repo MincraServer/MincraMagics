@@ -45,9 +45,9 @@ repositories {
     maven { url = uri("https://maven.enginehub.org/repo/") }
 }
 
-val pluginVersion = properties["pluginVersion"];
-val paperVersion = properties["paperVersion"];
-val oraxenVersion = properties["oraxenVersion"];
+val pluginVersion = project.properties["pluginVersion"];
+val paperVersion = project.properties["paperVersion"];
+val oraxenVersion = project.properties["oraxenVersion"];
 
 dependencies {
     // mincramagics
