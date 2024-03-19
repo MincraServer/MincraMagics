@@ -56,9 +56,9 @@ public class MincraCommand {
                     MincraPlayer mPlayer = playerManager.getPlayer(target.getUniqueId());
 
                     switch (type) {
-                        case "add" -> mPlayer.getMp().addMp(amount, true);
-                        case "sub" -> mPlayer.getMp().subMp(amount);
-                        case "set" -> mPlayer.getMp().setMp(amount, true);
+                        case "add" -> mPlayer.addMp(amount, true);
+                        case "sub" -> mPlayer.subMp(amount);
+                        case "set" -> mPlayer.setMp(amount, true);
                     }
                 });
     }

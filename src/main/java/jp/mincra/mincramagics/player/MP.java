@@ -4,6 +4,7 @@ public class MP {
     private float mp;
     private float maxMp;
     private float oldMp;
+    private MP oldState;
 
     public MP(float mp, float maxMp, float oldMp) {
         this.mp = mp;
@@ -28,6 +29,7 @@ public class MP {
     }
 
     public void setMp(float mp, boolean ignoreMax) {
+        oldState = this.clone();
         this.oldMp = this.mp;
         this.mp = mp;
 
@@ -45,6 +47,7 @@ public class MP {
             return;
         }
 
+        oldState = this.clone();
         this.oldMp = this.mp;
         this.mp += mp;
 
@@ -58,11 +61,28 @@ public class MP {
         if (mp < 0) {
             return;
         }
+        oldState = this.clone();
         this.oldMp = this.mp;
         this.mp -= mp;
 
         if (this.mp < 0) {
             this.mp = 0;
+        }
+    }
+
+    public void undoLastChange() {
+        this.mp = oldState.mp;
+        this.oldMp = oldState.oldMp;
+        this.maxMp = oldState.maxMp;
+    }
+
+    @Override
+    public MP clone() {
+        try {
+            super.clone();
+            return new MP(mp, maxMp, oldMp);
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

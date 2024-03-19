@@ -24,7 +24,7 @@ public class MPRecoverer implements Listener {
         new BKTween(instance)
                 .execute(v -> {
                     for (MincraPlayer player : sittingPlayers.values()) {
-                        player.getMp().addMp(2, false);
+                        player.addMp(2, false);
                     }
                     return true;
                 })

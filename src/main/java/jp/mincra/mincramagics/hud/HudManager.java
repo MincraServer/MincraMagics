@@ -31,7 +31,7 @@ public class HudManager implements Listener {
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         scheduler.scheduleSyncRepeatingTask(MincraMagics.getInstance(), () -> {
             for (MincraPlayer mPlayer : players) {
-                String mpHud = mpHudController.generateMpBar(mPlayer.getMp());
+                String mpHud = mpHudController.generateMpBar((int) mPlayer.getMaxMp(), (int) mPlayer.getMp());
                 String cooldownHud = cooldownHudController.generateCooldownHud(mPlayer.getCooldown());
 
                 Player player = mPlayer.getPlayer();

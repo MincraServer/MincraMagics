@@ -35,9 +35,9 @@ public class Charge extends MagicSkill {
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     // 10まで回復
-                    if (mPlayer.getMp().getMp() < maxMp) {
+                    if (mPlayer.getMp() < maxMp) {
                         // Add MP
-                        mPlayer.getMp().addMp(1, false);
+                        mPlayer.addMp(1, false);
                     }
                     return true;
                 })

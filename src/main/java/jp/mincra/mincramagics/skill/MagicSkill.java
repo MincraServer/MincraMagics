@@ -2,7 +2,6 @@ package jp.mincra.mincramagics.skill;
 
 import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.player.MP;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.player.SkillCooldown;
@@ -39,8 +38,7 @@ public abstract class MagicSkill {
     }
 
     protected void consumeMp(MincraPlayer player, MaterialProperty property) {
-        MP mp = player.getMp();
-        mp.subMp(property.mp());
+        player.subMp(property.mp());
     }
 
     protected void setCooldown(MincraPlayer player, MaterialProperty property) {
@@ -49,7 +47,7 @@ public abstract class MagicSkill {
     }
 
     protected boolean canTrigger(MincraPlayer player, MaterialProperty property) {
-        if (!player.getMp().isEnoughMP(property.mp())) {
+        if (!player.isEnoughMP(property.mp())) {
             player.getPlayer().sendMessage(Component.text("MPが足りない！").color(TextColor.fromHexString("#FFFFFF")));
             return false;
         }
