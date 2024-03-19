@@ -6,7 +6,7 @@ import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.InventoryGUI;
-import jp.mincra.mincramagics.nbtobject.MagicStuffNBT;
+import jp.mincra.mincramagics.nbtobject.MagicStaffNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.titleupdater.InventoryUpdate;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -111,7 +111,7 @@ public class MaterialEditor extends InventoryGUI {
                 event.setCancelled(!onPlace(slot, cursorItem));
             } else if (action == InventoryAction.PICKUP_ALL) {
                 onPickup(slot);
-            } else if (action == InventoryAction.SWAP_WITH_CURSOR && !isMagicStuffSlot(slot)) {
+            } else if (action == InventoryAction.SWAP_WITH_CURSOR && !isMagicStaffSlot(slot)) {
                 // マテリアルの入れ替えしかできない(magicstuff入れ替えは実装がめんどくさい)
                 onPickup(slot);
                 event.setCancelled(!onPlace(slot, cursorItem));
@@ -138,7 +138,7 @@ public class MaterialEditor extends InventoryGUI {
         // MaterialEditorのインベントリかどうか
         if (!event.getInventory().equals(getInventory())) return;
 
-        ItemStack magicStuff = getMagicStuff();
+        ItemStack magicStuff = getMagicStaff();
         // 魔法武器がまだスロットに入ってたら
         if (magicStuff != null) {
             if (isFullInventory(player)) {
@@ -158,16 +158,16 @@ public class MaterialEditor extends InventoryGUI {
      * @return 適切なアイテムが置かれたらtrue
      */
     private boolean onPlace(int slot, ItemStack placedItem) {
-        if (isMagicStuffSlot(slot)) {
+        if (isMagicStaffSlot(slot)) {
             if (placedItem == null) {
                 return false;
             }
 
             // 魔法武器スロットに置いたとき
-            MagicStuffNBT magicStuffNBT = MagicStuffNBT.getMincraNBT(placedItem);
-            if (magicStuffNBT == null) return false;
+            MagicStaffNBT magicStaffNBT = MagicStaffNBT.getMincraNBT(placedItem);
+            if (magicStaffNBT == null) return false;
 
-            Map<String, String> materialMap = magicStuffNBT.getMaterialMap();
+            Map<String, String> materialMap = magicStaffNBT.getMaterialMap();
 
             for (int i = 0; i < 4; i++) {
                 String slotId = slotIdList.get(i);
@@ -188,7 +188,7 @@ public class MaterialEditor extends InventoryGUI {
     }
 
     private void onPickup(int slot) {
-        if (isMagicStuffSlot(slot)) {
+        if (isMagicStaffSlot(slot)) {
             // マテリアルを削除
             for (int i = 12; i < 16; i++) {
                 inv.setItem(i, null);
@@ -223,15 +223,15 @@ public class MaterialEditor extends InventoryGUI {
         return (slot > 0 && slot < 10) || slot == 11 || (slot > 15 && slot < 27);
     }
 
-    private ItemStack getMagicStuff() {
+    private ItemStack getMagicStaff() {
         return inv.getItem(10);
     }
 
-    private void setMagicStuff(ItemStack item) {
+    private void setMagicStaff(ItemStack item) {
         inv.setItem(10, item);
     }
 
-    private boolean isMagicStuffSlot(int slot) {
+    private boolean isMagicStaffSlot(int slot) {
         return slot == 10;
     }
 
@@ -244,24 +244,24 @@ public class MaterialEditor extends InventoryGUI {
     private boolean registerMaterial(ItemStack materialItem, int slot) {
         // マテリアルを取ったとき
         // 魔法武器が置いてなかったらキャンセル
-        ItemStack magicStuff = getMagicStuff();
+        ItemStack magicStuff = getMagicStaff();
         if (magicStuff == null) return false;
 
         // 魔法武器のNBT入手
-        MagicStuffNBT magicStuffNBT = MagicStuffNBT.getMincraNBT(magicStuff);
-        if (magicStuffNBT == null) return false;
+        MagicStaffNBT magicStaffNBT = MagicStaffNBT.getMincraNBT(magicStuff);
+        if (magicStaffNBT == null) return false;
 
         if (materialItem != null) {
             String oraxenMaterialItemId = OraxenItems.getIdByItem(materialItem);
             if (!OraxenItems.exists(materialItem)) return false;
             if (!materialManager.isRegistered(oraxenMaterialItemId)) return false;
-            magicStuffNBT.setMaterial(slotIdList.get(slot - 12), oraxenMaterialItemId);
+            magicStaffNBT.setMaterial(slotIdList.get(slot - 12), oraxenMaterialItemId);
         } else {
-            magicStuffNBT.removeMaterial(slotIdList.get(slot - 12));
+            magicStaffNBT.removeMaterial(slotIdList.get(slot - 12));
         }
 
-        ItemStack newItem = magicStuffNBT.setNBTTag(new ItemBuilder(magicStuff)).build();
-        setMagicStuff(newItem);
+        ItemStack newItem = magicStaffNBT.setNBTTag(new ItemBuilder(magicStuff)).build();
+        setMagicStaff(newItem);
 
         return true;
     }

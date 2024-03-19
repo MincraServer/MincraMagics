@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * @param materialFilters
  * @param descriptionLore
  */
-public record MagicStuffNBT(List<Material> materials,
+public record MagicStaffNBT(List<Material> materials,
                             List<MagicEnchantment> magicEnchantments,
                             List<MaterialFilter> materialFilters,
                             List<String> descriptionLore) {
@@ -128,7 +128,7 @@ public record MagicStuffNBT(List<Material> materials,
     }
 
     @Nullable
-    public static MagicStuffNBT getMincraNBT(ItemStack item) {
+    public static MagicStaffNBT getMincraNBT(ItemStack item) {
         if (item == null) return null;
 
         PersistentDataContainer mincramagicsCon = item.getItemMeta().getPersistentDataContainer()
@@ -157,7 +157,7 @@ public record MagicStuffNBT(List<Material> materials,
         }
 
         //TODO: Implement MaterialFilters and MagicEnchantments
-        return new MagicStuffNBT(materials,
+        return new MagicStaffNBT(materials,
                 null,
                 null,
                 defaultLore);

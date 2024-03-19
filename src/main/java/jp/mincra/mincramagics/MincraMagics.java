@@ -11,7 +11,7 @@ import jp.mincra.mincramagics.command.MincraCommand;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
-import jp.mincra.mincramagics.oraxen.mechanic.magicstuff.MagicStuffMechanicFactory;
+import jp.mincra.mincramagics.oraxen.mechanic.magicstaff.MagicStaffMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MaterialManager;
@@ -58,7 +58,7 @@ public final class MincraMagics extends JavaPlugin {
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
 
-        MechanicsManager.registerMechanicFactory("magicstuff", new MagicStuffMechanicFactory("magicstuff"), true);
+        MechanicsManager.registerMechanicFactory("magicstaff", new MagicStaffMechanicFactory("magicstaff"), true);
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
         OraxenItems.loadItems();
