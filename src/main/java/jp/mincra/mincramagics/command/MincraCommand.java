@@ -1,9 +1,10 @@
-package jp.mincra.mincramagics;
+package jp.mincra.mincramagics.command;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
 import jp.mincra.bkvfx.VfxManager;
+import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.gui.impl.MaterialEditor;
 import jp.mincra.mincramagics.player.MincraPlayer;
@@ -17,9 +18,20 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
-public class CommandRegisterer {
+public class MincraCommand {
+    private enum Permission {
+        MINCRA_ADMIN("mincra.admin");
+
+        private final String value;
+
+        Permission(String value) {
+            this.value = value;
+        }
+    }
+
     public void registerAll() {
         new CommandAPICommand("mincra")
+                .withPermission(Permission.MINCRA_ADMIN.value)
                 // /mincra mp <type> <amount>
                 .withSubcommand(mpCommand())
                 .withSubcommand(skillCommand())
@@ -72,8 +84,7 @@ public class CommandRegisterer {
                     int consumedMp = (int) args.get(3);
                     int strength = (int) args.get(4);
                     MagicSkill skill = skillManager.getSkill(skillId);
-                    skill.onTrigger(caster, new MaterialProperty(skillId, skillId, cooldown, consumedMp)
-                            .setStrength(strength));
+                    skill.onTrigger(caster, new MaterialProperty(skillId, skillId, cooldown, consumedMp, strength));
                 });
     }
 

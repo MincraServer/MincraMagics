@@ -3,4 +3,4 @@ version: 0.1
 main: jp.mincra.mincramagics.MincraMagics
 api-version: 1.20
 authors: [Harineko]
-depend: [NBTAPI, PlaceholderAPI, CommandAPI]
+depend: [NBTAPI, PlaceholderAPI, CommandAPI, Oraxen]

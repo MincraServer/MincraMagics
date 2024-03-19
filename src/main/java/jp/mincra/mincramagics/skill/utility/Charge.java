@@ -8,45 +8,42 @@ import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.atomic.AtomicReference;
-
-public class Charging extends MagicSkill {
+public class Charge extends MagicSkill {
     @Override
     public boolean onTrigger(Player player, MaterialProperty property) {
         if (!super.onTrigger(player, property)) return false;
 
         Location playerLoc = player.getLocation();
-        World world = player.getLocation().getWorld();
 
         // Play Vfx
         Location vfxLoc = playerLoc.clone().add(new Vector(0, 0.5, 0));
         Vector axis = new Vector(0, 1, 0);
         Vfx vfx = vfxManager.getVfx("charging");
         vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
+
+        // Play Sound
+        player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
         MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
 
-        AtomicReference<Float> pitch = new AtomicReference<>((float) 1);
+        final int maxMp = (int) property.strength() * 7;
+
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
-                    // Add MP
-                    mPlayer.getMp().addMp(3, false);
-
-                    // Sound
-                    Location newPlayerLoc = player.getLocation().add(new Vector(0, 1, 0));
-                    world.playSound(newPlayerLoc, Sound.ENTITY_PLAYER_LEVELUP, 1F, pitch.get());
-                    pitch.updateAndGet(p -> p + 0.1f);
-                    // Particle
-                    world.spawnParticle(Particle.SCRAPE, newPlayerLoc, 10, 0.6, 0.6, 0.6, 1);
+                    // 10まで回復
+                    if (mPlayer.getMp().getMp() < maxMp) {
+                        // Add MP
+                        mPlayer.getMp().addMp(1, false);
+                    }
                     return true;
                 })
-                .repeat(TickTime.TICK, 15, 10, 3)
+                // spends 60 tick
+                .repeat(TickTime.TICK, 10, 0, maxMp)
                 .run();
+
         return true;
     }
 }

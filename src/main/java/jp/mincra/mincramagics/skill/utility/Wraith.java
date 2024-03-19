@@ -12,12 +12,8 @@ import org.bukkit.util.Vector;
 
 public class Wraith extends MagicSkill {
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         // Change Gamemode
         GameMode gameMode = player.getGameMode();
@@ -35,6 +31,7 @@ public class Wraith extends MagicSkill {
                     Location location = player.getLocation();
                     world.spawnParticle(Particle.SMOKE_LARGE, location.add(new Vector(0, 1.5, 0)).add(location.getDirection().multiply(2)),
                             30, 0.4, 1.0, 0.4, 0.2);
+                    return true;
                 })
                 .repeat(TickTime.TICK, 2, 0, 15)
                 .run();
@@ -45,8 +42,11 @@ public class Wraith extends MagicSkill {
                     player.playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0);
                     vfxManager.getVfx("wraith")
                             .playEffect(player.getLocation(), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
+                    return true;
                 })
                 .delay(TickTime.TICK, 30)
                 .run();
+
+        return true;
     }
 }

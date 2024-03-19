@@ -8,11 +8,12 @@ public class MaterialProperty {
 
     private float strength;
 
-    public MaterialProperty(String materialId, String skillId, float cooldown, float mp) {
+    public MaterialProperty(String materialId, String skillId, float cooldown, float mp, float strength) {
         this.cooldown = cooldown;
         this.mp = mp;
         this.materialId = materialId;
         this.skillId = skillId;
+        this.strength = strength;
     }
 
     public MaterialProperty setStrength(float strength) {

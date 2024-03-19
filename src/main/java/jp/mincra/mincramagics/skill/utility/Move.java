@@ -12,27 +12,26 @@ import org.bukkit.util.Vector;
 public class Move extends MagicSkill {
 
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
 
         // Move
-        Vector velocity = playerLoc.getDirection().setY(-0.3).normalize().multiply(2);
+        float strength = property.strength();
+        Vector velocity = playerLoc.getDirection().normalize().multiply(strength).setY(-0.5);
         player.setVelocity(velocity);
-        Location targetLoc = playerLoc.clone().add(velocity.add(new Vector(0, 0.6, 0)).multiply(3));
+        Location targetLoc = playerLoc.clone().add(velocity.multiply(strength * 1).setY(-0.5));
 
         // Sound
-        world.playSound(targetLoc, Sound.ENTITY_WITHER_SHOOT, 0.2F, 1F);
+        world.playSound(targetLoc, Sound.ENTITY_WITHER_SHOOT, 1F, 1F);
 
         // Vfx
         Vector axis = new Vector(0, 1, 0);
         vfxManager.getVfx("move")
                 .playEffect(targetLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
+
+        return true;
     }
 }

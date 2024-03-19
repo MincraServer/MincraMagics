@@ -21,12 +21,8 @@ import java.util.Set;
 
 public class Inferno extends MagicSkill {
     @Override
-    public void onTrigger(Player player, MaterialProperty property) {
-        // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+    public boolean onTrigger(Player player, MaterialProperty property) {
+        if (!super.onTrigger(player, property)) return false;
 
         // PlaySound
         Location playerLoc = player.getLocation();
@@ -73,8 +69,12 @@ public class Inferno extends MagicSkill {
 
                     // Fireball を上に
 //                    spawnRelativeLoc.add(new Vector(0, 1.5, 0));
+
+                    return true;
                 })
                 .repeat(TickTime.TICK, 5, 5, 5)
                 .run();
+
+        return true;
     }
 }

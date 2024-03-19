@@ -4,6 +4,7 @@ import jp.mincra.ezsvg.attribute.Transform;
 import jp.mincra.ezsvg.element.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.util.Vector;
 
 import java.awt.*;
@@ -19,6 +20,8 @@ public class SvgParticleVfx extends ParticleVfx {
     private Color color;
 //    private ParticleData particleData;
     private Vector origin;
+    private Particle.DustOptions dustOptions;
+    private Particle.DustTransition dustTransition;
 
     private final double density;
     private final List<CircleProperty> circles;
@@ -115,7 +118,17 @@ public class SvgParticleVfx extends ParticleVfx {
         return this;
     }
 
-//    public SvgParticleVfx setParticleData(ParticleData particleData) {
+    public SvgParticleVfx setDustOptions(Particle.DustOptions dustOptions) {
+        this.dustOptions = dustOptions;
+        return this;
+    }
+
+    public SvgParticleVfx setDustTransition(Particle.DustTransition dustTransition) {
+        this.dustTransition = dustTransition;
+        return this;
+    }
+
+    //    public SvgParticleVfx setParticleData(ParticleData particleData) {
 //        this.particleData = particleData;
 //        return this;
 //    }
@@ -160,15 +173,36 @@ public class SvgParticleVfx extends ParticleVfx {
             Location _loc = loc.clone();
             Vector pLoc = particle.getLocation().clone();
             pLoc = pLoc.rotateAroundAxis(axis, Math.toRadians(angle));
+            Location addedLoc = _loc.add(pLoc);
 
             // Spawn Particle
-            loc.getWorld().spawnParticle(particleEffect,
-                    _loc.add(pLoc),
-                    amount,
-                    offset.getX(),
-                    offset.getY(),
-                    offset.getZ(),
-                    speed);
+            if (particleEffect == Particle.DUST_PLUME) {
+                loc.getWorld().spawnParticle(Particle.DUST_PLUME,
+                        addedLoc,
+                        amount,
+                        offset.getX(),
+                        offset.getY(),
+                        offset.getZ(),
+                        speed,
+                        dustOptions);
+            } else if (particleEffect == Particle.DUST_COLOR_TRANSITION) {
+                loc.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION,
+                        addedLoc,
+                        amount,
+                        offset.getX(),
+                        offset.getY(),
+                        offset.getZ(),
+                        speed,
+                        dustTransition);
+            } else {
+                loc.getWorld().spawnParticle(particleEffect,
+                        addedLoc,
+                        amount,
+                        offset.getX(),
+                        offset.getY(),
+                        offset.getZ(),
+                        speed);
+            }
         }
 
         particles = new ArrayList<>();

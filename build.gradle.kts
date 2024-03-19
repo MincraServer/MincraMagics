@@ -41,30 +41,38 @@ repositories {
     maven {
         url = uri("https://repo.maven.apache.org/maven2/")
     }
+
+    maven { url = uri("https://maven.enginehub.org/repo/") }
 }
+
+val pluginVersion = properties["pluginVersion"];
+val paperVersion = properties["paperVersion"];
+val oraxenVersion = properties["oraxenVersion"];
 
 dependencies {
     // mincramagics
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:${paperVersion}")
 //    implementation("xyz.xenondevs:particle:1.8.4") deprecated!
     implementation("de.tr7zw:item-nbt-api-plugin:2.12.2")
     compileOnly("io.lumine:Mythic-Dist:5.3.5")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("dev.jorel:commandapi-bukkit-core:9.3.0")
     compileOnly("me.clip:placeholderapi:2.11.4")
-//    compileOnly("com.github.oraxen:oraxen:1.153.1")
+//    compileOnly("com.github.oraxen:oraxen:${oraxenVersion}")
     // ezsvg
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     implementation("org.w3c:dom:2.3.0-jaxb-1.0.6")
     // Test
-    testImplementation("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    implementation(files("libs/oraxen-1.170.0.jar"))
+    testImplementation("io.papermc.paper:paper-api:${paperVersion}")
+    implementation(files("libs/oraxen-${oraxenVersion}.jar"))
     // Spigot and NMS
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    // WorldGuard
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
 }
 
 group = "jp.mincra"
-version = "0.2-SNAPSHOT"
+version = pluginVersion as String
 description = "MincraMagics"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
