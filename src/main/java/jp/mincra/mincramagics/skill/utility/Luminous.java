@@ -34,7 +34,7 @@ public class Luminous extends MagicSkill {
         final int maxDistance = strength * 20;
         final int speedPerSec = strength * 2;
         final int duration = strength * 15; // 秒
-        final int lightLevel = strength * 6;
+        final int lightLevel = Math.min(15, strength * 6);
 
         Vector direction = player.getLocation().getDirection().multiply((double) speedPerSec / 20);
         AtomicReference<Location> lightLoc = new AtomicReference<>(player.getEyeLocation().add(direction));
