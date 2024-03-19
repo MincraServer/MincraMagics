@@ -58,7 +58,8 @@ public final class MincraMagics extends JavaPlugin {
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
 
-        MechanicsManager.registerMechanicFactory("magicstaff", new MagicStaffMechanicFactory("magicstaff"), true);
+        // stuff (staff) はタイポしてるけどもう後戻りはできない・・・
+        MechanicsManager.registerMechanicFactory("magicstuff", new MagicStaffMechanicFactory("magicstuff"), true);
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
         OraxenItems.loadItems();

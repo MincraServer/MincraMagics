@@ -6,6 +6,8 @@ import jp.mincra.mincramagics.player.MP;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.player.SkillCooldown;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -47,7 +49,11 @@ public abstract class MagicSkill {
     }
 
     protected boolean canTrigger(MincraPlayer player, MaterialProperty property) {
-        return player.getMp().isEnoughMP(property.mp())
-                && !player.getCooldown().isCooldown(property.materialId());
+        if (!player.getMp().isEnoughMP(property.mp())) {
+            player.getPlayer().sendMessage(Component.text("MPが足りない！").color(TextColor.fromHexString("#FFFFFF")));
+            return false;
+        }
+
+        return player.getCooldown().isCooldown(property.materialId());
     }
 }
