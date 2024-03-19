@@ -44,14 +44,16 @@ public class MincraCommand {
     public CommandAPICommand mpCommand() {
         return new CommandAPICommand("mp")
                 .withArguments(new StringArgument("type")
-                                .replaceSuggestions(ArgumentSuggestions.strings("add", "sub", "set")),
-                        new FloatArgument("amount"))
-                .executesPlayer((player, args) -> {
-                    PlayerManager playerManager = MincraMagics.getPlayerManager();
-                    MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-
+                                .replaceSuggestions(ArgumentSuggestions.strings("add", "sub", "set")))
+                .withArguments(new PlayerArgument("target"))
+                .withArguments(new FloatArgument("amount"))
+                .executes((sender, args) -> {
                     String type = (String) args.get(0);
-                    float amount = (float) args.get(1);
+                    Player target = (Player) args.get(1);
+                    float amount = (float) args.get(2);
+
+                    PlayerManager playerManager = MincraMagics.getPlayerManager();
+                    MincraPlayer mPlayer = playerManager.getPlayer(target.getUniqueId());
 
                     switch (type) {
                         case "add" -> mPlayer.getMp().addMp(amount, true);
