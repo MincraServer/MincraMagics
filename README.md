@@ -31,3 +31,4 @@ About detailed description about the code and how to add new feature (e.g. new m
 - [Harineko0](https://twitter.com/Harineko0)
 
 ## Licence
+[LICENSE](./LICENSE)
