@@ -35,7 +35,7 @@ public class Heal extends MagicSkill {
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     // 回復
-                    target.setHealth(Math.min(target.getHealth() + 6, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+                    target.setHealth(Math.min(target.getHealth() + 6, target.getAttribute(Attribute.MAX_HEALTH).getValue()));
                     Location targetLoc = target.getLocation();
                     // Play Sound
                     playerLoc.getWorld().playSound(targetLoc, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1, 1.1F);

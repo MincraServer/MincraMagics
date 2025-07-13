@@ -23,6 +23,8 @@ import jp.mincra.mincramagics.skill.utility.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Logger;
+
 public final class MincraMagics extends JavaPlugin {
     private static MincraMagics INSTANCE;
 
@@ -33,6 +35,7 @@ public final class MincraMagics extends JavaPlugin {
     private static HudManager hudManager;
     private static VfxManager vfxManager;
     private static GUIManager guiManager;
+    private static Logger logger;
 
     @Override
     public void onEnable() {
@@ -45,6 +48,7 @@ public final class MincraMagics extends JavaPlugin {
         hudManager = new HudManager(playerManager);
         vfxManager = BKVfx.instance().getVfxManager();
         guiManager = new GUIManager(this);
+        logger = getLogger();
 
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(playerManager, this);
@@ -120,5 +124,9 @@ public final class MincraMagics extends JavaPlugin {
 
     public static GUIManager getGuiManager() {
         return guiManager;
+    }
+
+    public static Logger getPluginLogger() {
+        return logger;
     }
 }

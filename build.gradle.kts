@@ -15,7 +15,8 @@ repositories {
     }
 
     maven {
-        url = uri("https://papermc.io/repo/repository/maven-public/")
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
     }
 
     maven {
@@ -43,6 +44,10 @@ repositories {
     }
 
     maven { url = uri("https://maven.enginehub.org/repo/") }
+
+    maven {
+        url = uri("https://repo.oraxen.com/releases")
+    }
 }
 
 val pluginVersion = project.properties["pluginVersion"]
@@ -52,31 +57,34 @@ val oraxenVersion = project.properties["oraxenVersion"]
 dependencies {
     // mincramagics
     compileOnly("io.papermc.paper:paper-api:${paperVersion}")
-//    implementation("xyz.xenondevs:particle:1.8.4") deprecated!
+    // implementation("xyz.xenondevs:particle:1.8.4") // deprecated!
     implementation("de.tr7zw:item-nbt-api-plugin:2.12.2")
     compileOnly("io.lumine:Mythic-Dist:5.3.5")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("dev.jorel:commandapi-bukkit-core:9.3.0")
-    compileOnly("me.clip:placeholderapi:2.11.4")
-//    compileOnly("com.github.oraxen:oraxen:${oraxenVersion}")
-    // ezsvg
+    compileOnly("me.clip:placeholderapi:2.11.6")
+    // Oraxen
+    // compileOnly("io.th0rgal:oraxen:1.190.0") // 変更を加えた Oraxen を libs フォルダで使用する
+    implementation(files("libs/oraxen-1.190.0-modified.jar"))
+
+    // jp.mincra.ezsvg
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     implementation("org.w3c:dom:2.3.0-jaxb-1.0.6")
+
     // Test
     testImplementation("io.papermc.paper:paper-api:${paperVersion}")
-    implementation(files("libs/oraxen-${oraxenVersion}.jar"))
     // Spigot and NMS
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     // WorldGuard
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
     // GSit
-    compileOnly(files("libs/GSit-1.8.0.jar"))
+    compileOnly(files("libs/GSit-2.4.2.jar"))
 }
 
 group = "jp.mincra"
 version = pluginVersion as String
 description = "MincraMagics"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 publishing {
     publications.create<MavenPublication>("maven") {
@@ -90,4 +98,8 @@ tasks.withType<JavaCompile>() {
 
 tasks.withType<Javadoc>() {
     options.encoding = "UTF-8"
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }

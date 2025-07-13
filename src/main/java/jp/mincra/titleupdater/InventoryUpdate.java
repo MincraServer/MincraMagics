@@ -23,6 +23,8 @@ package jp.mincra.titleupdater;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;

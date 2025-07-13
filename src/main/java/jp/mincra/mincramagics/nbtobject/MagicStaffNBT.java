@@ -3,6 +3,7 @@ package jp.mincra.mincramagics.nbtobject;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MincraMagics;
+import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.mincramagics.nbtobject.components.Divider;
 import jp.mincra.mincramagics.nbtobject.pdc.PersistentDataTypeEx;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -10,6 +11,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,8 +70,6 @@ public record MagicStaffNBT(List<Material> materials,
         MATERIAL_ID_TO_GLYPH.put(materialId, glyph);
         return glyph;
     }
-    private static final String COLOR_GRAY = "§7";
-    private static final String COLOR_WHITE = "§f";
     // endregion
 
     public ItemBuilder setNBTTag(ItemBuilder builder) {
@@ -108,12 +108,12 @@ public record MagicStaffNBT(List<Material> materials,
             ItemBuilder materialItemBuilder = OraxenItems.getItemById(materialId);
             String materialName;
             if (materialItemBuilder != null) {
-                materialName = materialItemBuilder.getDisplayName();
+                materialName = materialItemBuilder.getItemName();
             } else {
                 materialName = materialId;
             }
 
-            newLore.add(COLOR_WHITE + SLOT_TO_GLYPH.get(material.slot) + SHIFT_2 +
+            newLore.add(Color.COLOR_WHITE + SLOT_TO_GLYPH.get(material.slot) + SHIFT_2 +
                     getMaterialGlyph(materialId) + SHIFT_1 + materialName);
         }
 

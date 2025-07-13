@@ -1,6 +1,6 @@
 package jp.mincra.mincramagics.player;
 
-import dev.geco.gsit.api.event.EntityGetUpSitEvent;
+import dev.geco.gsit.api.event.EntityStopSitEvent;
 import dev.geco.gsit.api.event.EntitySitEvent;
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
@@ -41,7 +41,7 @@ public class MPRecoverer implements Listener {
     }
 
     @EventHandler
-    private void onEntityGetUp(EntityGetUpSitEvent event) {
+    private void onEntityGetUp(EntityStopSitEvent event) {
         if (event.getEntity() instanceof Player player) {
             sittingPlayers.remove(player.getUniqueId());
         }

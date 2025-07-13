@@ -246,7 +246,7 @@ public class TagAccessor {
             case "strider_warm_blocks":
                 return Tag.STRIDER_WARM_BLOCKS;
             case "tall_flowers":
-                return Tag.TALL_FLOWERS;
+                return Tag.FLOWERS;
             case "terracotta":
                 return Tag.TERRACOTTA;
             case "trapdoors":
