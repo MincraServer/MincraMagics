@@ -34,28 +34,28 @@ public class BKVfx {
                         5, Particle.SOUL_FIRE_FLAME).setSpeed(0.003f).setOffset(new Vector(0.003, 0.003, 0.003)));
         vfxManager.registerVfx("complex",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("complex_five_pointed_circle")),
-                        5, Particle.VILLAGER_HAPPY).setSpeed(0.003f).setOffset(new Vector(0.003, 0.003, 0.003)));
+                        5, Particle.HAPPY_VILLAGER).setSpeed(0.003f).setOffset(new Vector(0.003, 0.003, 0.003)));
         vfxManager.registerVfx("rect",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("rect")),
                         5, Particle.FLAME));
         vfxManager.registerVfx("charging",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
-                        5, Particle.ENCHANTMENT_TABLE).setSpeed(0.003f).setOffset(new Vector(0.003, 0.003, 0.003)));
+                        5, Particle.ENCHANT).setSpeed(0.003f).setOffset(new Vector(0.003, 0.003, 0.003)));
         vfxManager.registerVfx("move",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
-                        5, Particle.FIREWORKS_SPARK).setSpeed(0.1f));
+                        5, Particle.FIREWORK).setSpeed(0.1f));
         vfxManager.registerVfx("jump",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
                         5, Particle.CLOUD).setSpeed(0.1f));
         vfxManager.registerVfx("wraith",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
-                        6, Particle.SMOKE_LARGE).setSpeed(0.1f));
+                        6, Particle.LARGE_SMOKE).setSpeed(0.1f));
         vfxManager.registerVfx("scorch",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
-                        6, Particle.SMOKE_LARGE).setSpeed(0.1f));
+                        6, Particle.LARGE_SMOKE).setSpeed(0.1f));
         vfxManager.registerVfx("snowbomb",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
-                        6, Particle.SNOWBALL).setSpeed(0.1f));
+                        6, Particle.ITEM_SNOWBALL).setSpeed(0.1f));
         vfxManager.registerVfx("ice",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
                         5, Particle.DUST_COLOR_TRANSITION)
@@ -69,7 +69,7 @@ public class BKVfx {
                         ));
         vfxManager.registerVfx("healing",
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
-                        5, Particle.VILLAGER_HAPPY)
+                        5, Particle.HAPPY_VILLAGER)
                         .setSpeed(0.1f));
     }
 

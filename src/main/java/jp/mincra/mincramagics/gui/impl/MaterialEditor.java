@@ -5,12 +5,14 @@ import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
 import jp.mincra.mincramagics.MincraMagics;
+import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.mincramagics.gui.InventoryGUI;
 import jp.mincra.mincramagics.nbtobject.MagicStuffNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.titleupdater.InventoryUpdate;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,6 +23,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,13 +48,13 @@ public class MaterialEditor extends InventoryGUI {
     private final ItemStack invisibleItem;
 
     private final static String activeTitle =
-            "§f" +
+            Color.COLOR_WHITE +
             PlaceholderAPI.setPlaceholders(null, NEG_8 + GUI_ACTIVATED)
-            + "§8"
+            + Color.COLOR_DARK_GRAY
             + PlaceholderAPI.setPlaceholders(null, NEG_64 + NEG_128 + "マテリアル作業台");
-    private final static String inactiveTitle = "§f" +
+    private final static String inactiveTitle = Color.COLOR_WHITE +
             PlaceholderAPI.setPlaceholders(null, NEG_8 + GUI_INACTIVATED)
-            + "§8"
+            + Color.COLOR_DARK_GRAY
             + PlaceholderAPI.setPlaceholders(null, NEG_64 + NEG_128 + "マテリアル作業台");
 
     public MaterialEditor() {
@@ -270,6 +273,10 @@ public class MaterialEditor extends InventoryGUI {
         new BKTween(mincramagics)
                 .delay(TickTime.TICK, 1)
                 .execute(v -> {
+                    // FIXME: タイトルが更新されないバグを修正
+                    player.getOpenInventory().setTitle(title);
+//                    final Component component = player.getOpenInventory().title().replaceText(TextReplacementConfig.builder().replacement("/[^_]/" + title + "/g").build());
+//                    player.updateInventory();
                     InventoryUpdate.updateInventory(player, title);
                     return true;
                 })
