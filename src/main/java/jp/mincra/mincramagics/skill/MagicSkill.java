@@ -52,6 +52,6 @@ public abstract class MagicSkill {
             return false;
         }
 
-        return player.getCooldown().isCooldown(property.materialId());
+        return !player.getCooldown().isCooldown(property.materialId());
     }
 }
