@@ -7,3 +7,5 @@ depend: [NBTAPI, PlaceholderAPI]
 softdepend:
   - Oraxen
   - CommandAPI
+  - GSit
+  - WorldGuard
