@@ -25,7 +25,7 @@ public class MP {
     }
 
     public boolean isEnoughMP(float requiredMp) {
-        return !(mp < requiredMp);
+        return mp >= requiredMp;
     }
 
     public void setMp(float mp, boolean ignoreMax) {
@@ -78,11 +78,8 @@ public class MP {
 
     @Override
     public MP clone() {
-        try {
-            super.clone();
-            return new MP(mp, maxMp, oldMp);
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+        // super.clone() is not used here because we want to create a new instance
+        // and avoid CloneNotSupportedException
+        return new MP(mp, maxMp, oldMp);
     }
 }
