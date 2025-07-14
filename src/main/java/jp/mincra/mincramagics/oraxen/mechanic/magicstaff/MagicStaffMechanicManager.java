@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -97,9 +96,7 @@ public class MagicStaffMechanicManager implements Listener {
         String skillId = materialProperty.skillId();
         if (!skillManager.isRegistered(skillId)) return false;
         MagicSkill skill = skillManager.getSkill(skillId);
-        skill.onTrigger(caster, materialProperty);
-
-        return true;
+        return skill.onTrigger(caster, materialProperty);
     }
 }
 
