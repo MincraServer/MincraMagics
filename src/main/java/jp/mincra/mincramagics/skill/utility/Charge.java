@@ -29,19 +29,20 @@ public class Charge extends MagicSkill {
         player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
         MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
 
-        final int maxMp = (int) property.strength() * 7;
+        int strength = (int) property.strength();
+        final int maxMp = strength * 7;
 
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     // 10まで回復
-                    if (mPlayer.getMp().getMp() < maxMp) {
+                    if (mPlayer.getMp() < maxMp) {
                         // Add MP
-                        mPlayer.getMp().addMp(1, false);
+                        mPlayer.addMp(1, false);
                     }
                     return true;
                 })
                 // spends 60 tick
-                .repeat(TickTime.TICK, 10, 0, maxMp)
+                .repeat(TickTime.TICK, 10 / strength, 0, maxMp)
                 .run();
 
         return true;

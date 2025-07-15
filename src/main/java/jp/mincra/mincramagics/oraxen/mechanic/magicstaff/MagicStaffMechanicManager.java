@@ -1,8 +1,8 @@
-package jp.mincra.mincramagics.oraxen.mechanic.magicstuff;
+package jp.mincra.mincramagics.oraxen.mechanic.magicstaff;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.nbtobject.MagicStuffNBT;
+import jp.mincra.mincramagics.nbtobject.MagicStaffNBT;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.MaterialProperty;
@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -23,14 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class MagicStuffMechanicManager implements Listener {
-    private final MagicStuffMechanicFactory factory;
+public class MagicStaffMechanicManager implements Listener {
+    private final MagicStaffMechanicFactory factory;
     private final MaterialManager materialManager;
     private final SkillManager skillManager;
     private final Map<UUID, Integer> disableLeftTrigger;
     private final Server server;
 
-    public MagicStuffMechanicManager(MagicStuffMechanicFactory factory) {
+    public MagicStaffMechanicManager(MagicStaffMechanicFactory factory) {
         this.factory = factory;
         materialManager = MincraMagics.getMaterialManager();
         skillManager = MincraMagics.getSkillManager();
@@ -86,9 +85,9 @@ public class MagicStuffMechanicManager implements Listener {
         if (factory.isNotImplementedIn(itemId))
             return false;
 
-        MagicStuffNBT magicStuffNBT = MagicStuffNBT.getMincraNBT(item);
-        if (magicStuffNBT == null) return false;
-        Map<String, String> materials = magicStuffNBT.getMaterialMap();
+        MagicStaffNBT magicStaffNBT = MagicStaffNBT.getMincraNBT(item);
+        if (magicStaffNBT == null) return false;
+        Map<String, String> materials = magicStaffNBT.getMaterialMap();
         String materialId = materials.get(triggerType.toString().toLowerCase());
         if (materialId == null) return false;
 
@@ -97,9 +96,7 @@ public class MagicStuffMechanicManager implements Listener {
         String skillId = materialProperty.skillId();
         if (!skillManager.isRegistered(skillId)) return false;
         MagicSkill skill = skillManager.getSkill(skillId);
-        skill.onTrigger(caster, materialProperty);
-
-        return true;
+        return skill.onTrigger(caster, materialProperty);
     }
 }
 

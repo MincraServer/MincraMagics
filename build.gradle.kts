@@ -77,6 +77,8 @@ dependencies {
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     // WorldGuard
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
+    // GSit
+    compileOnly(files("libs/GSit-2.4.2.jar"))
 }
 
 group = "jp.mincra"

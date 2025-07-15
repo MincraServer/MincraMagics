@@ -11,15 +11,13 @@ import jp.mincra.mincramagics.command.MincraCommand;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
-import jp.mincra.mincramagics.oraxen.mechanic.magicstuff.MagicStuffMechanicFactory;
+import jp.mincra.mincramagics.oraxen.mechanic.magicstaff.MagicStaffMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
+import jp.mincra.mincramagics.player.MPRecoverer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
-import jp.mincra.mincramagics.skill.combat.Freeze;
-import jp.mincra.mincramagics.skill.combat.Inferno;
-import jp.mincra.mincramagics.skill.combat.Scorch;
-import jp.mincra.mincramagics.skill.combat.Snowbomb;
+import jp.mincra.mincramagics.skill.combat.*;
 import jp.mincra.mincramagics.skill.healing.Heal;
 import jp.mincra.mincramagics.skill.utility.*;
 import org.bukkit.plugin.PluginManager;
@@ -55,17 +53,20 @@ public final class MincraMagics extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(playerManager, this);
         pluginManager.registerEvents(hudManager, this);
+        pluginManager.registerEvents(new MPRecoverer(this, playerManager), this);
 
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
 
-        MechanicsManager.registerMechanicFactory("magicstuff", new MagicStuffMechanicFactory("magicstuff"), true);
+        // stuff (staff) はタイポしてるけどもう後戻りはできない・・・
+        MechanicsManager.registerMechanicFactory("magicstuff", new MagicStaffMechanicFactory("magicstuff"), true);
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
         OraxenItems.loadItems();
 
         // Combat
         skillManager.registerSkill("freeze", new Freeze());
+        skillManager.registerSkill("icetree", new IceTree());
         skillManager.registerSkill("inferno", new Inferno());
         skillManager.registerSkill("scorch", new Scorch());
         Snowbomb snowbomb = new Snowbomb();
@@ -77,12 +78,15 @@ public final class MincraMagics extends JavaPlugin {
 
         // Utility
         skillManager.registerSkill("charge", new Charge());
-        skillManager.registerSkill("charging", new Charging());
         Jump jumpSkill = new Jump();
         skillManager.registerSkill("jump", jumpSkill);
         pluginManager.registerEvents(jumpSkill, this);
         skillManager.registerSkill("move", new Move());
+        Speeden speeden = new Speeden();
+        skillManager.registerSkill("speeden", speeden);
+        pluginManager.registerEvents(speeden, this);
         skillManager.registerSkill("wraith", new Wraith());
+        skillManager.registerSkill("luminous", new Luminous(this));
 
     }
 

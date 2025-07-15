@@ -44,6 +44,14 @@ public class BKTween {
         return this;
     }
 
+    /**
+     *
+     * @param tickTime interval, delay の単位
+     * @param interval 関数を実行する間隔
+     * @param delay 関数を実行するまで待機する時間
+     * @param attempts -1 にすると無限に実行
+     * @return 同一のBKTweenオブジェクト
+     */
     public BKTween repeat(TickTime tickTime, long interval, long delay, int attempts) {
         int multi = tickTime.getMultiplier();
         tasks.add(new TweenTask(tmpFunction,
@@ -86,7 +94,7 @@ public class BKTween {
             BukkitTask bkTask = scheduler.runTaskTimer(plugin, () -> {
                 int currentIterate = currentIteration.incrementAndGet();
 
-                if (currentIterate >= maxAttempts) {
+                if (currentIterate >= maxAttempts && maxAttempts != -1) {
                     Bukkit.getScheduler().cancelTask(processId.get());
                 }
 
