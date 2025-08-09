@@ -6,23 +6,23 @@ public class MaterialProperty {
     private final float cooldown;
     private final float mp;
 
-    private float strength;
+    private float level;
 
-    public MaterialProperty(String materialId, String skillId, float cooldown, float mp, float strength) {
+    public MaterialProperty(String materialId, String skillId, float cooldown, float mp, float level) {
         this.cooldown = cooldown;
         this.mp = mp;
         this.materialId = materialId;
         this.skillId = skillId;
-        this.strength = strength;
+        this.level = level;
     }
 
-    public MaterialProperty setStrength(float strength) {
-        this.strength = strength;
+    public MaterialProperty setLevel(float level) {
+        this.level = level;
         return this;
     }
 
     public float strength() {
-        return strength;
+        return level;
     }
 
     public float cooldown() {
