@@ -25,18 +25,15 @@ import java.util.stream.Collectors;
  * - MagicEnchantments
  * - DescriptionLore
  * - MagicStuffProperty
- *   - Strength
- *   - Accuracy
- *   - MPSaver
- *   - CooldownShorter
+ * - Strength
+ * - Accuracy
+ * - MPSaver
+ * - CooldownShorter
+ *
  * @param materials
- * @param magicEnchantments
- * @param materialFilters
  * @param descriptionLore
  */
 public record MagicStaffNBT(List<Material> materials,
-                            List<MagicEnchantment> magicEnchantments,
-                            List<MaterialFilter> materialFilters,
                             List<String> descriptionLore) {
     // region NamespacedKey
     private static final JavaPlugin mincra = MincraMagics.getInstance();
@@ -62,6 +59,7 @@ public record MagicStaffNBT(List<Material> materials,
     private static final String SHIFT_1 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%");
     private static final String SHIFT_2 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_2%");
     private static final Map<String, String> MATERIAL_ID_TO_GLYPH = new HashMap<>();
+
     private static String getMaterialGlyph(String materialId) {
         if (MATERIAL_ID_TO_GLYPH.containsKey(materialId)) {
             return MATERIAL_ID_TO_GLYPH.get(materialId);
@@ -157,15 +155,11 @@ public record MagicStaffNBT(List<Material> materials,
         }
 
         //TODO: Implement MaterialFilters and MagicEnchantments
-        return new MagicStaffNBT(materials,
-                null,
-                null,
-                defaultLore);
+        return new MagicStaffNBT(materials, defaultLore);
     }
 
     /**
-     *
-     * @return (K,V) = (Slot, Id)
+     * @return (K, V) = (Slot, Id)
      */
     public Map<String, String> getMaterialMap() {
         return materials.stream()
@@ -188,10 +182,14 @@ public record MagicStaffNBT(List<Material> materials,
 
     private int getSlotOrder(String slot) {
         switch (slot) {
-            case "left": return 0;
-            case "right": return 1;
-            case "swap": return 2;
-            case "drop": return 3;
+            case "left":
+                return 0;
+            case "right":
+                return 1;
+            case "swap":
+                return 2;
+            case "drop":
+                return 3;
         }
         return 4;
     }

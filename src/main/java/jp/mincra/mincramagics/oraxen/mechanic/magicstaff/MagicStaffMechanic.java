@@ -34,11 +34,7 @@ public class MagicStaffMechanic extends Mechanic {
             }
 
             //TODO: Implement MaterialFilters and MagicEnchantments
-            MagicStaffNBT magicStaffNBT = new MagicStaffNBT(
-                    materials,
-                    null,
-                    null,
-                    itemBuilder.getLore());
+            MagicStaffNBT magicStaffNBT = new MagicStaffNBT(materials, itemBuilder.getLore());
 
             return magicStaffNBT.setNBTTag(itemBuilder);
         });
