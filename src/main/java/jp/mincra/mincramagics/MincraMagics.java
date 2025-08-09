@@ -94,6 +94,17 @@ public final class MincraMagics extends JavaPlugin {
     public void onDisable() {
     }
 
+    public void reload() {
+        try {
+            // FIXME: onEnable() の中身を切り出して reload() が onEnable() を呼ばないようにする
+            onEnable();
+            logger.info("MincraMagics reloaded successfully.");
+        } catch (Exception e) {
+            logger.severe("Failed to reload MincraMagics: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public static MincraMagics getInstance() {
         return INSTANCE;
     }

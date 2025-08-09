@@ -155,6 +155,14 @@ public class MincraCommand {
                 }));
     }
 
+    private CommandAPICommand reloadCommand() {
+        return new CommandAPICommand("reload")
+                .executesPlayer((sender, args) -> {
+                    MincraMagics.getInstance().reload();
+                    sender.sendMessage(Component.text("MincraMagics has been reloaded.").color(TextColor.fromHexString("#00FF00")));
+                });
+    }
+
     private void error(Player player, String message) {
         player.sendMessage(Component
                 .text(message)
