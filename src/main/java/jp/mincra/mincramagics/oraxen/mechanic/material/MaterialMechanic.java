@@ -21,7 +21,7 @@ public class MaterialMechanic extends Mechanic {
         double mp = section.getDouble("mp");
         // Fallback to strength if level is not set
         if (!section.contains("level") && section.contains("strength")) {
-            MincraMagics.getPluginLogger().log(Level.WARNING, "Material {} uses deprecated property 'strength'. Please use 'level' instead.", materialId);
+            MincraMagics.getPluginLogger().log(Level.WARNING, "Material " + materialId + " uses deprecated property 'strength'. Please use 'level' instead.");
         }
         double level = section.getDouble("level", section.getDouble("strength", 1.0));
 
