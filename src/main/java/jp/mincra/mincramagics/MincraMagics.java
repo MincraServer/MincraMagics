@@ -11,7 +11,7 @@ import jp.mincra.mincramagics.command.MincraCommand;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
-import jp.mincra.mincramagics.oraxen.mechanic.magicstaff.MagicStaffMechanicFactory;
+import jp.mincra.mincramagics.oraxen.mechanic.artifact.ArtifactMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
 import jp.mincra.mincramagics.player.MPRecoverer;
 import jp.mincra.mincramagics.player.PlayerManager;
@@ -59,7 +59,7 @@ public final class MincraMagics extends JavaPlugin {
         new GuardCommand(getServer()).registerAll();
 
         // stuff (staff) はタイポしてるけどもう後戻りはできない・・・
-        MechanicsManager.registerMechanicFactory("magicstuff", new MagicStaffMechanicFactory("magicstuff"), true);
+        MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
         OraxenItems.loadItems();

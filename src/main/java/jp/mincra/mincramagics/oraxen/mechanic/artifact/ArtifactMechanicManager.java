@@ -1,8 +1,8 @@
-package jp.mincra.mincramagics.oraxen.mechanic.magicstaff;
+package jp.mincra.mincramagics.oraxen.mechanic.artifact;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.nbtobject.MagicStaffNBT;
+import jp.mincra.mincramagics.nbtobject.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.MaterialProperty;
@@ -22,14 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class MagicStaffMechanicManager implements Listener {
-    private final MagicStaffMechanicFactory factory;
+public class ArtifactMechanicManager implements Listener {
+    private final ArtifactMechanicFactory factory;
     private final MaterialManager materialManager;
     private final SkillManager skillManager;
     private final Map<UUID, Integer> disableLeftTrigger;
     private final Server server;
 
-    public MagicStaffMechanicManager(MagicStaffMechanicFactory factory) {
+    public ArtifactMechanicManager(ArtifactMechanicFactory factory) {
         this.factory = factory;
         materialManager = MincraMagics.getMaterialManager();
         skillManager = MincraMagics.getSkillManager();
@@ -85,9 +85,9 @@ public class MagicStaffMechanicManager implements Listener {
         if (factory.isNotImplementedIn(itemId))
             return false;
 
-        MagicStaffNBT magicStaffNBT = MagicStaffNBT.getMincraNBT(item);
-        if (magicStaffNBT == null) return false;
-        Map<String, String> materials = magicStaffNBT.getMaterialMap();
+        ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(item);
+        if (artifactNBT == null) return false;
+        Map<String, String> materials = artifactNBT.getMaterialMap();
         String materialId = materials.get(triggerType.toString().toLowerCase());
         if (materialId == null) return false;
 

@@ -7,6 +7,8 @@ import jp.mincra.mincramagics.nbtobject.MaterialNBT;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.logging.Level;
+
 public class MaterialMechanic extends Mechanic {
     protected MaterialMechanic(MechanicFactory mechanicFactory, ConfigurationSection section) {
         super(mechanicFactory, section, item -> {
@@ -17,9 +19,13 @@ public class MaterialMechanic extends Mechanic {
         String skillId = section.getString("skillId");
         double cooldown = section.getDouble("cooldown");
         double mp = section.getDouble("mp");
-        double strength = section.getDouble("strength");
+        // Fallback to strength if level is not set
+        if (!section.contains("level") && section.contains("strength")) {
+            MincraMagics.getPluginLogger().log(Level.WARNING, "Material " + materialId + " uses deprecated property 'strength'. Please use 'level' instead.");
+        }
+        double level = section.getDouble("level", section.getDouble("strength", 1.0));
 
-        MaterialProperty materialProperty = new MaterialProperty(materialId, skillId, (float) cooldown, (float) mp, (float) strength);
+        MaterialProperty materialProperty = new MaterialProperty(materialId, skillId, (float) cooldown, (float) mp, (float) level);
         MincraMagics.getMaterialManager().registerMaterial(materialId, materialProperty);
     }
 }

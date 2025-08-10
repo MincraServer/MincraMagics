@@ -2,56 +2,26 @@ package jp.mincra.mincramagics.nbtobject;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
-import jp.mincra.mincramagics.MincraMagics;
+import jp.mincra.mincramagics.MaterialSlot;
 import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.mincramagics.nbtobject.components.Divider;
-import jp.mincra.mincramagics.nbtobject.pdc.PersistentDataTypeEx;
+import jp.mincra.mincramagics.nbtobject.utils.PDCUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.PluginLogger;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * MincraMagics
- * - Materials
- * - MaterialFilters
- * - MagicEnchantments
- * - DescriptionLore
- * - MagicStuffProperty
- *   - Strength
- *   - Accuracy
- *   - MPSaver
- *   - CooldownShorter
- * @param materials
- * @param magicEnchantments
- * @param materialFilters
- * @param descriptionLore
+ * Artifact (魔法武器, 魔法杖) 用の NBT オブジェクト.
  */
-public record MagicStaffNBT(List<Material> materials,
-                            List<MagicEnchantment> magicEnchantments,
-                            List<MaterialFilter> materialFilters,
-                            List<String> descriptionLore) {
-    // region NamespacedKey
-    private static final JavaPlugin mincra = MincraMagics.getInstance();
-    private static final NamespacedKey MINCRA_MAGICS_KEY = new NamespacedKey(mincra, "MincraMagics");
-    // Material
-    private static final NamespacedKey MATERIALS_KEY = new NamespacedKey(mincra, "Materials");
-    private static final NamespacedKey SLOT_KEY = new NamespacedKey(mincra, "Slot");
-    private static final NamespacedKey ID_KEY = new NamespacedKey(mincra, "Id");
-    // MagicEnchantments
-    private final static NamespacedKey MAGIC_ENCHANTMENTS_KEY = new NamespacedKey(mincra, "MagicEnchantments");
-    // MaterialFilter
-    private final static NamespacedKey MATERIAL_FILTERS_KEY = new NamespacedKey(mincra, "MaterialFilters");
-    private final static NamespacedKey LORE_KEY = new NamespacedKey(mincra, "LORE");
-    // endregion
-
+public record ArtifactNBT(List<Material> materials,
+                          List<MaterialSlot> availableSlots,
+                          List<String> availableMaterials,
+                          List<String> descriptionLore) {
     // region Oraxen Tag
     private static final Map<String, String> SLOT_TO_GLYPH = Map.of(
             "left", PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%%oraxen_mouse_left%%oraxen_shift_1%"),
@@ -62,6 +32,7 @@ public record MagicStaffNBT(List<Material> materials,
     private static final String SHIFT_1 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%");
     private static final String SHIFT_2 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_2%");
     private static final Map<String, String> MATERIAL_ID_TO_GLYPH = new HashMap<>();
+
     private static String getMaterialGlyph(String materialId) {
         if (MATERIAL_ID_TO_GLYPH.containsKey(materialId)) {
             return MATERIAL_ID_TO_GLYPH.get(materialId);
@@ -76,22 +47,31 @@ public record MagicStaffNBT(List<Material> materials,
         ItemStack item = builder.build();
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
 
-        PersistentDataContainer newMincraMagicsContainer = container.getAdapterContext().newPersistentDataContainer();
+        PersistentDataContainer mincraMagicsContainer = container.getAdapterContext().newPersistentDataContainer();
 
-        // Set Materials Container
-        PersistentDataContainer[] materialContainers = new PersistentDataContainer[materials.size()];
-        for (int i = 0; i < materials.size(); i++) {
-            Material material = materials.get(i);
-            PersistentDataContainer materialContainer = newMincraMagicsContainer.getAdapterContext().newPersistentDataContainer();
-            materialContainer.set(SLOT_KEY, PersistentDataType.STRING, material.slot());
-            materialContainer.set(ID_KEY, PersistentDataType.STRING, material.id());
+        /* Set Custom NBT Tag */
+        List<PersistentDataContainer> materialContainers = new ArrayList<>(materials.size());
+        for (Material material : materials) {
+            PersistentDataContainer materialContainer = mincraMagicsContainer.getAdapterContext().newPersistentDataContainer();
+            materialContainer.set(NamespacedKeys.SLOT_KEY, PersistentDataType.STRING, material.slot());
+            materialContainer.set(NamespacedKeys.ID_KEY, PersistentDataType.STRING, material.id());
 
-            materialContainers[i] = materialContainer;
+            materialContainers.add(materialContainer);
         }
-        newMincraMagicsContainer.set(MATERIALS_KEY, PersistentDataType.TAG_CONTAINER_ARRAY, materialContainers);
-        builder.setCustomTag(MINCRA_MAGICS_KEY, PersistentDataType.TAG_CONTAINER, newMincraMagicsContainer);
+        mincraMagicsContainer.set(NamespacedKeys.MATERIALS_KEY, PersistentDataType.LIST.dataContainers(), materialContainers);
 
-        //// Set Lore
+        // Set lore tag
+        PDCUtils.setStrings(mincraMagicsContainer, NamespacedKeys.LORE_KEY, descriptionLore);
+
+        // Set available slots and available materials tag
+        PDCUtils.setStrings(mincraMagicsContainer, NamespacedKeys.AVAILABLE_MATERIALS_KEY, availableMaterials);
+        PDCUtils.setStrings(mincraMagicsContainer, NamespacedKeys.AVAILABLE_SLOTS_KEY,
+                availableSlots.stream().map(MaterialSlot::getSlot).toList());
+
+        // Finalize the MincraMagics container
+        builder.setCustomTag(NamespacedKeys.MINCRA_MAGICS_KEY, PersistentDataType.TAG_CONTAINER, mincraMagicsContainer);
+
+        /* Set Lore */
         List<String> newLore = new ArrayList<>(descriptionLore);
 
         // Loreの横線
@@ -101,7 +81,7 @@ public record MagicStaffNBT(List<Material> materials,
         // 各スロットに装備されたマテリアルのリスト
         // 表示順に並べ替え
         List<Material> sortedMaterials = materials.stream()
-                .sorted((a, b) -> getSlotOrder(a.slot) - getSlotOrder(b.slot))
+                .sorted(Comparator.comparingInt(a -> MaterialSlot.getIndexOf(a.slot)))
                 .toList();
         for (Material material : sortedMaterials) {
             String materialId = material.id;
@@ -128,44 +108,42 @@ public record MagicStaffNBT(List<Material> materials,
     }
 
     @Nullable
-    public static MagicStaffNBT getMincraNBT(ItemStack item) {
+    public static ArtifactNBT getMincraNBT(ItemStack item) {
         if (item == null) return null;
 
-        PersistentDataContainer mincramagicsCon = item.getItemMeta().getPersistentDataContainer()
-                .get(MINCRA_MAGICS_KEY, PersistentDataType.TAG_CONTAINER);
+        final PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        PersistentDataContainer mincramagicsCon = container.get(NamespacedKeys.MINCRA_MAGICS_KEY, PersistentDataType.TAG_CONTAINER);
 
         if (mincramagicsCon == null) return null;
-        PersistentDataContainer[] materialsCon = mincramagicsCon.get(MATERIALS_KEY, PersistentDataType.TAG_CONTAINER_ARRAY);
+        PersistentDataContainer[] materialsCon = mincramagicsCon.get(NamespacedKeys.MATERIALS_KEY, PersistentDataType.TAG_CONTAINER_ARRAY);
         if (materialsCon == null) return null;
 
         // Get Materials
         List<Material> materials = new ArrayList<>();
         for (PersistentDataContainer materialCon : materialsCon) {
-            String slot = materialCon.get(SLOT_KEY, PersistentDataType.STRING);
-            String id = materialCon.get(ID_KEY, PersistentDataType.STRING);
+            String slot = materialCon.get(NamespacedKeys.SLOT_KEY, PersistentDataType.STRING);
+            String id = materialCon.get(NamespacedKeys.ID_KEY, PersistentDataType.STRING);
             if (slot == null || id == null) continue;
             materials.add(new Material(slot.toLowerCase(), id));
         }
 
         // Get Lore
-        List<String> defaultLore;
-        String[] loreInNBT = mincramagicsCon.get(LORE_KEY, PersistentDataTypeEx.STRING_ARRAY);
-        if (loreInNBT != null) {
-            defaultLore = Arrays.stream(loreInNBT).toList();
-        } else {
-            defaultLore = new ArrayList<>();
-        }
+        List<String> loreInNBT = PDCUtils.getStrings(mincramagicsCon, NamespacedKeys.LORE_KEY);
+
+        // Get Available Slots
+        List<String> availableSlotsInNBT = PDCUtils.getStrings(mincramagicsCon, NamespacedKeys.AVAILABLE_SLOTS_KEY);
+        List<MaterialSlot> availableSlots = availableSlotsInNBT == null ? new ArrayList<>() : availableSlotsInNBT.stream().map(MaterialSlot::fromString)
+                .filter(Optional::isPresent).map(Optional::get).toList();
+        // Available Materials
+        List<String> availableMaterialsInNBT = PDCUtils.getStrings(mincramagicsCon, NamespacedKeys.AVAILABLE_MATERIALS_KEY);
+        List<String> availableMaterials = availableMaterialsInNBT == null ? new ArrayList<>() : availableMaterialsInNBT.stream().toList();
 
         //TODO: Implement MaterialFilters and MagicEnchantments
-        return new MagicStaffNBT(materials,
-                null,
-                null,
-                defaultLore);
+        return new ArtifactNBT(materials, availableSlots, availableMaterials, loreInNBT);
     }
 
     /**
-     *
-     * @return (K,V) = (Slot, Id)
+     * @return (K, V) = (Slot, Id)
      */
     public Map<String, String> getMaterialMap() {
         return materials.stream()
@@ -186,13 +164,13 @@ public record MagicStaffNBT(List<Material> materials,
         }
     }
 
-    private int getSlotOrder(String slot) {
-        switch (slot) {
-            case "left": return 0;
-            case "right": return 1;
-            case "swap": return 2;
-            case "drop": return 3;
-        }
-        return 4;
+    public boolean isAvailableSlot(MaterialSlot slot) {
+        // 空であれば全てのスロットが使用可能
+        return availableSlots.isEmpty() || availableSlots.contains(slot);
+    }
+
+    public boolean isAvailableMaterial(String materialId) {
+        // 空であれば全てのマテリアルが使用可能
+        return availableMaterials.isEmpty() || availableMaterials.contains(materialId);
     }
 }

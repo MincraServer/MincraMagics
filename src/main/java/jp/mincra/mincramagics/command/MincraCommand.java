@@ -38,6 +38,7 @@ public class MincraCommand {
                 .withSubcommand(effectCommand())
                 .withSubcommand(vfxCommand())
                 .withSubcommand(guiCommand())
+                .withSubcommand(reloadCommand())
                 .register();
     }
 
@@ -71,7 +72,7 @@ public class MincraCommand {
                 )))
                 .withArguments(new FloatArgument("cooldown"))
                 .withArguments(new IntegerArgument("consumed_mp"))
-                .withArguments(new IntegerArgument("strength"))
+                .withArguments(new IntegerArgument("level"))
                 .executesPlayer((sender, args) -> {
                     SkillManager skillManager = MincraMagics.getSkillManager();
                     Player caster = (Player) args.get(0);
