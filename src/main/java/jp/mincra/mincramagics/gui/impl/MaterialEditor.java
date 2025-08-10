@@ -22,7 +22,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -164,7 +163,7 @@ public class MaterialEditor extends InventoryGUI {
             return setArtifact(placedItem, slot);
         } else {
             // マテリアルのとき
-            return registerMaterial(placedItem, slot);
+            return setMaterial(placedItem, slot);
         }
     }
 
@@ -177,7 +176,7 @@ public class MaterialEditor extends InventoryGUI {
             changeTitle(inactiveTitle);
         } else {
             // マテリアルを取ったとき
-            registerMaterial(null, slot);
+            setMaterial(null, slot);
         }
     }
 
@@ -242,12 +241,10 @@ public class MaterialEditor extends InventoryGUI {
     }
 
     /**
-     *
-     * @param materialItem
-     * @param slot
-     * @return 成功したらtrue
+     * @param materialItem マテリアルアイテム
+     * @param slot         スロット番号 (12~15)
      */
-    private boolean registerMaterial(ItemStack materialItem, int slot) {
+    private boolean setMaterial(ItemStack materialItem, int slot) {
         // マテリアルを取ったとき
         // 魔法武器が置いてなかったらキャンセル
         ItemStack magicStuff = getMagicStaff();
