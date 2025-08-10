@@ -161,28 +161,7 @@ public class MaterialEditor extends InventoryGUI {
      */
     private boolean onPlace(int slot, ItemStack placedItem) {
         if (isMagicStaffSlot(slot)) {
-            if (placedItem == null) {
-                return false;
-            }
-
-            // 魔法武器スロットに置いたとき
-            MagicStaffNBT magicStaffNBT = MagicStaffNBT.getMincraNBT(placedItem);
-            if (magicStaffNBT == null) return false;
-
-            Map<String, String> materialMap = magicStaffNBT.getMaterialMap();
-
-            for (int i = 0; i < 4; i++) {
-                String slotId = slotIdList.get(i);
-                if (materialMap.containsKey(slotId)) {
-                    String materialId = materialMap.get(slotId);
-                    if (OraxenItems.exists(materialId)) {
-                        ItemStack material = OraxenItems.getItemById(materialId).build();
-                        inv.setItem(12 + i, material);
-                    }
-                }
-            }
-            changeTitle(activeTitle);
-            return true;
+            return setArtifact(placedItem, slot);
         } else {
             // マテリアルのとき
             return registerMaterial(placedItem, slot);
@@ -235,6 +214,31 @@ public class MaterialEditor extends InventoryGUI {
 
     private boolean isMagicStaffSlot(int slot) {
         return slot == 10;
+    }
+
+    private boolean setArtifact(ItemStack artifactItem, int slot) {
+        if (artifactItem == null) {
+            return false;
+        }
+
+        // 魔法武器スロットに置いたとき
+        MagicStaffNBT magicStaffNBT = MagicStaffNBT.getMincraNBT(artifactItem);
+        if (magicStaffNBT == null) return false;
+
+        Map<String, String> materialMap = magicStaffNBT.getMaterialMap();
+
+        for (int i = 0; i < 4; i++) {
+            String slotId = slotIdList.get(i);
+            if (materialMap.containsKey(slotId)) {
+                String materialId = materialMap.get(slotId);
+                if (OraxenItems.exists(materialId)) {
+                    ItemStack material = OraxenItems.getItemById(materialId).build();
+                    inv.setItem(12 + i, material);
+                }
+            }
+        }
+        changeTitle(activeTitle);
+        return true;
     }
 
     /**
