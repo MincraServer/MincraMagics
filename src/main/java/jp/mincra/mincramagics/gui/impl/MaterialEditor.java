@@ -136,7 +136,7 @@ public class MaterialEditor extends InventoryGUI {
                 event.setCancelled(!handlePlaceItem(slot, cursorItem));
             } else if (action == InventoryAction.PICKUP_ALL) {
                 event.setCancelled(!handlePickupItem(slot));
-            } else if (action == InventoryAction.SWAP_WITH_CURSOR && !isMagicStaffSlot(slot)) {
+            } else if (action == InventoryAction.SWAP_WITH_CURSOR && !isArtifact(slot)) {
                 // マテリアルの入れ替えしかできない(magicstuff入れ替えは実装がめんどくさい)
                 event.setCancelled(!handlePickupItem(slot));
                 event.setCancelled(!handlePlaceItem(slot, cursorItem));
@@ -163,7 +163,7 @@ public class MaterialEditor extends InventoryGUI {
         // MaterialEditorのインベントリかどうか
         if (!event.getInventory().equals(getInventory())) return;
 
-        ItemStack magicStuff = getMagicStaffItem();
+        ItemStack magicStuff = getArtifactItem();
         // 魔法武器がまだスロットに入ってたら
         if (magicStuff != null) {
             if (isFullInventory(player)) {
@@ -185,7 +185,7 @@ public class MaterialEditor extends InventoryGUI {
      * @return 適切なアイテムが置かれたらtrue
      */
     private boolean handlePlaceItem(int slot, ItemStack placedItem) {
-        if (isMagicStaffSlot(slot)) {
+        if (isArtifact(slot)) {
             return setArtifact(placedItem, slot);
         } else {
             // マテリアルのとき
@@ -201,7 +201,7 @@ public class MaterialEditor extends InventoryGUI {
      * @param slot 取られたスロット
      */
     private boolean handlePickupItem(int slot) {
-        if (isMagicStaffSlot(slot)) {
+        if (isArtifact(slot)) {
             return unsetArtifact(slot);
         } else {
             if (!isAvailableMaterialSlot(slot)) {
@@ -217,7 +217,7 @@ public class MaterialEditor extends InventoryGUI {
             return true; // マテリアルスロットの範囲外
         }
 
-        final ItemStack artifact = getMagicStaffItem();
+        final ItemStack artifact = getArtifactItem();
         final ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(artifact);
         if (artifactNBT == null) {
             return true; // 魔法武器がない場合は未使用スロット
@@ -243,15 +243,15 @@ public class MaterialEditor extends InventoryGUI {
     }
 
     @Nullable
-    private ItemStack getMagicStaffItem() {
+    private ItemStack getArtifactItem() {
         return inv.getItem(ARTIFACT_SLOT_INDEX);
     }
 
-    private void setMagicStaff(ItemStack item) {
+    private void setArtifact(ItemStack item) {
         inv.setItem(ARTIFACT_SLOT_INDEX, item);
     }
 
-    private boolean isMagicStaffSlot(int slot) {
+    private boolean isArtifact(int slot) {
         return slot == ARTIFACT_SLOT_INDEX;
     }
 
@@ -317,7 +317,7 @@ public class MaterialEditor extends InventoryGUI {
     private boolean setMaterial(ItemStack materialItem, int slot) {
         // マテリアルを取ったとき
         // 魔法武器が置いてなかったらキャンセル
-        ItemStack magicStuff = getMagicStaffItem();
+        ItemStack magicStuff = getArtifactItem();
         if (magicStuff == null) return false;
 
         // 魔法武器のNBT入手
@@ -336,7 +336,7 @@ public class MaterialEditor extends InventoryGUI {
         }
 
         ItemStack newItem = artifactNBT.setNBTTag(new ItemBuilder(magicStuff)).build();
-        setMagicStaff(newItem);
+        setArtifact(newItem);
 
         return true;
     }
