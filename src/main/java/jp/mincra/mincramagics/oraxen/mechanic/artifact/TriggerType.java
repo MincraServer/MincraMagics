@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.oraxen.mechanic.magicstaff;
+package jp.mincra.mincramagics.oraxen.mechanic.artifact;
 
 /**
  * TriggerType when player uses the material actively.

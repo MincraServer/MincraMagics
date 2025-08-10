@@ -11,7 +11,7 @@ import jp.mincra.mincramagics.command.MincraCommand;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
-import jp.mincra.mincramagics.oraxen.mechanic.magicstaff.MagicStaffMechanicFactory;
+import jp.mincra.mincramagics.oraxen.mechanic.artifact.MagicStaffMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
 import jp.mincra.mincramagics.player.MPRecoverer;
 import jp.mincra.mincramagics.player.PlayerManager;

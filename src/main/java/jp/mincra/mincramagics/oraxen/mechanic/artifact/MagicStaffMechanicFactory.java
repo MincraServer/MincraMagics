@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.oraxen.mechanic.magicstaff;
+package jp.mincra.mincramagics.oraxen.mechanic.artifact;
 
 import io.th0rgal.oraxen.OraxenPlugin;
 import io.th0rgal.oraxen.mechanics.Mechanic;
