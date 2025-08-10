@@ -22,14 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class MagicStaffMechanicManager implements Listener {
-    private final MagicStaffMechanicFactory factory;
+public class ArtifactMechanicManager implements Listener {
+    private final ArtifactMechanicFactory factory;
     private final MaterialManager materialManager;
     private final SkillManager skillManager;
     private final Map<UUID, Integer> disableLeftTrigger;
     private final Server server;
 
-    public MagicStaffMechanicManager(MagicStaffMechanicFactory factory) {
+    public ArtifactMechanicManager(ArtifactMechanicFactory factory) {
         this.factory = factory;
         materialManager = MincraMagics.getMaterialManager();
         skillManager = MincraMagics.getSkillManager();

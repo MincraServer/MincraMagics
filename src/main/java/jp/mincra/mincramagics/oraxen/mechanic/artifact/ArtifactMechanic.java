@@ -12,11 +12,11 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class MagicStaffMechanic extends Mechanic {
+public class ArtifactMechanic extends Mechanic {
     private static final Set<String> availableSlot = Arrays.stream(TriggerType.values())
             .map(triggerType -> triggerType.toString().toLowerCase()).collect(Collectors.toSet());
 
-    protected MagicStaffMechanic(MechanicFactory mechanicFactory, ConfigurationSection section) {
+    protected ArtifactMechanic(MechanicFactory mechanicFactory, ConfigurationSection section) {
         super(mechanicFactory, section, itemBuilder -> {
             List<Material> materials = new ArrayList<>();
 
