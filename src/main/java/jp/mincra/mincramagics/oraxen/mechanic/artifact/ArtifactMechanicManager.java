@@ -2,7 +2,7 @@ package jp.mincra.mincramagics.oraxen.mechanic.artifact;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.nbtobject.MagicStaffNBT;
+import jp.mincra.mincramagics.nbtobject.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.MaterialProperty;
@@ -85,9 +85,9 @@ public class ArtifactMechanicManager implements Listener {
         if (factory.isNotImplementedIn(itemId))
             return false;
 
-        MagicStaffNBT magicStaffNBT = MagicStaffNBT.getMincraNBT(item);
-        if (magicStaffNBT == null) return false;
-        Map<String, String> materials = magicStaffNBT.getMaterialMap();
+        ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(item);
+        if (artifactNBT == null) return false;
+        Map<String, String> materials = artifactNBT.getMaterialMap();
         String materialId = materials.get(triggerType.toString().toLowerCase());
         if (materialId == null) return false;
 

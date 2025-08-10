@@ -4,7 +4,7 @@ import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.MechanicFactory;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.nbtobject.Material;
-import jp.mincra.mincramagics.nbtobject.MagicStaffNBT;
+import jp.mincra.mincramagics.nbtobject.ArtifactNBT;
 import jp.mincra.mincramagics.MaterialSlot;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -47,9 +47,9 @@ public class ArtifactMechanic extends Mechanic {
             List<String> availableMaterials = section.getStringList("available_materials");
 
             //TODO: Implement MaterialFilters and MagicEnchantments
-            MagicStaffNBT magicStaffNBT = new MagicStaffNBT(materials, availableSlots, availableMaterials, itemBuilder.getLore());
+            ArtifactNBT artifactNBT = new ArtifactNBT(materials, availableSlots, availableMaterials, itemBuilder.getLore());
 
-            return magicStaffNBT.setNBTTag(itemBuilder);
+            return artifactNBT.setNBTTag(itemBuilder);
         });
     }
 }

@@ -7,7 +7,7 @@ import jp.mincra.bktween.TickTime;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.mincramagics.gui.InventoryGUI;
-import jp.mincra.mincramagics.nbtobject.MagicStaffNBT;
+import jp.mincra.mincramagics.nbtobject.ArtifactNBT;
 import jp.mincra.mincramagics.MaterialSlot;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.titleupdater.InventoryUpdate;
@@ -218,7 +218,7 @@ public class MaterialEditor extends InventoryGUI {
         }
 
         final ItemStack artifact = getMagicStaffItem();
-        final MagicStaffNBT artifactNBT = MagicStaffNBT.getMincraNBT(artifact);
+        final ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(artifact);
         if (artifactNBT == null) {
             return true; // 魔法武器がない場合は未使用スロット
         }
@@ -263,10 +263,10 @@ public class MaterialEditor extends InventoryGUI {
         }
 
         // 魔法武器スロットに置いたとき
-        MagicStaffNBT magicStaffNBT = MagicStaffNBT.getMincraNBT(artifactItem);
-        if (magicStaffNBT == null) return false;
+        ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(artifactItem);
+        if (artifactNBT == null) return false;
 
-        Map<String, String> materialMap = magicStaffNBT.getMaterialMap();
+        Map<String, String> materialMap = artifactNBT.getMaterialMap();
 
         for (int i = 0; i < 4; i++) {
             MaterialSlot mSlot = MaterialSlot.fromIndex(i);
@@ -286,7 +286,7 @@ public class MaterialEditor extends InventoryGUI {
 
         // 利用可能でないスロットに barrier を置く
         final MaterialSlot[] allSlots = MaterialSlot.values();
-        final List<MaterialSlot> availableSlots = magicStaffNBT.availableSlots();
+        final List<MaterialSlot> availableSlots = artifactNBT.availableSlots();
         final List<MaterialSlot> unavailableSlots = Arrays.stream(allSlots)
                 .filter(materialSlot -> !availableSlots.contains(materialSlot))
                 .toList();
@@ -321,21 +321,21 @@ public class MaterialEditor extends InventoryGUI {
         if (magicStuff == null) return false;
 
         // 魔法武器のNBT入手
-        MagicStaffNBT magicStaffNBT = MagicStaffNBT.getMincraNBT(magicStuff);
-        if (magicStaffNBT == null) return false;
+        ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(magicStuff);
+        if (artifactNBT == null) return false;
 
         if (materialItem != null) {
             String oraxenMaterialItemId = OraxenItems.getIdByItem(materialItem);
             if (!OraxenItems.exists(materialItem)) return false;
             if (!materialManager.isRegistered(oraxenMaterialItemId)) return false;
-            if (!magicStaffNBT.isAvailableMaterial(oraxenMaterialItemId)) return false;
+            if (!artifactNBT.isAvailableMaterial(oraxenMaterialItemId)) return false;
 
-            magicStaffNBT.setMaterial(MaterialSlot.fromIndexAsString(slot - FIRST_MATERIAL_SLOT_INDEX), oraxenMaterialItemId);
+            artifactNBT.setMaterial(MaterialSlot.fromIndexAsString(slot - FIRST_MATERIAL_SLOT_INDEX), oraxenMaterialItemId);
         } else {
-            magicStaffNBT.removeMaterial(MaterialSlot.fromIndexAsString(slot - FIRST_MATERIAL_SLOT_INDEX));
+            artifactNBT.removeMaterial(MaterialSlot.fromIndexAsString(slot - FIRST_MATERIAL_SLOT_INDEX));
         }
 
-        ItemStack newItem = magicStaffNBT.setNBTTag(new ItemBuilder(magicStuff)).build();
+        ItemStack newItem = artifactNBT.setNBTTag(new ItemBuilder(magicStuff)).build();
         setMagicStaff(newItem);
 
         return true;

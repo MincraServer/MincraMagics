@@ -16,24 +16,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * MincraMagics
- * - Materials
- * - MaterialFilters
- * - MagicEnchantments
- * - DescriptionLore
- * - MagicStuffProperty
- * - Strength
- * - Accuracy
- * - MPSaver
- * - CooldownShorter
- *
- * @param materials
- * @param descriptionLore
+ * Artifact (魔法武器, 魔法杖) 用の NBT オブジェクト.
  */
-public record MagicStaffNBT(List<Material> materials,
-                            List<MaterialSlot> availableSlots,
-                            List<String> availableMaterials,
-                            List<String> descriptionLore) {
+public record ArtifactNBT(List<Material> materials,
+                          List<MaterialSlot> availableSlots,
+                          List<String> availableMaterials,
+                          List<String> descriptionLore) {
     // region Oraxen Tag
     private static final Map<String, String> SLOT_TO_GLYPH = Map.of(
             "left", PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%%oraxen_mouse_left%%oraxen_shift_1%"),
@@ -120,7 +108,7 @@ public record MagicStaffNBT(List<Material> materials,
     }
 
     @Nullable
-    public static MagicStaffNBT getMincraNBT(ItemStack item) {
+    public static ArtifactNBT getMincraNBT(ItemStack item) {
         if (item == null) return null;
 
         final PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
@@ -151,7 +139,7 @@ public record MagicStaffNBT(List<Material> materials,
         List<String> availableMaterials = availableMaterialsInNBT == null ? new ArrayList<>() : availableMaterialsInNBT.stream().toList();
 
         //TODO: Implement MaterialFilters and MagicEnchantments
-        return new MagicStaffNBT(materials, availableSlots, availableMaterials, loreInNBT);
+        return new ArtifactNBT(materials, availableSlots, availableMaterials, loreInNBT);
     }
 
     /**
