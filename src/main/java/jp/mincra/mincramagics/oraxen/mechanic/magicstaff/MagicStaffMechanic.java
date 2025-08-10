@@ -5,7 +5,7 @@ import io.th0rgal.oraxen.mechanics.MechanicFactory;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.nbtobject.Material;
 import jp.mincra.mincramagics.nbtobject.MagicStaffNBT;
-import jp.mincra.mincramagics.nbtobject.MaterialSlot;
+import jp.mincra.mincramagics.MaterialSlot;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.*;
