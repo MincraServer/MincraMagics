@@ -32,7 +32,7 @@ public class IceTreeSnowball extends MagicSkill implements Listener {
 
         // Parameters
         final double level = property.level();
-        final double velocityMultiplier = 0.9 + level * 0.3;
+        final double velocityMultiplier = 1.1 + level * 0.3;
         final int duration = (int) (level * 4 * 20); // 4 seconds per level
 
         // Core functionality
@@ -45,7 +45,7 @@ public class IceTreeSnowball extends MagicSkill implements Listener {
         summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, player, duration));
 
         // Effect and sound
-        player.playSound(playerLoc, Sound.ENTITY_BREEZE_SLIDE, 1F, 2F);
+        player.playSound(playerLoc, Sound.ENTITY_BREEZE_SHOOT, 0.2F, 2F);
         Vfx vfx = vfxManager.getVfx("ice");
         Vector axis = new Vector(0, 1, 0);
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, axis, 0);
@@ -63,8 +63,15 @@ public class IceTreeSnowball extends MagicSkill implements Listener {
 
         if (!(e.getEntity() instanceof LivingEntity entity)) return;
 
-        // ダメージを与える
         MagicSnowball snowball = summonedSnowballs.get(uuid);
+
+        // if the entity is shooter, ignore the hit
+        if (snowball.shooter.equals(entity)) {
+            e.setCancelled(true);
+            return;
+        }
+
+        // ダメージを与える
         freezeManager.freeze(entity, snowball.shooter, snowball.duration);
 
         // スノーボールを削除
