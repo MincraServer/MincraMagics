@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -19,31 +18,33 @@ public class Resistance extends MagicSkill {
     public boolean onTrigger(Player player, MaterialProperty property) {
         if (!super.onTrigger(player, property)) return false;
 
-        // 視線の先にいるプレイヤーを取得
-        Entity target = player.getTargetEntity(3);
-        if (!(target instanceof Player targetPlayer)) {
-            player.sendMessage("§c視線の先にプレイヤーがいません。");
-            return false;
-        }
-
         // Parameters
         int level = (int) property.level();
+        int radius = level * 3; // 3 blocks per level
         int duration = 60 * 20; // 60 seconds in ticks
         int amplifier = level - 1;
 
         // Core functionality
-        targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, duration, amplifier, false, false, true));
-
-        // Send messages
-        player.sendMessage(Component.text(targetPlayer.getName() + "に結界の杖lv1を使用しました").color(NamedTextColor.GREEN));
-        targetPlayer.sendMessage(Component.text(player.getName() + "から結界の杖lv1を受けました").color(NamedTextColor.GREEN));
+        final var targets = player.getLocation().getNearbyLivingEntities(radius, 3, radius, e -> e instanceof Player).stream().map(Player.class::cast).toList();
+        if (targets.isEmpty()) {
+            player.sendMessage(Component.text("近くにプレイヤーがいません").color(NamedTextColor.RED));
+            return false;
+        }
+        Vfx vfx = vfxManager.getVfx("instant_effect_pentagon");
+        Component itemName = player.getInventory().getItemInMainHand().getItemMeta().itemName();
+        // Add Resistance effect
+        for (Player target : targets) {
+            target.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, duration, amplifier, false, false, true));
+            // Send messages
+            player.sendMessage(Component.text(target.getName() + "に").color(NamedTextColor.GREEN).append(itemName).append(Component.text("を使用しました").color(NamedTextColor.GREEN)));
+            target.sendMessage(Component.text(player.getName() + "から").color(NamedTextColor.GREEN).append(itemName).append(Component.text("を受けました").color(NamedTextColor.GREEN)));
+            vfx.playEffect(target.getLocation().add(0, 0.5, 0), 5, new Vector(0, 1, 0), 0);
+        }
 
         // Effect and sound
         Location playerLoc = player.getLocation();
         player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
-        Vfx vfx = vfxManager.getVfx("instant_effect_pentagon");
-        Vector axis = new Vector(0, 1, 0);
-        vfx.playEffect(target.getLocation().add(0, 0.5, 0), 5, axis, 0);
+        vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
 
         return true;
     }
