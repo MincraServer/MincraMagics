@@ -86,6 +86,11 @@ public class BKVfx {
                         5, Particle.BUBBLE_POP)
                         .setSpeed(0.1f)
                         .setOffset(new Vector(0.003, 0.003, 0.003)));
+        vfxManager.registerVfx("electric_spark_hexagon",
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
+                        5, Particle.ELECTRIC_SPARK)
+                        .setSpeed(0.1f)
+                        .setOffset(new Vector(0.003, 0.003, 0.003)));
     }
 
     public VfxManager getVfxManager() {
