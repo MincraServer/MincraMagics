@@ -29,7 +29,7 @@ public class Charge extends MagicSkill {
         player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
         MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
 
-        int strength = (int) property.strength();
+        int strength = (int) property.level();
         final int maxMp = strength * 7;
 
         new BKTween(MincraMagics.getInstance())

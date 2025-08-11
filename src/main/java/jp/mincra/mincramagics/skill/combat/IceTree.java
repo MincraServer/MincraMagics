@@ -18,9 +18,9 @@ public class IceTree extends MagicSkill {
     public boolean onTrigger(Player player, MaterialProperty property) {
         if (!super.onTrigger(player, property)) return false;
 
-        int strength = (int) property.strength();
-        final int radius = strength * 5;
-        final int durationTick = strength * 130;
+        int level = (int) property.level();
+        final int radius = level * 5;
+        final int durationTick = level * 130;
 
         World world = player.getWorld();
         Location playerLoc = player.getLocation();

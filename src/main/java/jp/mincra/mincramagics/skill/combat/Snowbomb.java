@@ -1,7 +1,6 @@
 package jp.mincra.mincramagics.skill.combat;
 
 import jp.mincra.bkvfx.Vfx;
-import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Location;
@@ -47,7 +46,7 @@ public class Snowbomb extends MagicSkill implements Listener {
         snowball.setShooter(player);
         snowball.setVelocity(playerLoc.getDirection().multiply(1.5));
         // リスナー用にMapに入れる
-        summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, property.strength() * 3));
+        summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, property.level() * 3));
         return true;
     }
 

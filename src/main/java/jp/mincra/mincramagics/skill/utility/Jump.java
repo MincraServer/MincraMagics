@@ -1,7 +1,6 @@
 package jp.mincra.mincramagics.skill.utility;
 
 import de.tr7zw.nbtapi.NBTEntity;
-import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Bukkit;
@@ -28,7 +27,7 @@ public class Jump extends MagicSkill implements Listener {
         if (!super.onTrigger(player, property)) return false;
 
         // Jump
-        float strength = property.strength();
+        float strength = property.level();
         Vector playerVelocity = player.getVelocity();
         if (playerVelocity.getY() > 0) {
             playerVelocity.add(new Vector(0, 0.4 * strength, 0));

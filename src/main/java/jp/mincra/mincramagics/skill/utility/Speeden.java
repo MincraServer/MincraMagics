@@ -25,7 +25,7 @@ public class Speeden extends MagicSkill implements Listener {
     public boolean onTrigger(Player player, MaterialProperty property) {
         if (!super.onTrigger(player, property)) return false;
 
-        int strength = (int) property.strength();
+        int strength = (int) property.level();
 
         int duration = 300 * strength;
         player.addPotionEffect(PotionEffectType.SPEED.createEffect(duration, 15 * strength));
