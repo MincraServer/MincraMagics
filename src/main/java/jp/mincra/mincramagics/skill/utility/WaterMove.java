@@ -25,8 +25,8 @@ public class WaterMove extends MagicSkill implements Listener {
 
         // Parameters
         final int level = (int) property.level();
-        final int duration = level * 45 * 20; // 45 seconds in ticks
-        final double speedMultiplier = 1 + level * 0.2;
+        final int duration = level * 30 * 20; // 30 seconds in ticks
+        final double speedMultiplier = 0.6 + level * 0.2;
 
         // Core functionality
         final int currentTick = Bukkit.getCurrentTick();
@@ -36,9 +36,8 @@ public class WaterMove extends MagicSkill implements Listener {
         // Effect and sound
         Vfx vfx = vfxManager.getVfx("bubble_pop_hexagon");
         Location playerLoc = player.getLocation();
-        player.playSound(playerLoc, Sound.ENTITY_DOLPHIN_SPLASH, 2F, 1F);
+        player.playSound(playerLoc, Sound.ENTITY_DOLPHIN_SPLASH, 1F, 2F);
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
-
 
         return true;
     }
@@ -60,12 +59,9 @@ public class WaterMove extends MagicSkill implements Listener {
             return;
         }
 
-        final double yaw = player.getY();
-        final double pitch = player.getPitch();
-        // -10F ~ 0.6Fの範囲でy方向のVelocityを計算
-        final float vVec = Math.max(Math.min((float) (-Math.tan(pitch * Math.PI / 180.0) * 0.6F), 0.6F), -10F);
-
-        Vector vec = new Vector(-1 * Math.sin(yaw * Math.PI / 180.0) * 0.6F, vVec, Math.cos(yaw * Math.PI / 180.0) * 0.6F).multiply(prop.speedMultiplier);
+        final Vector tmpVec = player.getLocation().getDirection().multiply(prop.speedMultiplier);
+        // 上下方向へはある程度までしか上がらないようにする (-0.3 ~ 0.5)
+        final Vector vec = tmpVec.setY(Math.max(-0.3, Math.min(0.5, tmpVec.getY())));
         player.setVelocity(vec);
 
         // Effect and sound
