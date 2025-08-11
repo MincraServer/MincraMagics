@@ -108,7 +108,7 @@ public record ArtifactNBT(List<Material> materials,
     }
 
     @Nullable
-    public static ArtifactNBT getMincraNBT(ItemStack item) {
+    public static ArtifactNBT fromItem(ItemStack item) {
         if (item == null) return null;
 
         final PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();

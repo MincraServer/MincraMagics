@@ -218,7 +218,7 @@ public class MaterialEditor extends InventoryGUI {
         }
 
         final ItemStack artifact = getArtifactItem();
-        final ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(artifact);
+        final ArtifactNBT artifactNBT = ArtifactNBT.fromItem(artifact);
         if (artifactNBT == null) {
             return true; // 魔法武器がない場合は未使用スロット
         }
@@ -263,7 +263,7 @@ public class MaterialEditor extends InventoryGUI {
         }
 
         // 魔法武器スロットに置いたとき
-        ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(artifactItem);
+        ArtifactNBT artifactNBT = ArtifactNBT.fromItem(artifactItem);
         if (artifactNBT == null) return false;
 
         Map<String, String> materialMap = artifactNBT.getMaterialMap();
@@ -321,7 +321,7 @@ public class MaterialEditor extends InventoryGUI {
         if (magicStuff == null) return false;
 
         // 魔法武器のNBT入手
-        ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(magicStuff);
+        ArtifactNBT artifactNBT = ArtifactNBT.fromItem(magicStuff);
         if (artifactNBT == null) return false;
 
         if (materialItem != null) {
