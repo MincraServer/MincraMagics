@@ -21,7 +21,7 @@ public class MaterialProperty {
         return this;
     }
 
-    public float strength() {
+    public float level() {
         return level;
     }
 

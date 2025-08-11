@@ -46,7 +46,7 @@ public class Freeze extends MagicSkill implements Listener {
         Vector gap = player.getLocation().getDirection().multiply(2);
         AtomicReference<Location> atomicSearchLoc = new AtomicReference<>(eyeLoc.clone().add(gap));
         UUID playerUuid = player.getUniqueId();
-        float strength = property.strength();
+        float strength = property.level();
 
         // 前方に地面に沿ってターゲットを探索する
         new BKTween(MincraMagics.getInstance())

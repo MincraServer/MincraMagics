@@ -1,6 +1,5 @@
 package jp.mincra.mincramagics.skill.utility;
 
-import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Location;
@@ -19,7 +18,7 @@ public class Move extends MagicSkill {
         World world = player.getLocation().getWorld();
 
         // Move
-        float strength = property.strength();
+        float strength = property.level();
         Vector velocity = playerLoc.getDirection().normalize().multiply(strength).setY(-0.5);
         player.setVelocity(velocity);
         Location targetLoc = playerLoc.clone().add(velocity.multiply(strength * 1).setY(-0.5));

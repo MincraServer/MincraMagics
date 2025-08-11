@@ -29,7 +29,7 @@ public class Luminous extends MagicSkill {
     public boolean onTrigger(Player player, MaterialProperty property) {
         if (!super.onTrigger(player, property)) return false;
 
-        int strength = (int) property.strength();
+        int strength = (int) property.level();
 
         final int maxDistance = strength * 20;
         final int speedPerSec = strength * 2;

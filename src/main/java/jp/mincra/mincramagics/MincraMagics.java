@@ -72,6 +72,11 @@ public final class MincraMagics extends JavaPlugin {
         Snowbomb snowbomb = new Snowbomb();
         skillManager.registerSkill("snowbomb", snowbomb);
         pluginManager.registerEvents(snowbomb, this);
+        skillManager.registerSkill("resistance", new Resistance());
+        IceTreeSnowball iceTreeSnowball = new IceTreeSnowball();
+        skillManager.registerSkill("icetree_snowball", iceTreeSnowball);
+        pluginManager.registerEvents(iceTreeSnowball, this);
+        skillManager.registerSkill("lightning", new Lightning());
 
         // Healing
         skillManager.registerSkill("heal", new Heal());
@@ -87,6 +92,10 @@ public final class MincraMagics extends JavaPlugin {
         pluginManager.registerEvents(speeden, this);
         skillManager.registerSkill("wraith", new Wraith());
         skillManager.registerSkill("luminous", new Luminous(this));
+        skillManager.registerSkill("mine", new Mine());
+        WaterMove waterMove = new WaterMove();
+        skillManager.registerSkill("water_move", waterMove);
+        pluginManager.registerEvents(waterMove, this);
 
     }
 

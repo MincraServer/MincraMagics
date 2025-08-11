@@ -85,7 +85,7 @@ public class ArtifactMechanicManager implements Listener {
         if (factory.isNotImplementedIn(itemId))
             return false;
 
-        ArtifactNBT artifactNBT = ArtifactNBT.getMincraNBT(item);
+        ArtifactNBT artifactNBT = ArtifactNBT.fromItem(item);
         if (artifactNBT == null) return false;
         Map<String, String> materials = artifactNBT.getMaterialMap();
         String materialId = materials.get(triggerType.toString().toLowerCase());
