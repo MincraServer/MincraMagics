@@ -3,10 +3,12 @@ package jp.mincra.mincramagics.skill.combat;
 import jp.mincra.bkvfx.Vfx;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
+import jp.mincra.mincramagics.skill.utils.FreezeManager;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
@@ -19,34 +21,35 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Snowbomb extends MagicSkill implements Listener {
+public class IceTreeSnowball extends MagicSkill implements Listener {
+    private final FreezeManager freezeManager = FreezeManager.getInstance();
     private final Map<UUID, MagicSnowball> summonedSnowballs = new HashMap<>();
-    private record MagicSnowball(Snowball snowball, double damage) {}
+    private record MagicSnowball(Snowball snowball, Player shooter, int duration) {}
 
     @Override
     public boolean onTrigger(Player player, MaterialProperty property) {
         if (!super.onTrigger(player, property)) return false;
 
-        Location playerLoc = player.getLocation();
+        // Parameters
+        final double level = property.level();
+        final double velocityMultiplier = level * 1.5;
+        final int duration = (int) (level * 5 * 20); // 5 seconds per level
 
-        // Play Vfx
-        Location vfxLoc = playerLoc.clone().add(new Vector(0, 0.5, 0));
-        Vector axis = new Vector(0, 1, 0);
-        Vfx vfx = vfxManager.getVfx("snowbomb");
-        vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
-
+        // Core functionality
         World world = player.getWorld();
-
-        // Play Sound
-        world.playSound(playerLoc, Sound.ENTITY_SNOWBALL_THROW, 1F, 1.15F);
-        world.playSound(playerLoc, Sound.ENTITY_BREEZE_SHOOT, 0.15F, 1.05F);
-
-        // Summon Snowball
+        Location playerLoc = player.getLocation();
         Snowball snowball = world.spawn(player.getEyeLocation(), Snowball.class);
         snowball.setShooter(player);
-        snowball.setVelocity(playerLoc.getDirection().multiply(1.5));
-        // リスナー用にMapに入れる
-        summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, property.level() * 3));
+        snowball.setVelocity(playerLoc.getDirection().multiply(velocityMultiplier));
+        // summonedSnowballs でリスナー用に管理
+        summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, player, duration));
+
+        // Effect and sound
+        player.playSound(playerLoc, Sound.ENTITY_BREEZE_SLIDE, 2F, 1F);
+        Vfx vfx = vfxManager.getVfx("ice");
+        Vector axis = new Vector(0, 1, 0);
+        vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, axis, 0);
+
         return true;
     }
 
@@ -58,9 +61,11 @@ public class Snowbomb extends MagicSkill implements Listener {
         UUID uuid = damager.getUniqueId();
         if (!summonedSnowballs.containsKey(uuid)) return;
 
+        if (!(e.getEntity() instanceof LivingEntity entity)) return;
+
         // ダメージを与える
         MagicSnowball snowball = summonedSnowballs.get(uuid);
-        e.setDamage(snowball.damage);
+        freezeManager.freeze(entity, snowball.shooter, snowball.duration);
 
         // スノーボールを削除
         snowball.snowball.remove();

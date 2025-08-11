@@ -26,10 +26,13 @@ public class Resistance extends MagicSkill {
             return false;
         }
 
+        // Parameters
         int level = (int) property.level();
+        int duration = 60 * 20; // 60 seconds in ticks
+        int amplifier = level - 1;
 
         // Core functionality
-        targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 60 * 20, level - 1, false, false, true));
+        targetPlayer.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, duration, amplifier, false, false, true));
 
         // Send messages
         player.sendMessage(Component.text(targetPlayer.getName() + "に結界の杖lv1を使用しました").color(NamedTextColor.GREEN));

@@ -73,6 +73,9 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("snowbomb", snowbomb);
         pluginManager.registerEvents(snowbomb, this);
         skillManager.registerSkill("resistance", new Resistance());
+        IceTreeSnowball iceTreeSnowball = new IceTreeSnowball();
+        skillManager.registerSkill("icetree_snowball", iceTreeSnowball);
+        pluginManager.registerEvents(iceTreeSnowball, this);
 
         // Healing
         skillManager.registerSkill("heal", new Heal());
