@@ -76,6 +76,11 @@ public class BKVfx {
                         5, Particle.INSTANT_EFFECT)
                         .setSpeed(0.1f)
                         .setOffset(new Vector(0.003, 0.003, 0.003)));
+        vfxManager.registerVfx("happy_villager_hexagon",
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
+                        5, Particle.HAPPY_VILLAGER)
+                        .setSpeed(0.1f)
+                        .setOffset(new Vector(0.003, 0.003, 0.003)));
     }
 
     public VfxManager getVfxManager() {
