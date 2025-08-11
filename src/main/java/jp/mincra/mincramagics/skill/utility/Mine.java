@@ -16,8 +16,6 @@ public class Mine extends MagicSkill {
 
     @Override
     public boolean onTrigger(Player player, MaterialProperty property) {
-        if (!super.onTrigger(player, property)) return false;
-
         // Parameters
         int level = (int) property.level();
         int radius = Math.min(level * 5, 20); // 5 blocks per level, max 20 blocks
@@ -33,6 +31,8 @@ public class Mine extends MagicSkill {
             player.sendMessage(Component.text("近くにプレイヤーがいません").color(NamedTextColor.RED));
             return false;
         }
+
+        if (!super.onTrigger(player, property)) return false;
 
         Vfx vfx = vfxManager.getVfx("happy_villager_hexagon");
         // Add Resistance effect

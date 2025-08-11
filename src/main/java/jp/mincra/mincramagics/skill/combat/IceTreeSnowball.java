@@ -32,8 +32,8 @@ public class IceTreeSnowball extends MagicSkill implements Listener {
 
         // Parameters
         final double level = property.level();
-        final double velocityMultiplier = level * 1.5;
-        final int duration = (int) (level * 5 * 20); // 5 seconds per level
+        final double velocityMultiplier = 0.9 + level * 0.3;
+        final int duration = (int) (level * 4 * 20); // 4 seconds per level
 
         // Core functionality
         World world = player.getWorld();
@@ -45,7 +45,7 @@ public class IceTreeSnowball extends MagicSkill implements Listener {
         summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, player, duration));
 
         // Effect and sound
-        player.playSound(playerLoc, Sound.ENTITY_BREEZE_SLIDE, 2F, 1F);
+        player.playSound(playerLoc, Sound.ENTITY_BREEZE_SLIDE, 1F, 2F);
         Vfx vfx = vfxManager.getVfx("ice");
         Vector axis = new Vector(0, 1, 0);
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, axis, 0);

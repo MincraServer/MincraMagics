@@ -16,8 +16,6 @@ public class Resistance extends MagicSkill {
 
     @Override
     public boolean onTrigger(Player player, MaterialProperty property) {
-        if (!super.onTrigger(player, property)) return false;
-
         // Parameters
         int level = (int) property.level();
         int radius = level * 3; // 3 blocks per level
@@ -25,11 +23,18 @@ public class Resistance extends MagicSkill {
         int amplifier = level - 1;
 
         // Core functionality
-        final var targets = player.getLocation().getNearbyLivingEntities(radius, 3, radius, e -> e instanceof Player).stream().map(Player.class::cast).toList();
+        // 周囲のプレイヤーを取得
+        final var targets = player.getLocation().getNearbyLivingEntities(radius, 3, radius, e -> e instanceof Player).stream()
+                .map(Player.class::cast)
+                .filter(target -> !target.equals(player)) // 自分自身を除外
+                .toList();
         if (targets.isEmpty()) {
             player.sendMessage(Component.text("近くにプレイヤーがいません").color(NamedTextColor.RED));
             return false;
         }
+
+        if (!super.onTrigger(player, property)) return false;
+
         Vfx vfx = vfxManager.getVfx("instant_effect_pentagon");
         Component itemName = player.getInventory().getItemInMainHand().getItemMeta().itemName();
         // Add Resistance effect
