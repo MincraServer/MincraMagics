@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class BeastSpawn extends MagicSkill {
@@ -59,10 +60,9 @@ public class BeastSpawn extends MagicSkill {
             wolf[i].setBreed(false);
 
             // バフを付与する
-            int duration = 200 / 20;// 200ティック分(1秒20ティックらしい)
-            wolf[i].addPotionEffect(PotionEffectType.HEALTH_BOOST.createEffect(duration, skillLevel + 2));
-            wolf[i].addPotionEffect(PotionEffectType.STRENGTH.createEffect(duration, skillLevel + 1));
-            wolf[i].addPotionEffect(PotionEffectType.INSTANT_HEALTH.createEffect(duration, 99));
+            wolf[i].addPotionEffect(PotionEffectType.HEALTH_BOOST.createEffect(PotionEffect.INFINITE_DURATION, skillLevel + 2));
+            wolf[i].addPotionEffect(PotionEffectType.STRENGTH.createEffect(PotionEffect.INFINITE_DURATION, skillLevel + 1));
+            wolf[i].addPotionEffect(PotionEffectType.INSTANT_HEALTH.createEffect(PotionEffect.INFINITE_DURATION, 99));
         }
 
         // 召喚した幻獣は200ティックで消える
