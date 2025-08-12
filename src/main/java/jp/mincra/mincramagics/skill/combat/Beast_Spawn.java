@@ -14,7 +14,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 
-public class Beast_Spawn extends MagicSkill {
+public class BeastSpawn extends MagicSkill {
     @Override
     public boolean onTrigger(Player player, MaterialProperty property) {
         // MP, Cooldown
