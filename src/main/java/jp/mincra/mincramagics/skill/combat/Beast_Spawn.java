@@ -18,10 +18,7 @@ public class BeastSpawn extends MagicSkill {
     @Override
     public boolean onTrigger(Player player, MaterialProperty property) {
         // MP, Cooldown
-        MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
-        if (!canTrigger(mPlayer, property)) return false;
-        consumeMp(mPlayer, property);
-        setCooldown(mPlayer, property);
+        if (!super.onTrigger(player, property)) return false;
 
         final Wolf wolf;
 
