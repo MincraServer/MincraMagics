@@ -25,16 +25,16 @@ public class BeastSpawn extends MagicSkill {
         int skillLevel = (int) property.level();
 
         final Wolf[] wolf = new Wolf[4];
-        final int SpawnCount = switch (skillLevel) {
+        final int spawnCount = switch (skillLevel) {
             case 1 -> 1;
             case 2 -> 3;
             case 3 -> 5;
-            default -> 1;
+            default -> 5;
         };
 
         World world = player.getLocation().getWorld();
 
-        for (int i = 0; SpawnCount > i; i++) {
+        for (int i = 0; spawnCount > i; i++) {
             wolf[i] = (Wolf) world.spawnEntity(player.getLocation(), EntityType.WOLF);
             world.spawnParticle(Particle.INSTANT_EFFECT, wolf[i].getLocation(), 1);//SPELL_INSTANTからINSTANT_EFFECTへ
             wolf[i].customName(Component.text("幻獣"));//setCustomNameは非推奨なのでcustomNameを使用
@@ -68,7 +68,7 @@ public class BeastSpawn extends MagicSkill {
         // 召喚した幻獣は200ティックで消える
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
-                    for(int i = 0; SpawnCount > i; i++) {
+                    for(int i = 0; spawnCount > i; i++) {
                         world.spawnParticle(Particle.INSTANT_EFFECT, wolf[i].getLocation(), 1);//SPELL_INSTANTからINSTANT_EFFECTへ
                         wolf[i].remove();
                     }
