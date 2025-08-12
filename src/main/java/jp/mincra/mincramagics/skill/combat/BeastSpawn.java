@@ -21,10 +21,10 @@ public class BeastSpawn extends MagicSkill {
         if (!super.onTrigger(player, property)) return false;
 
         // LevelGet
-        int SkillLevel = (int) property.level();
+        int skillLevel = (int) property.level();
 
         final Wolf[] wolf = new Wolf[4];
-        final int SpawnCount = switch (SkillLevel) {
+        final int SpawnCount = switch (skillLevel) {
             case 1 -> 1;
             case 2 -> 3;
             case 3 -> 5;
@@ -60,8 +60,8 @@ public class BeastSpawn extends MagicSkill {
 
             // バフを付与する
             int duration = 200 / 20;// 200ティック分(1秒20ティックらしい)
-            wolf[i].addPotionEffect(PotionEffectType.HEALTH_BOOST.createEffect(duration, SkillLevel + 2));
-            wolf[i].addPotionEffect(PotionEffectType.STRENGTH.createEffect(duration, SkillLevel + 1));
+            wolf[i].addPotionEffect(PotionEffectType.HEALTH_BOOST.createEffect(duration, skillLevel + 2));
+            wolf[i].addPotionEffect(PotionEffectType.STRENGTH.createEffect(duration, skillLevel + 1));
             wolf[i].addPotionEffect(PotionEffectType.INSTANT_HEALTH.createEffect(duration, 99));
         }
 
