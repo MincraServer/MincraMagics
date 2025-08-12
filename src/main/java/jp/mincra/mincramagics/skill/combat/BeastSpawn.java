@@ -20,24 +20,52 @@ public class BeastSpawn extends MagicSkill {
         // MP, Cooldown
         if (!super.onTrigger(player, property)) return false;
 
-        final Wolf wolf;
+        // LevelGet
+        int SkillLevel = (int) property.level();
+
+        final Wolf[] wolf = new Wolf[4];
+        final int SpawnCount = switch (SkillLevel) {
+            case 1 -> 1;
+            case 2 -> 3;
+            case 3 -> 5;
+            default -> 1;
+        };
 
         World world = player.getLocation().getWorld();
 
-        wolf=(Wolf) world.spawnEntity(player.getLocation(),EntityType.WOLF);
-        world.spawnParticle(Particle.INSTANT_EFFECT, wolf.getLocation(), 1);//SPELL_INSTANTからINSTANT_EFFECTへ
-
-        wolf.customName(Component.text("幻獣"));//setCustomNameは非推奨なのでcustomNameを使用
-        wolf.setCollarColor(DyeColor.GREEN);
-        wolf.setAdult();
-        wolf.setOwner(player);
-        wolf.setBreed(false);
+        for (int i = 0; SpawnCount > i; i++) {
+            wolf[i] = (Wolf) world.spawnEntity(player.getLocation(), EntityType.WOLF);
+            world.spawnParticle(Particle.INSTANT_EFFECT, wolf[i].getLocation(), 1);//SPELL_INSTANTからINSTANT_EFFECTへ
+            wolf[i].customName(Component.text("幻獣"));//setCustomNameは非推奨なのでcustomNameを使用
+            switch (i) {
+                case 1:
+                    wolf[i].setCollarColor(DyeColor.GREEN);
+                    break;
+                case 2:
+                    wolf[i].setCollarColor(DyeColor.BLUE);
+                    break;
+                case 3:
+                    wolf[i].setCollarColor(DyeColor.YELLOW);
+                    break;
+                case 4:
+                    wolf[i].setCollarColor(DyeColor.ORANGE);
+                    break;
+                case 5:
+                    wolf[i].setCollarColor(DyeColor.RED);
+                    break;
+            }
+            wolf[i].setAdult();
+            wolf[i].setOwner(player);
+            wolf[i].setBreed(false);
+        }
 
         // 召喚した幻獣は200ティックで消える
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
-                    world.spawnParticle(Particle.INSTANT_EFFECT, wolf.getLocation(), 1);//SPELL_INSTANTからINSTANT_EFFECTへ
-                    wolf.remove();
+                    for(int i = 0; SpawnCount > i; i++) {
+                        world.spawnParticle(Particle.INSTANT_EFFECT, wolf[i].getLocation(), 1);//SPELL_INSTANTからINSTANT_EFFECTへ
+                        wolf[i].remove();
+                    }
                     return true;
                 })
                 .delay(TickTime.TICK, 200)
