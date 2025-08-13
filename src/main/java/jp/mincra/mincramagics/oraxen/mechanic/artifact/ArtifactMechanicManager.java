@@ -1,6 +1,7 @@
 package jp.mincra.mincramagics.oraxen.mechanic.artifact;
 
 import io.th0rgal.oraxen.api.OraxenItems;
+import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.nbtobject.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MagicSkill;
@@ -11,8 +12,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -71,6 +74,23 @@ public class ArtifactMechanicManager implements Listener {
             disableLeftTrigger.put(player.getUniqueId(), server.getCurrentTick() + 2);
             e.setCancelled(true);
         }
+    }
+
+    // Artifact のクラフト時に NBT タグが上書きされないので, このメソッドで上書きする
+    // Oraxen の RecipesEventsManager#onCrafted() の priority が HIGHEST なので, その次に実行されるようにする
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    private void onCrafted(PrepareItemCraftEvent event) {
+        final ItemStack result = event.getInventory().getResult();
+        if (result == null || result.getType().isAir()) return;
+
+        if (!OraxenItems.exists(result)) return;
+
+        final String itemId = OraxenItems.getIdByItem(result);
+        if (factory.isNotImplementedIn(itemId)) return;
+
+        final ItemBuilder builder = OraxenItems.getItemById(itemId);
+        final ItemStack trueResult = builder.build();
+        event.getInventory().setResult(trueResult);
     }
 
     /**

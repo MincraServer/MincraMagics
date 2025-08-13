@@ -1,9 +1,9 @@
 package jp.mincra.mincramagics.player;
 
-import jp.mincra.mincramagics.MincraMagics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -14,13 +14,13 @@ import java.util.*;
 public class PlayerManager implements Listener {
     private final Map<UUID, MincraPlayer> players = new HashMap<>();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         addPlayer(player);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent e) {
         players.remove(e.getPlayer().getUniqueId());
     }
