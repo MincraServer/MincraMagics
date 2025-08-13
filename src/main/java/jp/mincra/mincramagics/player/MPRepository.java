@@ -19,8 +19,7 @@ import java.util.logging.Logger;
 public class MPRepository implements Listener {
     private final PlayerManager playerManager;
     private final Logger logger;
-    private final String OBJECTIVE_NAME = "current_mp";
-    private final int PRESITION = 100; // MPの精度を100倍する
+    private final int PRECISION = 100; // MPの精度を100倍する
 
     public MPRepository(PlayerManager playerManager) {
         this.playerManager = playerManager;
@@ -33,7 +32,7 @@ public class MPRepository implements Listener {
         final UUID uuid = player.getUniqueId();
         final Objective objective = getOrCreateObjective();
         final Score score = objective.getScoreFor(player);
-        final float currentMp = (float) score.getScore() / PRESITION;
+        final float currentMp = score.isScoreSet () ? (float) score.getScore() / PRECISION : 20;
 
         final MincraPlayer mPlayer = playerManager.getPlayer(uuid);
         if (mPlayer == null) {
@@ -56,12 +55,13 @@ public class MPRepository implements Listener {
 
         final Objective objective = getOrCreateObjective();
         final Score score = objective.getScoreFor(player);
-        score.setScore((int) (mPlayer.getMp() * PRESITION));
+        score.setScore((int) (mPlayer.getMp() * PRECISION));
     }
 
     private Objective getOrCreateObjective() {
         final ScoreboardManager manager = Bukkit.getScoreboardManager();
         final Scoreboard board = manager.getMainScoreboard();
+        String OBJECTIVE_NAME = "current_mp";
         Objective objective = board.getObjective(OBJECTIVE_NAME);
         if (objective == null) {
             objective = board.registerNewObjective(OBJECTIVE_NAME, Criteria.DUMMY, Component.text("Current MP"));
