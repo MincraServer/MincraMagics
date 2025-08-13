@@ -48,18 +48,21 @@ public class MincraCommand {
                                 .replaceSuggestions(ArgumentSuggestions.strings("add", "sub", "set")))
                 .withArguments(new PlayerArgument("target"))
                 .withArguments(new FloatArgument("amount"))
+                .withOptionalArguments(new BooleanArgument("ignore_max")
+                        .replaceSuggestions(ArgumentSuggestions.strings("true", "false")))
                 .executes((sender, args) -> {
                     String type = (String) args.get(0);
                     Player target = (Player) args.get(1);
-                    float amount = (float) args.get(2);
+                    float amount = (float) args.getOrDefault(2, 0);
+                    boolean ignoreMax = (boolean) args.getOrDefault(3, false);
 
                     PlayerManager playerManager = MincraMagics.getPlayerManager();
                     MincraPlayer mPlayer = playerManager.getPlayer(target.getUniqueId());
 
                     switch (type) {
-                        case "add" -> mPlayer.addMp(amount, true);
+                        case "add" -> mPlayer.addMp(amount, ignoreMax);
                         case "sub" -> mPlayer.subMp(amount);
-                        case "set" -> mPlayer.setMp(amount, true);
+                        case "set" -> mPlayer.setMp(amount, ignoreMax);
                     }
                 });
     }
