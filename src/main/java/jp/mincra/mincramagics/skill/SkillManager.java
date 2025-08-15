@@ -1,5 +1,9 @@
 package jp.mincra.mincramagics.skill;
 
+import jp.mincra.mincramagics.MincraMagics;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +17,9 @@ public class SkillManager {
      * @param skill MagicSkillの具象クラス
      */
     public void registerSkill(String skillId, MagicSkill skill) {
+        if (skill instanceof Listener) {
+            Bukkit.getPluginManager().registerEvents((Listener) skill, MincraMagics.getInstance());
+        }
         idToSkill.put(skillId, skill);
     }
 
