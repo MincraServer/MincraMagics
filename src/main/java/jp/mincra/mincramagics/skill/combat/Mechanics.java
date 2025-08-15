@@ -22,14 +22,11 @@ public class Mechanics extends MagicSkill {
         // MP, Cooldown
         if(!super.onTrigger(player, property))return false;
 
-        // LevelGet
-        int skillLevel = (int) property.level();
-
-        final float fallDamagePer = switch (skillLevel) {
-            case 1 -> 0.25F;
-            case 2 -> 1F;
-            default -> 1F;
-        };
+        // Parameters
+        final float level = property.level();
+        final double logLevel = Math.log(level);
+        final float damagePerDist = (float) (0.5 * logLevel + 0.25F);
+        final double range = 10 / (1 + Math.pow(Math.E, -level));// ロジスティック関数(L=10)
 
         World world = player.getLocation().getWorld();
 
@@ -56,9 +53,9 @@ public class Mechanics extends MagicSkill {
                                 player.spawnParticle(Particle.INSTANT_EFFECT, player.getLocation(), 200);
                                 world.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 0.3F, 1.75F);
                                 // 範囲攻撃処理
-                                for (Entity entity : player.getNearbyEntities(7, 1, 7)) {
+                                for (Entity entity : player.getNearbyEntities(range, range, range)) {
                                     if (entity instanceof Monster monster) {// モンスターのみ
-                                        monster.damage(fallDistance * fallDamagePer);
+                                        monster.damage(fallDistance * damagePerDist);
                                         world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.3F, 1.75F);
                                         player.setFallDistance(0);
                                         monster.setVelocity(new Vector(entity.getVelocity().getX(), 2F, entity.getVelocity().getZ()));
