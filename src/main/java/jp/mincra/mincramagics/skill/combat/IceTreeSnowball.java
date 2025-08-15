@@ -24,7 +24,7 @@ import java.util.UUID;
 public class IceTreeSnowball extends MagicSkill implements Listener {
     private final FreezeManager freezeManager = FreezeManager.getInstance();
     private final Map<UUID, MagicSnowball> summonedSnowballs = new HashMap<>();
-    private record MagicSnowball(Snowball snowball, Player shooter, int duration) {}
+    private record MagicSnowball(Snowball snowball, Player shooter, int duration, double extraDamage) {}
 
     @Override
     public boolean onTrigger(Player player, MaterialProperty property) {
@@ -34,6 +34,7 @@ public class IceTreeSnowball extends MagicSkill implements Listener {
         final double level = property.level();
         final double velocityMultiplier = 1.1 + level * 0.3;
         final int duration = (int) (level * 4 * 20); // 4 seconds per level
+        final double extraDamage = 4 * Math.log(level) + 8;
 
         // Core functionality
         World world = player.getWorld();
@@ -42,7 +43,7 @@ public class IceTreeSnowball extends MagicSkill implements Listener {
         snowball.setShooter(player);
         snowball.setVelocity(playerLoc.getDirection().multiply(velocityMultiplier));
         // summonedSnowballs でリスナー用に管理
-        summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, player, duration));
+        summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, player, duration, extraDamage));
 
         // Effect and sound
         player.playSound(playerLoc, Sound.ENTITY_BREEZE_SHOOT, 0.2F, 2F);
@@ -72,7 +73,7 @@ public class IceTreeSnowball extends MagicSkill implements Listener {
         }
 
         // ダメージを与える
-        freezeManager.freeze(entity, snowball.shooter, snowball.duration);
+        freezeManager.freeze(entity, snowball.shooter, snowball.duration, snowball.extraDamage);
 
         // スノーボールを削除
         snowball.snowball.remove();

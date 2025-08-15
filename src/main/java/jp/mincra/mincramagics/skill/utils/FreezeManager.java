@@ -28,7 +28,14 @@ public class FreezeManager {
 
     private record LocationAndOldType(Location location, Material oldType) {}
 
-    public void freeze(LivingEntity target, Player caster, int durationTick) {
+    /**
+     *
+     * @param target
+     * @param caster
+     * @param durationTick
+     * @param extraDamage 追加で与えるダメージの総量
+     */
+    public void freeze(LivingEntity target, Player caster, int durationTick, double extraDamage) {
         // 凍らせる
         List<LocationAndOldType> placedIcePos = fillWithIce(target);
         // 0ダメージを与えて Player を DamageSource に設定する
@@ -48,6 +55,21 @@ public class FreezeManager {
                 })
                 // 5秒凍結
                 .delay(TickTime.TICK, durationTick)
+                .run();
+
+
+        int interval = 10;
+        int attempts = durationTick / interval;
+        double damagePerAttempt = extraDamage / attempts;
+
+        // Add extra damage to each monster
+        new BKTween(MincraMagics.getInstance())
+                .execute(v -> {
+                    target.setNoDamageTicks(0); // Reset no damage ticks to allow immediate damage
+                    target.damage(damagePerAttempt, caster);
+                    return true;
+                })
+                .repeat(TickTime.TICK, interval, 0, attempts)
                 .run();
     }
 
