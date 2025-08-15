@@ -14,7 +14,7 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class Mechanicd extends MagicSkill {
+public class Mechanics extends MagicSkill {
     @Override
     public boolean onTrigger(Player player, MaterialProperty property) {
         // MP, Cooldown
