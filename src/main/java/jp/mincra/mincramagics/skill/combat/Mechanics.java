@@ -46,8 +46,9 @@ public class Mechanics extends MagicSkill {
         // メイン処理
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
+                    final double velY = player.getVelocity().getY();
                     if(ref.exit){
-                        if(player.getVelocity().getY()>=-0.1F) {
+                        if(velY >= -0.1F) {
                             double fallDistance = ref.height - player.getLocation().getY();// 落下距離
                             if(fallDistance >= 10) {
                                 // 落下距離が10ブロック以上で攻撃
@@ -66,7 +67,7 @@ public class Mechanics extends MagicSkill {
                             }
                             return false;// ループ終了
                         }
-                    } else if(player.getVelocity().getY() <= 3.6F){
+                    } else if(velY <= 3.6F){
                         // 一定の高さまで上昇したので落下させる
                         player.setVelocity(new Vector(player.getVelocity().getX(),-5F,player.getVelocity().getZ()));
                         player.getWorld().playSound(player.getLocation(),Sound.ENTITY_WITHER_SHOOT, 0.1F, 1F);
