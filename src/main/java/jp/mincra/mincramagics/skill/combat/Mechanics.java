@@ -53,7 +53,7 @@ public class Mechanics extends MagicSkill {
                                 player.spawnParticle(Particle.INSTANT_EFFECT, player.getLocation(), 200);
                                 world.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 0.3F, 1.75F);
                                 // 範囲攻撃処理
-                                for (Entity entity : player.getNearbyEntities(range, range, range)) {
+                                for (Entity entity : player.getNearbyEntities(range, 1, range)) {
                                     if (entity instanceof Monster monster) {// モンスターのみ
                                         monster.damage(fallDistance * damagePerDist);
                                         world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.3F, 1.75F);
