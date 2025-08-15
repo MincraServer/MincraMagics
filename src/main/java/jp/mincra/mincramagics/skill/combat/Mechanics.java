@@ -49,7 +49,7 @@ public class Mechanics extends MagicSkill {
                     final double velY = player.getVelocity().getY();
                     if(ref.exit){
                         if(velY >= -0.1F) {
-                            double fallDistance = ref.height - player.getLocation().getY();// 落下距離
+                            double fallDistance = ref.height - player.getLocation().getY();
                             if(fallDistance >= 10) {
                                 // 落下距離が10ブロック以上で攻撃
                                 player.spawnParticle(Particle.INSTANT_EFFECT, player.getLocation(), 200);
