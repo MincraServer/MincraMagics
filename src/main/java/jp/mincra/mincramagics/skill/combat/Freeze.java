@@ -76,7 +76,7 @@ public class Freeze extends MagicSkill implements Listener {
                     LivingEntity target = entities.iterator().next();
 
                     if (freezeManager == null) freezeManager = FreezeManager.getInstance();
-                    freezeManager.freeze(target, player, (int) strength * 100);
+                    freezeManager.freeze(target, player, (int) strength * 100, 0);
 
                     // false を返して Tween を終える
                     return false;
