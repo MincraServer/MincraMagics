@@ -91,6 +91,16 @@ public class BKVfx {
                         5, Particle.ELECTRIC_SPARK)
                         .setSpeed(0.1f)
                         .setOffset(new Vector(0.003, 0.003, 0.003)));
+        vfxManager.registerVfx("mana_charge",
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("complex_five_pointed_circle")),
+                        5, Particle.DUST_COLOR_TRANSITION)
+                        .setDustTransition(new Particle.DustTransition(
+                                Color.fromRGB(171, 255, 191), // green
+                                Color.fromRGB(171, 223, 255),
+                                1
+                        ))
+                        .setSpeed(0.1f)
+                        .setOffset(new Vector(0.003, 0.003, 0.003)));
     }
 
     public VfxManager getVfxManager() {

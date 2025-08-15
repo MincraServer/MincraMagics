@@ -83,9 +83,7 @@ public final class MincraMagics extends JavaPlugin {
 
         // Utility
         skillManager.registerSkill("charge", new Charge());
-        Jump jumpSkill = new Jump();
-        skillManager.registerSkill("jump", jumpSkill);
-        pluginManager.registerEvents(jumpSkill, this);
+        skillManager.registerSkill("charging", new Charging());
         skillManager.registerSkill("jump", new Jump());
         skillManager.registerSkill("move", new Move());
         skillManager.registerSkill("speeden", new Speeden());
