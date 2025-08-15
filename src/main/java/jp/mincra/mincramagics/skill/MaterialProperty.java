@@ -1,24 +1,23 @@
 package jp.mincra.mincramagics.skill;
 
+import java.util.Map;
+
 public class MaterialProperty {
     private final String skillId;
     private final String materialId;
     private final float cooldown;
     private final float mp;
+    private final float level;
+    private final Map<String, Object> extra;
 
-    private float level;
 
-    public MaterialProperty(String materialId, String skillId, float cooldown, float mp, float level) {
+    public MaterialProperty(String materialId, String skillId, float cooldown, float mp, float level, Map<String, Object> extra) {
         this.cooldown = cooldown;
         this.mp = mp;
         this.materialId = materialId;
         this.skillId = skillId;
         this.level = level;
-    }
-
-    public MaterialProperty setLevel(float level) {
-        this.level = level;
-        return this;
+        this.extra = extra;
     }
 
     public float level() {
@@ -39,5 +38,9 @@ public class MaterialProperty {
 
     public String skillId() {
         return skillId;
+    }
+
+    public Map<String, Object> extra() {
+        return extra;
     }
 }
