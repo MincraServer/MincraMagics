@@ -1,5 +1,6 @@
 package jp.mincra.mincramagics.skill.combat;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
 import jp.mincra.mincramagics.MincraMagics;
@@ -8,11 +9,12 @@ import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Mechanics extends MagicSkill {
     @Override
@@ -38,18 +40,16 @@ public class Mechanics extends MagicSkill {
         world.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 0.1F, 1F);
 
         // Initialize_Variable(For Repeat)
-        var ref = new Object() {
-            boolean exit = false;
-            double height = 0;
-        };
+        AtomicBoolean isFalling = new AtomicBoolean(false);
+        AtomicDouble currentHeight = new AtomicDouble(0F);
 
         // メイン処理
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     final double velY = player.getVelocity().getY();
-                    if(ref.exit){
+                    if(isFalling.get()){
                         if(velY >= -0.1F) {
-                            double fallDistance = ref.height - player.getLocation().getY();
+                            double fallDistance = currentHeight.get() - player.getLocation().getY();
                             if(fallDistance >= 10) {
                                 // 落下距離が10ブロック以上で攻撃
                                 player.spawnParticle(Particle.INSTANT_EFFECT, player.getLocation(), 200);
@@ -71,8 +71,8 @@ public class Mechanics extends MagicSkill {
                         // 一定の高さまで上昇したので落下させる
                         player.setVelocity(new Vector(player.getVelocity().getX(),-5F,player.getVelocity().getZ()));
                         player.getWorld().playSound(player.getLocation(),Sound.ENTITY_WITHER_SHOOT, 0.1F, 1F);
-                        ref.height = player.getLocation().getY();
-                        ref.exit = true;
+                        currentHeight.set(player.getLocation().getY());
+                        isFalling.set(true);
                         player.setFallDistance(-25);// 落下ダメージを打ち消す
                     } else {
                         world.spawnParticle(Particle.FIREWORK, player.getLocation(), 5);
