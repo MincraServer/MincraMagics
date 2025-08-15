@@ -57,6 +57,7 @@ public final class MincraMagics extends JavaPlugin {
         pluginManager.registerEvents(new MPRecoverer(this, playerManager), this);
         pluginManager.registerEvents(new MPRepository(playerManager), this);
 
+//        CommandAPI.onLoad(new CommandAPIConfig().initializeNBTAPI());
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
 
@@ -71,13 +72,9 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("icetree", new IceTree());
         skillManager.registerSkill("inferno", new Inferno());
         skillManager.registerSkill("scorch", new Scorch());
-        Snowbomb snowbomb = new Snowbomb();
-        skillManager.registerSkill("snowbomb", snowbomb);
-        pluginManager.registerEvents(snowbomb, this);
+        skillManager.registerSkill("snowbomb", new Snowbomb());
         skillManager.registerSkill("resistance", new Resistance());
-        IceTreeSnowball iceTreeSnowball = new IceTreeSnowball();
-        skillManager.registerSkill("icetree_snowball", iceTreeSnowball);
-        pluginManager.registerEvents(iceTreeSnowball, this);
+        skillManager.registerSkill("icetree_snowball", new IceTreeSnowball());
         skillManager.registerSkill("lightning", new Lightning());
         skillManager.registerSkill("beast_spawn", new BeastSpawn());
         skillManager.registerSkill("mechanics", new Mechanics());
@@ -87,19 +84,14 @@ public final class MincraMagics extends JavaPlugin {
 
         // Utility
         skillManager.registerSkill("charge", new Charge());
-        Jump jumpSkill = new Jump();
-        skillManager.registerSkill("jump", jumpSkill);
-        pluginManager.registerEvents(jumpSkill, this);
+        skillManager.registerSkill("charging", new Charging());
+        skillManager.registerSkill("jump", new Jump());
         skillManager.registerSkill("move", new Move());
-        Speeden speeden = new Speeden();
-        skillManager.registerSkill("speeden", speeden);
-        pluginManager.registerEvents(speeden, this);
+        skillManager.registerSkill("speeden", new Speeden());
         skillManager.registerSkill("wraith", new Wraith());
         skillManager.registerSkill("luminous", new Luminous(this));
         skillManager.registerSkill("mine", new Mine());
-        WaterMove waterMove = new WaterMove();
-        skillManager.registerSkill("water_move", waterMove);
-        pluginManager.registerEvents(waterMove, this);
+        skillManager.registerSkill("water_move", new WaterMove());
 
     }
 

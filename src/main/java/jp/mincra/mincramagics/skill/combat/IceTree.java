@@ -1,6 +1,9 @@
 package jp.mincra.mincramagics.skill.combat;
 
+import jp.mincra.bktween.BKTween;
+import jp.mincra.bktween.TickTime;
 import jp.mincra.bkvfx.Vfx;
+import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import jp.mincra.mincramagics.skill.utils.FreezeManager;
@@ -25,7 +28,7 @@ public class IceTree extends MagicSkill {
 
         World world = player.getWorld();
         Location playerLoc = player.getLocation();
-        var monsters = playerLoc.getNearbyLivingEntities(radius, 3, radius, e -> e instanceof Monster);
+        var monsters = playerLoc.getNearbyLivingEntities(radius, 10, radius, e -> e instanceof Monster);
 
         if (monsters.isEmpty()) {
             player.sendMessage(Component.text("周囲にモンスターがいません。").color(NamedTextColor.RED));
@@ -43,9 +46,8 @@ public class IceTree extends MagicSkill {
             vfx.playEffect(monster.getLocation().add(0, 0.5, 0), 5, axis, 0);
 
             if (freezeManager == null) freezeManager = FreezeManager.getInstance();
-            freezeManager.freeze(monster, player, durationTick);
+            freezeManager.freeze(monster, player, durationTick, 0);
         }
-
 
         return true;
     }
