@@ -46,8 +46,8 @@ public class PlayerManager implements Listener {
     private void addPlayer(Player player) {
         if (!players.containsKey(player.getUniqueId())) {
             // boolean isFirstLogin = player.getFirstPlayed() == 0;
-            float mp = 20; //TODO: 初期MPを設定
-            float maxMp = 20; //TODO: MaxMPを装備から参照
+            float mp = 10; //TODO: 初期MPを設定
+            float maxMp = 10; //TODO: MaxMPを装備から参照
             MincraPlayer mPlayer = new MincraPlayer(player, new MP(mp, maxMp, mp));
             players.put(player.getUniqueId(), mPlayer);
         }

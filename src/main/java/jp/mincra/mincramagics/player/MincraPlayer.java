@@ -4,15 +4,24 @@ import jp.mincra.mincramagics.event.PlayerMpChangedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
+import java.util.Map;
+
 public class MincraPlayer {
     private final Player player;
     private final MP mpObject;
     private final SkillCooldown cooldown;
+    private final Map<MincraAttribute, MincraAttributeInstance> attributes;
 
     public MincraPlayer(Player player, MP mp) {
         this.player = player;
         this.mpObject = mp;
         this.cooldown = new SkillCooldown();
+        final MincraAttributeInstance manaAttribute = new MincraAttributeInstance();
+        this.attributes = Map.of(
+                MincraAttribute.MAX_MANA, manaAttribute
+        );
+        mpObject.setMaxManaAttribute(manaAttribute);
     }
 
     public float getMp() {
@@ -41,7 +50,7 @@ public class MincraPlayer {
     }
 
     public void setMaxMp(float maxMp) {
-        mpObject.setMaxMp(maxMp);
+        mpObject.setBaseMaxMp(maxMp);
     }
 
     public void addMp(float mp, boolean ignoreMax) {
@@ -60,5 +69,10 @@ public class MincraPlayer {
 
     public SkillCooldown getCooldown() {
         return cooldown;
+    }
+
+    @Nullable
+    public MincraAttributeInstance getAttribute(MincraAttribute attribute) {
+        return attributes.get(attribute);
     }
 }

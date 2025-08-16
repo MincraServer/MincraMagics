@@ -32,14 +32,14 @@ public class MPRepository implements Listener {
         final UUID uuid = player.getUniqueId();
         final Objective objective = getOrCreateObjective();
         final Score score = objective.getScoreFor(player);
-        final float currentMp = score.isScoreSet () ? (float) score.getScore() / PRECISION : 20;
+        final float currentMp = score.isScoreSet () ? (float) score.getScore() / PRECISION : 10;
 
         final MincraPlayer mPlayer = playerManager.getPlayer(uuid);
         if (mPlayer == null) {
             logger.warning("MincraPlayer not found for player: " + player.getName());
             return;
         }
-        mPlayer.setMp(currentMp, true);
+        mPlayer.setMp(currentMp, false);
     }
 
     @EventHandler

@@ -107,6 +107,6 @@ public class CooldownHudController {
                     .append(SHIFT_1);
         }
 
-        return hudBuilder.append(NEG_SHIFT_12.repeat(iconCount)).toString();
+        return hudBuilder.append(NEG_SHIFT_12.repeat(iconCount)).append(NEG_SHIFT_1.repeat(iconCount)).toString();
     }
 }

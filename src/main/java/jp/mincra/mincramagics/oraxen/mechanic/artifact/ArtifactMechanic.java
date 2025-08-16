@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class ArtifactMechanic extends Mechanic {
-    private static final Set<String> availableSlot = Arrays.stream(TriggerType.values())
-            .map(triggerType -> triggerType.toString().toLowerCase()).collect(Collectors.toSet());
+    private static final Set<String> availableSlot = Arrays.stream(MaterialSlot.values())
+            .map(MaterialSlot::getSlot).collect(Collectors.toSet());
 
     protected ArtifactMechanic(MechanicFactory mechanicFactory, ConfigurationSection section) {
         super(mechanicFactory, section, itemBuilder -> {

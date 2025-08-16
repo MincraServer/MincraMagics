@@ -23,6 +23,8 @@ public class HudManager implements Listener {
     private Collection<MincraPlayer> players;
 
     private static final String SHIFT_HUD = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_hud%");
+    private static final String SHIFT_COOLDOWN = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_cooldown%");
+    private static final String NEG_SHIFT_COOLDOWN = PlaceholderAPI.setPlaceholders(null, "%oraxen_neg_shift_cooldown%");
 
     public HudManager(PlayerManager playerManager) {
         this.playerManager = playerManager;
@@ -36,10 +38,10 @@ public class HudManager implements Listener {
 
                 Player player = mPlayer.getPlayer();
                 TextComponent component = Component
-                        .text(SHIFT_HUD + cooldownHud + mpHud);
+                        .text(SHIFT_HUD + SHIFT_COOLDOWN + cooldownHud + NEG_SHIFT_COOLDOWN + mpHud);
                 player.sendActionBar(component);
             }
-        }, 0L, 1L);
+        }, 0L, 2L);
     }
 
     @EventHandler
