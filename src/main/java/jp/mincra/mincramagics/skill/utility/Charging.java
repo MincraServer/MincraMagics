@@ -26,9 +26,9 @@ public class Charging extends MagicSkill implements Listener {
         final float level = property.level();
         final float normalizedLevel = level == 0 ? 1 : level; // Avoid division by zero
         // level1 = 6mp, level2 = 10mp
-        final float mpUpperBound = (float) (8 * Math.log(normalizedLevel) + 6);
-        // level1 = 10, level2 = 12, level3 = 14
-        final float mpToAdd = 2 * level + 8;
+        final float mpUpperBound = (float) (14 * Math.log(normalizedLevel) + 8);
+        // level1 = 12, level2 = 14, level3 = 16
+        final float mpToAdd = 2 * level + 10;
         // level1 = 3sec, level2 = 2sec, level3 = 1sec
         final long castingTimeInTick = (long) (Functions.logistic(level, 2, -3, 2) * 20);
         // MP add method
