@@ -6,5 +6,5 @@ package jp.mincra.mincramagics.oraxen.mechanic.artifact;
  * For instance, the latter may contain a passive slot, but the former does not.
  */
 public enum TriggerType {
-    LEFT, RIGHT, SWAP, DROP
+    LEFT, RIGHT, SWAP, DROP, PASSIVE
 }
