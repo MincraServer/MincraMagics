@@ -38,7 +38,7 @@ public class MpHudController {
         // 55/55
         // 55:60: sshfffffffttttttttttffffffffffttttttttttffffffffff
 
-        int padding = 10 - (((maxMp - 1) % 20 + 1) / 2);
+        int padding = 10 - (((maxMp + 1) % 20) / 2);
         int line = (maxMp + 19) / 20;
         StringBuilder result = new StringBuilder(shift.repeat(padding));
 
