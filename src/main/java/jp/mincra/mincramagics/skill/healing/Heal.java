@@ -23,6 +23,10 @@ public class Heal extends MagicSkill {
     public boolean onTrigger(Player player, MaterialProperty property) {
         if (!super.onTrigger(player, property)) return false;
 
+        // Parameters
+        final double level = property.level();
+        final double healAmount = 6.0f * level; // 6 HP per level
+
         Location playerLoc = player.getLocation();
 
         // Play Sound
@@ -35,7 +39,7 @@ public class Heal extends MagicSkill {
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     // 回復
-                    target.setHealth(Math.min(target.getHealth() + 6, target.getAttribute(Attribute.MAX_HEALTH).getValue()));
+                    target.setHealth(Math.min(target.getHealth() + healAmount, target.getAttribute(Attribute.MAX_HEALTH).getValue()));
                     Location targetLoc = target.getLocation();
                     // Play Sound
                     playerLoc.getWorld().playSound(targetLoc, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1, 1.1F);

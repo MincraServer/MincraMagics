@@ -117,7 +117,7 @@ public class Inferno extends MagicSkill implements Listener {
         final Projectile projectile = event.getEntity();
         if (!(projectile instanceof Fireball fireball)) return;
 
-        if (!fireballs.containsKey(fireball.getUniqueId())) return;
+        if (!fireball.hasMetadata(FIREBALL_METADATA)) return;
 
         MagicFireball magicFireball = fireballs.get(fireball.getUniqueId());
         fireballs.remove(fireball.getUniqueId());

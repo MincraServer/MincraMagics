@@ -43,10 +43,6 @@ public class Lightning extends MagicSkill {
                         // Calculate the offset for each lightning strike
                         Vector offset = rightVec.clone().multiply((i - (double) lightningAmountPerAttempt / 2) * 2 * currentRepeat);
                         Location targetLocation = playerLocation.clone().add(direction.clone().multiply(2 + 2 * currentRepeat).add(offset));
-                        MincraMagics.getPluginLogger().info(
-                                String.format("rightVec: %s, offset: %s, targetLocation: %s",
-                                        rightVec.toString(), offset.toString(), targetLocation.toString())
-                        );
 
                         // Strike lightning at the target location
                         targetLocation.getWorld().strikeLightning(targetLocation);

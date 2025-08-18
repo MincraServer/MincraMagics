@@ -58,6 +58,14 @@ public abstract class MagicSkill {
         return true;
     }
 
+    public void onEquip(Player player, MaterialProperty property) {
+        return;
+    }
+
+    public void onUnequip(Player player, MaterialProperty property) {
+        return;
+    }
+
     protected void consumeMp(MincraPlayer player, MaterialProperty property) {
         player.subMp(property.mp());
     }

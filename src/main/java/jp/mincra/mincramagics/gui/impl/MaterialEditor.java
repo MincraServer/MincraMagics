@@ -44,7 +44,7 @@ public class MaterialEditor extends InventoryGUI {
     private static final int FIRST_SLOT_INDEX = 0;
     private static final int ARTIFACT_SLOT_INDEX = 10;
     private static final int FIRST_MATERIAL_SLOT_INDEX = 12;
-    private static final int LAST_MATERIAL_SLOT_INDEX = 16;
+    private static final int LAST_MATERIAL_SLOT_INDEX = 18;
     private static final int MATERIAL_EDITOR_SIZE = 27;
 
     private final MaterialManager materialManager;
@@ -266,17 +266,16 @@ public class MaterialEditor extends InventoryGUI {
         ArtifactNBT artifactNBT = ArtifactNBT.fromItem(artifactItem);
         if (artifactNBT == null) return false;
 
-        Map<String, String> materialMap = artifactNBT.getMaterialMap();
+        Map<MaterialSlot, String> materialMap = artifactNBT.getMaterialMap();
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < MaterialSlot.values().length; i++) {
             MaterialSlot mSlot = MaterialSlot.fromIndex(i);
             if (mSlot == null) {
                 logger.warning("Invalid MaterialSlot index: " + i);
                 continue;
             }
-            String slotId = mSlot.getSlot();
-            if (materialMap.containsKey(slotId)) {
-                String materialId = materialMap.get(slotId);
+            if (materialMap.containsKey(mSlot)) {
+                String materialId = materialMap.get(mSlot);
                 if (OraxenItems.exists(materialId)) {
                     ItemStack material = OraxenItems.getItemById(materialId).build();
                     inv.setItem(FIRST_MATERIAL_SLOT_INDEX + i, material);

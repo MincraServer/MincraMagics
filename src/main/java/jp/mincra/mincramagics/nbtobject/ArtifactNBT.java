@@ -3,6 +3,7 @@ package jp.mincra.mincramagics.nbtobject;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MaterialSlot;
+import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.mincramagics.nbtobject.components.Divider;
 import jp.mincra.mincramagics.nbtobject.utils.PDCUtils;
@@ -27,7 +28,9 @@ public record ArtifactNBT(List<Material> materials,
             "left", PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%%oraxen_mouse_left%%oraxen_shift_1%"),
             "right", PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%%oraxen_mouse_right%%oraxen_shift_1%"),
             "swap", PlaceholderAPI.setPlaceholders(null, "%oraxen_key_f%"),
-            "drop", PlaceholderAPI.setPlaceholders(null, "%oraxen_key_q%")
+            "drop", PlaceholderAPI.setPlaceholders(null, "%oraxen_key_q%"),
+            "passive_1", PlaceholderAPI.setPlaceholders(null, "%oraxen_passive%"),
+            "passive_2", PlaceholderAPI.setPlaceholders(null, "%oraxen_passive%")
     );
     private static final String SHIFT_1 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%");
     private static final String SHIFT_2 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_2%");
@@ -145,9 +148,16 @@ public record ArtifactNBT(List<Material> materials,
     /**
      * @return (K, V) = (Slot, Id)
      */
-    public Map<String, String> getMaterialMap() {
+    public Map<MaterialSlot, String> getMaterialMap() {
         return materials.stream()
-                .collect(Collectors.toMap(material -> material.slot, material -> material.id));
+                .collect(Collectors.toMap(material -> {
+                    final var key = MaterialSlot.fromString(material.slot);
+                    if (key.isEmpty()) {
+                        MincraMagics.getPluginLogger().warning("Invalid material slot: " + material.slot + ". Defaulting to LEFT slot.");
+                        return MaterialSlot.LEFT; // デフォルトはLEFTスロット
+                    }
+                    return key.get();
+                }, material -> material.id));
     }
 
     public void setMaterial(String slot, String id) {
