@@ -74,8 +74,17 @@ public record ArtifactNBT(List<Material> materials,
         // Finalize the MincraMagics container
         builder.setCustomTag(NamespacedKeys.MINCRA_MAGICS_KEY, PersistentDataType.TAG_CONTAINER, mincraMagicsContainer);
 
+        // "<reset>" と一致する文字列の前までが mainDescriptionLore
+        List<String> mainDescriptionLore = descriptionLore.stream()
+                .takeWhile(line -> !line.isEmpty()) // <reset> は空文字に変換される
+                .toList();
+        List<String> flavorLore = descriptionLore.stream()
+                .dropWhile(line -> !line.isEmpty())
+                .skip(1) // "<reset>" の次の行から始める
+                .toList();
+
         /* Set Lore */
-        List<String> newLore = new ArrayList<>(descriptionLore);
+        List<String> newLore = new ArrayList<>(mainDescriptionLore);
 
         // Loreの横線
         String divider = Divider.toString(descriptionLore);
@@ -100,8 +109,19 @@ public record ArtifactNBT(List<Material> materials,
                     getMaterialGlyph(materialId) + SHIFT_1 + materialName);
         }
 
+        // availableMaterials
+//        newLore.add(Color.COLOR_WHITE + "装着可能マテリアル  " + (availableMaterials.isEmpty() ? "全て" :
+//                availableMaterials.stream()
+//                        .map(ArtifactNBT::getMaterialGlyph)
+//                        .collect(Collectors.joining(SHIFT_2))));
+
         // Loreの横線2
         newLore.add(divider);
+
+        if (!flavorLore.isEmpty()) {
+            // フレーバーテキストがある場合は追加
+            newLore.addAll(flavorLore);
+        }
 
         builder.setLore(newLore);
 
