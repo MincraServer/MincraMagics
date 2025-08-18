@@ -194,14 +194,14 @@ public class ArtifactMechanicManager implements Listener {
         ArtifactNBT artifactNBT = ArtifactNBT.fromItem(item);
         if (artifactNBT == null) return null;
         Map<MaterialSlot, String> materials = artifactNBT.getMaterialMap();
-        MincraMagics.getPluginLogger().info("materials: " + materials);
+//        MincraMagics.getPluginLogger().info("materials: " + materials);
         List<MaterialSlot> targetSlots = Arrays.stream(MaterialSlot.values()).filter(slot -> slot.getTriggerType() == triggerType).toList();
-        MincraMagics.getPluginLogger().info("targetSlots: " + targetSlots);
+//        MincraMagics.getPluginLogger().info("targetSlots: " + targetSlots);
         List<String> materialIds = targetSlots.stream()
                 .map(materials::get)
                 .filter(Objects::nonNull)
                 .toList();
-        MincraMagics.getPluginLogger().info("materialIds: " + materialIds);
+//        MincraMagics.getPluginLogger().info("materialIds: " + materialIds);
         if (materialIds.isEmpty()) return null;
 
         List<MaterialSkill> materialProperties = materialIds.stream().filter(materialManager::isRegistered)
@@ -218,7 +218,7 @@ public class ArtifactMechanicManager implements Listener {
                 })
                 .filter(Objects::nonNull)
                 .toList();
-        MincraMagics.getPluginLogger().info("materialProperties: " + materialProperties);
+//        MincraMagics.getPluginLogger().info("materialProperties: " + materialProperties);
 
         if (materialProperties.isEmpty()) return null;
         return materialProperties;
