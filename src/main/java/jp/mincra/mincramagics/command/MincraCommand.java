@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 public class MincraCommand {
     private enum Permission {
         MINCRA_ADMIN("mincra.admin");
@@ -76,6 +77,7 @@ public class MincraCommand {
                 .withArguments(new FloatArgument("cooldown"))
                 .withArguments(new IntegerArgument("consumed_mp"))
                 .withArguments(new IntegerArgument("level"))
+//                .withArguments(new NBTCompoundArgument<NBTContainer>("extra"))
                 .executesPlayer((sender, args) -> {
                     SkillManager skillManager = MincraMagics.getSkillManager();
                     Player caster = (Player) args.get(0);
@@ -89,8 +91,34 @@ public class MincraCommand {
                     float cooldown = (float) args.get(2);
                     int consumedMp = (int) args.get(3);
                     int strength = (int) args.get(4);
+                    // TODO: Update /mincra skill command to specify Extra properties
+//                    NBTContainer extra = (NBTContainer) args.getOrDefault(5, new NBTContainer());
+//
+//                    // convert extra to Map<String, Object>
+//                    final Set<String> keys = extra.getKeys();
+//                    final Map<String, Object> extraMap = keys.stream()
+//                            .collect(java.util.stream.Collectors.toMap(key -> key, key -> {
+//                                NBTType type = extra.getType(key);
+//                                if (type == NBTType.NBTTagString) {
+//                                    return extra.getString(key);
+//                                } else if (type == NBTType.NBTTagInt) {
+//                                    return extra.getInteger(key);
+//                                } else if (type == NBTType.NBTTagDouble) {
+//                                    return extra.getDouble(key);
+//                                } else if (type == NBTType.NBTTagFloat) {
+//                                    return extra.getFloat(key);
+//                                } else if (type == NBTType.NBTTagLong) {
+//                                    return extra.getLong(key);
+//                                } else if (type == NBTType.NBTTagByte) {
+//                                    return extra.getByte(key);
+//                                } else if (type == NBTType.NBTTagShort) {
+//                                    return extra.getShort(key);
+//                                }
+//                                return "unknown";
+//                            }));
+
                     MagicSkill skill = skillManager.getSkill(skillId);
-                    skill.onTrigger(caster, new MaterialProperty(skillId, skillId, cooldown, consumedMp, strength));
+                    skill.onTrigger(caster, new MaterialProperty(skillId, skillId, cooldown, consumedMp, strength, Map.of()));
                 });
     }
 
