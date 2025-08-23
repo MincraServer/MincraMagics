@@ -1,5 +1,6 @@
 package jp.mincra.mincramagics.player;
 
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -18,12 +19,10 @@ import java.util.logging.Logger;
  */
 public class MPRepository implements Listener {
     private final PlayerManager playerManager;
-    private final Logger logger;
     private final int PRECISION = 100; // MPの精度を100倍する
 
     public MPRepository(PlayerManager playerManager) {
         this.playerManager = playerManager;
-        this.logger = MincraMagics.getPluginLogger();
     }
 
     @EventHandler
@@ -36,7 +35,7 @@ public class MPRepository implements Listener {
 
         final MincraPlayer mPlayer = playerManager.getPlayer(uuid);
         if (mPlayer == null) {
-            logger.warning("MincraPlayer not found for player: " + player.getName());
+            MincraLogger.warn("MincraPlayer not found for player: " + player.getName());
             return;
         }
         mPlayer.setMp(currentMp, false);
@@ -49,7 +48,7 @@ public class MPRepository implements Listener {
         final MincraPlayer mPlayer = playerManager.getPlayer(uuid);
 
         if (mPlayer == null) {
-            logger.warning("MincraPlayer not found for player: " + player.getName());
+            MincraLogger.warn("MincraPlayer not found for player: " + player.getName());
             return;
         }
 

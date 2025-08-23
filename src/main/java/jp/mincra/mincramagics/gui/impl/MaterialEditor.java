@@ -4,6 +4,7 @@ import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.mincramagics.gui.InventoryGUI;
@@ -48,7 +49,6 @@ public class MaterialEditor extends InventoryGUI {
     private static final int MATERIAL_EDITOR_SIZE = 27;
 
     private final MaterialManager materialManager;
-    private final Logger logger;
     private final Inventory inv;
     private final JavaPlugin mincramagics;
     private Player player;
@@ -77,7 +77,6 @@ public class MaterialEditor extends InventoryGUI {
         unavailableSlotItem = OraxenItems.getItemById("unavailable_slot").build();
         materialManager = MincraMagics.getMaterialManager();
         mincramagics = MincraMagics.getInstance();
-        logger = MincraMagics.getPluginLogger();
     }
 
     @Override
@@ -224,7 +223,7 @@ public class MaterialEditor extends InventoryGUI {
         }
         final MaterialSlot materialSlot = MaterialSlot.fromIndex(slot - FIRST_MATERIAL_SLOT_INDEX);
         if (materialSlot == null) {
-            logger.warning("Invalid MaterialSlot index: " + (slot - FIRST_MATERIAL_SLOT_INDEX));
+            MincraLogger.warn("Invalid MaterialSlot index: " + (slot - FIRST_MATERIAL_SLOT_INDEX));
             return true;
         }
         return artifactNBT.isAvailableSlot(materialSlot);
@@ -271,7 +270,7 @@ public class MaterialEditor extends InventoryGUI {
         for (int i = 0; i < MaterialSlot.values().length; i++) {
             MaterialSlot mSlot = MaterialSlot.fromIndex(i);
             if (mSlot == null) {
-                logger.warning("Invalid MaterialSlot index: " + i);
+                MincraLogger.warn("Invalid MaterialSlot index: " + i);
                 continue;
             }
             if (materialMap.containsKey(mSlot)) {

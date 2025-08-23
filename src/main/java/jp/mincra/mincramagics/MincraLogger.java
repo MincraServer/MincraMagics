@@ -67,4 +67,9 @@ public class MincraLogger {
     public static void fatal(String message) {
         send(LogLevel.FATAL, message);
     }
+
+    public static void fatal(String message, Exception e) {
+        send(LogLevel.FATAL, message + " - Exception: " + e.getMessage());
+        e.printStackTrace();
+    }
 }

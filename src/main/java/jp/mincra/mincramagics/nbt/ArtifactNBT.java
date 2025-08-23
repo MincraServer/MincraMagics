@@ -3,6 +3,7 @@ package jp.mincra.mincramagics.nbt;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MaterialSlot;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.mincramagics.nbt.components.Divider;
@@ -173,7 +174,7 @@ public record ArtifactNBT(List<Material> materials,
                 .collect(Collectors.toMap(material -> {
                     final var key = MaterialSlot.fromString(material.slot);
                     if (key.isEmpty()) {
-                        MincraMagics.getPluginLogger().warning("Invalid material slot: " + material.slot + ". Defaulting to LEFT slot.");
+                        MincraLogger.warn("Invalid material slot: " + material.slot + ". Defaulting to LEFT slot.");
                         return MaterialSlot.LEFT; // デフォルトはLEFTスロット
                     }
                     return key.get();

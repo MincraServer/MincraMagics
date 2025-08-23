@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MaterialSlot;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MagicSkill;
@@ -210,7 +211,7 @@ public class ArtifactMechanicManager implements Listener {
                     // Get the skill for the material
                     String skillId = material.skillId();
                     if (!skillManager.isRegistered(skillId)) {
-                        MincraMagics.getPluginLogger().warning("Skill " + skillId + " is not registered for material " + material.materialId() + ". Skipping.");
+                        MincraLogger.warn("Skill " + skillId + " is not registered for material " + material.materialId() + ". Skipping.");
                         return null;
                     }
                     MagicSkill skill = skillManager.getSkill(skillId);

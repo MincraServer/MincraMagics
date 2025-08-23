@@ -45,7 +45,6 @@ public final class MincraMagics extends JavaPlugin {
     private static VfxManager vfxManager;
     private static GUIManager guiManager;
     private static ConfigManager configManager;
-    private static Logger logger;
     private static BukkitAudiences audiences;
 
     private static JobRewardDao jobRewardDao;
@@ -63,7 +62,6 @@ public final class MincraMagics extends JavaPlugin {
         vfxManager = BKVfx.instance().getVfxManager();
         guiManager = new GUIManager(this);
         configManager = new ConfigManager(this);
-        logger = getLogger();
         audiences = BukkitAudiences.create(this);
 
         // Initialize database
@@ -128,10 +126,9 @@ public final class MincraMagics extends JavaPlugin {
         try {
             // FIXME: onEnable() の中身を切り出して reload() が onEnable() を呼ばないようにする
             onEnable();
-            logger.info("MincraMagics reloaded successfully.");
+            MincraLogger.info("MincraMagics reloaded successfully.");
         } catch (Exception e) {
-            logger.severe("Failed to reload MincraMagics: " + e.getMessage());
-            e.printStackTrace();
+            MincraLogger.fatal("Failed to reload MincraMagics", e);
         }
     }
 
@@ -165,14 +162,6 @@ public final class MincraMagics extends JavaPlugin {
 
     public static GUIManager getGuiManager() {
         return guiManager;
-    }
-
-    /**
-     * @deprecated Use MincraLogger instead
-     */
-    @Deprecated
-    public static Logger getPluginLogger() {
-        return logger;
     }
 
     public static BukkitAudiences getAudiences() {

@@ -1,6 +1,7 @@
 package jp.mincra.mincramagics.skill.passive;
 
 import jp.mincra.bkvfx.Vfx;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.player.MincraAttribute;
 import jp.mincra.mincramagics.player.MincraAttributeInstance;
@@ -22,7 +23,6 @@ import java.util.logging.Logger;
 public class MpBoost extends MagicSkill {
     private static final NamespacedKey MODIFIER_KEY = new NamespacedKey(MincraMagics.getInstance(), "mp_boost");
 
-    private final Logger logger = MincraMagics.getPluginLogger();
     private final PlayerManager playerManager = MincraMagics.getPlayerManager();
 
     @Override
@@ -36,12 +36,12 @@ public class MpBoost extends MagicSkill {
         // Core functionality
         final MincraPlayer mincraPlayer = playerManager.getPlayer(player.getUniqueId());
         if (mincraPlayer == null) {
-            logger.warning("Player " + player.getName() + " is not registered in PlayerManager.");
+            MincraLogger.warn("Player " + player.getName() + " is not registered in PlayerManager.");
             return;
         }
         final MincraAttributeInstance attribute = mincraPlayer.getAttribute(MincraAttribute.MAX_MANA);
         if (attribute == null) {
-            logger.warning("Player " + player.getName() + " does not have MAX_MANA attribute.");
+            MincraLogger.warn("Player " + player.getName() + " does not have MAX_MANA attribute.");
             return;
         }
         attribute.addModifier(new AttributeModifier(
@@ -61,12 +61,12 @@ public class MpBoost extends MagicSkill {
 
         final MincraPlayer mincraPlayer = playerManager.getPlayer(player.getUniqueId());
         if (mincraPlayer == null) {
-            logger.warning("Player " + player.getName() + " is not registered in PlayerManager.");
+            MincraLogger.warn("Player " + player.getName() + " is not registered in PlayerManager.");
             return;
         }
         final MincraAttributeInstance attribute = mincraPlayer.getAttribute(MincraAttribute.MAX_MANA);
         if (attribute == null) {
-            logger.warning("Player " + player.getName() + " does not have MAX_MANA attribute.");
+            MincraLogger.warn("Player " + player.getName() + " does not have MAX_MANA attribute.");
             return;
         }
 

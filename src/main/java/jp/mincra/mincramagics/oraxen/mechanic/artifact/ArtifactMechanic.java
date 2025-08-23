@@ -2,6 +2,7 @@ package jp.mincra.mincramagics.oraxen.mechanic.artifact;
 
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.MechanicFactory;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.nbt.Material;
 import jp.mincra.mincramagics.nbt.ArtifactNBT;
@@ -33,12 +34,10 @@ public class ArtifactMechanic extends Mechanic {
                 }
             }
 
-            final Logger logger = MincraMagics.getPluginLogger();
-
             // get 'available_slots' section, which is an array of string
             List<MaterialSlot> availableSlots = section.getStringList("available_slots").stream().map(MaterialSlot::fromString).filter((slot) -> {
                 if (slot.isEmpty()) {
-                    logger.warning("Invalid slot in 'available_slots': " + slot);
+                    MincraLogger.warn("Invalid slot in 'available_slots': " + slot);
                 }
                 return slot.isPresent();
             }).map(Optional::get).toList();
