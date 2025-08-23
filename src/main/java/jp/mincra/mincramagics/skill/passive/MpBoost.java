@@ -12,13 +12,9 @@ import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-
-import java.util.logging.Logger;
 
 public class MpBoost extends MagicSkill {
     private static final NamespacedKey MODIFIER_KEY = new NamespacedKey(MincraMagics.getInstance(), "mp_boost");
