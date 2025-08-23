@@ -1,0 +1,5 @@
+# Enable debug logging
+debug: false
+# Database settings
+database:
+  filename: "mincra.sqlite.db"

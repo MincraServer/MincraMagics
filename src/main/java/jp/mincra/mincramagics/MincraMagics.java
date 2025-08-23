@@ -2,12 +2,16 @@ package jp.mincra.mincramagics;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import io.lumine.mythic.bukkit.utils.adventure.platform.bukkit.BukkitAudiences;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import jp.mincra.bkvfx.BKVfx;
 import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.command.GuardCommand;
 import jp.mincra.mincramagics.command.MincraCommand;
+import jp.mincra.mincramagics.config.ConfigManager;
+import jp.mincra.mincramagics.db.HibernateUtil;
+import jp.mincra.mincramagics.db.dao.JobRewardDao;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
@@ -40,12 +44,17 @@ public final class MincraMagics extends JavaPlugin {
     private static HudManager hudManager;
     private static VfxManager vfxManager;
     private static GUIManager guiManager;
+    private static ConfigManager configManager;
     private static Logger logger;
+    private static BukkitAudiences audiences;
+
+    private static JobRewardDao jobRewardDao;
 
     @Override
     public void onEnable() {
         INSTANCE = this;
 
+        // Managers
         protocolManager = ProtocolLibrary.getProtocolManager();
         playerManager = new PlayerManager();
         skillManager = new SkillManager();
@@ -53,25 +62,34 @@ public final class MincraMagics extends JavaPlugin {
         hudManager = new HudManager(playerManager);
         vfxManager = BKVfx.instance().getVfxManager();
         guiManager = new GUIManager(this);
+        configManager = new ConfigManager(this);
         logger = getLogger();
+        audiences = BukkitAudiences.create(this);
 
+        // Initialize database
+        HibernateUtil.initialize(this, configManager.getConfig("database.yml"));
+        jobRewardDao = new JobRewardDao(HibernateUtil.getSessionFactory());
+
+        // Event Listeners
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(playerManager, this);
         pluginManager.registerEvents(hudManager, this);
         pluginManager.registerEvents(new MPRecoverer(this, playerManager), this);
         pluginManager.registerEvents(new MPRepository(playerManager), this);
 
-//        CommandAPI.onLoad(new CommandAPIConfig().initializeNBTAPI());
+        // Command API
+        // CommandAPI.onLoad(new CommandAPIConfig().initializeNBTAPI());
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
 
-        // stuff (staff) はタイポしてるけどもう後戻りはできない・・・
+        // Mechanics
         MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
         OraxenItems.loadItems();
 
-        // Combat
+        // Skills
+        // combat
         skillManager.registerSkill("freeze", new Freeze());
         skillManager.registerSkill("icetree", new IceTree());
         skillManager.registerSkill("inferno", new Inferno());
@@ -82,16 +100,13 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("lightning", new Lightning());
         skillManager.registerSkill("beast_spawn", new BeastSpawn());
         skillManager.registerSkill("mechanics", new Mechanics());
-
         // Healing
         skillManager.registerSkill("heal", new Heal());
-
         // Passive
         skillManager.registerSkill("hp_boost", new HpBoost());
         skillManager.registerSkill("mp_boost", new MpBoost());
         skillManager.registerSkill("hp_recovery", new HpRecovery());
         skillManager.registerSkill("mp_recovery", new MpRecovery());
-
         // Utility
         skillManager.registerSkill("charge", new Charge());
         skillManager.registerSkill("charging", new Charging());
@@ -102,7 +117,6 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("luminous", new Luminous(this));
         skillManager.registerSkill("mine", new Mine());
         skillManager.registerSkill("water_move", new WaterMove());
-
     }
 
     @Override
@@ -110,6 +124,7 @@ public final class MincraMagics extends JavaPlugin {
     }
 
     public void reload() {
+        configManager.reloadConfigs();
         try {
             // FIXME: onEnable() の中身を切り出して reload() が onEnable() を呼ばないようにする
             onEnable();
@@ -152,7 +167,19 @@ public final class MincraMagics extends JavaPlugin {
         return guiManager;
     }
 
+    /**
+     * @deprecated Use MincraLogger instead
+     */
+    @Deprecated
     public static Logger getPluginLogger() {
         return logger;
+    }
+
+    public static BukkitAudiences getAudiences() {
+        return audiences;
+    }
+
+    public static boolean isDebug() {
+        return getInstance().getConfig().getBoolean("debug", false);
     }
 }
