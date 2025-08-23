@@ -7,7 +7,7 @@ import jp.mincra.bktween.TickTime;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.mincramagics.gui.InventoryGUI;
-import jp.mincra.mincramagics.nbtobject.ArtifactNBT;
+import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.MaterialSlot;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.titleupdater.InventoryUpdate;

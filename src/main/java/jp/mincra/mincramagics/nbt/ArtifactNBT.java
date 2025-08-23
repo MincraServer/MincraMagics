@@ -1,12 +1,12 @@
-package jp.mincra.mincramagics.nbtobject;
+package jp.mincra.mincramagics.nbt;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MaterialSlot;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.constant.Color;
-import jp.mincra.mincramagics.nbtobject.components.Divider;
-import jp.mincra.mincramagics.nbtobject.utils.PDCUtils;
+import jp.mincra.mincramagics.nbt.components.Divider;
+import jp.mincra.mincramagics.nbt.utils.PDCUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;

@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.nbtobject;
+package jp.mincra.mincramagics.nbt;
 
 public enum MagicEnchantment {
     ;

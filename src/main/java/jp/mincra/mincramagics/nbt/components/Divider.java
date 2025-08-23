@@ -1,8 +1,7 @@
-package jp.mincra.mincramagics.nbtobject.components;
+package jp.mincra.mincramagics.nbt.components;
 
 import jp.mincra.mincramagics.constant.Color;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class Divider {

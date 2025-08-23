@@ -3,7 +3,7 @@ package jp.mincra.mincramagics.oraxen.mechanic.material;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.MechanicFactory;
 import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.nbtobject.MaterialNBT;
+import jp.mincra.mincramagics.nbt.MaterialNBT;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.configuration.ConfigurationSection;
 
