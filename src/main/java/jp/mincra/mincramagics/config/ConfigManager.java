@@ -1,5 +1,6 @@
 package jp.mincra.mincramagics.config;
 
+import jp.mincra.mincramagics.MincraLogger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
@@ -11,12 +12,12 @@ import java.util.Map;
  * Designed to be extensible for multiple configuration files.
  */
 public class ConfigManager {
-
     private final JavaPlugin plugin;
     private final Map<String, YamlConfiguration> configs = new HashMap<>();
 
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
+        loadConfigs();
     }
 
     /**
@@ -25,6 +26,7 @@ public class ConfigManager {
      */
     public void loadConfigs() {
         loadConfigFile("config.yml");
+        loadConfigFile("job_reward.yml");
     }
 
     /**
@@ -39,13 +41,13 @@ public class ConfigManager {
         // If the file doesn't exist in the data folder, save the default from resources
         if (!configFile.exists()) {
             plugin.saveResource(fileName, false);
-            plugin.getLogger().info(String.format("'%s' not found, created a default one.", fileName));
+            MincraLogger.info(String.format("'%s' not found, created a default one.", fileName));
         }
 
         // Load the configuration from the file and store it in the map
         YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
         configs.put(fileName, config);
-        plugin.getLogger().info(String.format("Successfully loaded '%s'.", fileName));
+        MincraLogger.info(String.format("Successfully loaded '%s'.", fileName));
     }
 
     /**
@@ -67,6 +69,10 @@ public class ConfigManager {
         return getConfig("config.yml");
     }
 
+    public YamlConfiguration getJobRewardConfig() {
+        return getConfig("job_reward.yml");
+    }
+
     /**
      * Reloads all configuration files from disk.
      */
@@ -75,6 +81,6 @@ public class ConfigManager {
         configs.clear();
         // Load all configs again
         loadConfigs();
-        plugin.getLogger().info("All configuration files have been reloaded.");
+        MincraLogger.info("All configuration files have been reloaded.");
     }
 }
