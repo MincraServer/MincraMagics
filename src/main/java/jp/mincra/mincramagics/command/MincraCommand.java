@@ -171,19 +171,14 @@ public class MincraCommand {
         return new CommandAPICommand("gui")
                 .withArguments(new PlayerArgument("target"))
                 .withArguments(new StringArgument("id").replaceSuggestions(ArgumentSuggestions.strings(
-                        "MaterialEditor"
+                        MincraMagics.getGuiManager().getRegisteredGuiIds()
                 )))
                 .executes(((sender, args) -> {
                     GUIManager guiManager = MincraMagics.getGuiManager();
                     Player target = (Player) args.get(0);
                     String guiId = (String) args.get(1);
 
-                    switch (guiId) {
-                        case "MaterialEditor" -> {
-                            guiManager.open(new MaterialEditor(), target);
-                            return;
-                        }
-                    }
+                    guiManager.open(guiId, target);
                 }));
     }
 
