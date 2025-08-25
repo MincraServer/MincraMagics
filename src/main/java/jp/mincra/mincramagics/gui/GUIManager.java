@@ -1,5 +1,6 @@
 package jp.mincra.mincramagics.gui;
 
+import jp.mincra.mincramagics.gui.impl.JobRewardMenu;
 import jp.mincra.mincramagics.gui.impl.MaterialEditor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -9,7 +10,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GUIManager implements Listener {
@@ -30,6 +33,10 @@ public class GUIManager implements Listener {
         idToGui.put(id, clazz);
     }
 
+    public List<String> getRegisteredGuiIds() {
+        return new ArrayList<>(idToGui.keySet());
+    }
+
     @Nullable
     private InventoryGUI instantiateGui(String id) {
         if (!idToGui.containsKey(id)) {
@@ -45,12 +52,7 @@ public class GUIManager implements Listener {
 
     private void registerDefault() {
         registerGui("MaterialEditor", MaterialEditor.class);
-    }
-
-    public void open(InventoryGUI gui, Player target) {
-        pluginManager.registerEvents(gui, plugin);
-//        openedGui.put(target.getUniqueId(), gui);
-        gui.open(target);
+        registerGui("JobRewardMenu", JobRewardMenu.class);
     }
 
     public boolean open(String guiId, Player target) {
@@ -58,19 +60,9 @@ public class GUIManager implements Listener {
         if (inventoryGUI == null) {
             return false;
         } else {
-            open(inventoryGUI, target);
+            pluginManager.registerEvents(inventoryGUI, plugin);
+            inventoryGUI.open(target);
             return true;
         }
     }
-
-//    @EventHandler
-//    private void onClose(InventoryCloseEvent e) {
-//        Inventory closedInv = e.getInventory();
-//        for (InventoryGUI gui : openedGui.values()) {
-//            if (gui.getInventory().equals(closedInv)) {
-//                gui.onClose();
-//                pluginManager.even
-//            }
-//        }
-//    }
 }
