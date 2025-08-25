@@ -1,13 +1,16 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
+
 plugins {
     `java-library`
     `maven-publish`
 
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.9"
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
+
     maven {
         url = uri("https://jitpack.io")
     }
@@ -69,15 +72,17 @@ dependencies {
     compileOnly("dev.jorel:commandapi-bukkit-core:9.3.0")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
-    implementation(files("libs/Jobs5.2.6.3.jar")) // Jobs Reborn
-    implementation(files("libs/oraxen-1.190.0-modified.jar")) // // 変更を加えた Oraxen を libs フォルダに配置
+    compileOnly(files("libs/Jobs5.2.6.3.jar")) // Jobs Reborn
+    compileOnly(files("libs/oraxen-1.190.0-modified.jar")) // // 変更を加えた Oraxen を libs フォルダに配置
     compileOnly(files("libs/GSit-2.4.2.jar"))
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar")))) // NMS
     // Libraries
-    implementation("org.hibernate.orm:hibernate-core:7.1.0.Final")
+    implementation("org.hibernate:hibernate-core:7.1.0.Final")
+    implementation("org.hibernate:hibernate-community-dialects:7.1.0.Final")
     implementation("org.xerial:sqlite-jdbc:3.50.3.0")
     compileOnly("org.projectlombok:lombok:1.18.32")
     annotationProcessor("org.projectlombok:lombok:1.18.32")
+    compileOnly("net.kyori:adventure-platform-bukkit:4.3.4")
     // For jp.mincra.ezsvg
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     implementation("org.w3c:dom:2.3.0-jaxb-1.0.6")
@@ -100,27 +105,36 @@ publishing {
 tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
+        options.release.set(21)
     }
 
     withType<Javadoc> {
         options.encoding = "UTF-8"
     }
 
-//    // パッケージの競合を回避
-//    shadowJar {
-//        relocate("org.hibernate", "jp.mincra.mincramagics.libs.hibernate")
-//        relocate("org.sqlite", "jp.mincra.mincramagics.libs.sqlite")
-//        relocate("jakarta.persistence", "jp.mincra.mincramagics.libs.jakarta.persistence")
-//        // Add other relocations for transitive dependencies as needed
-//
-//        archiveBaseName.set(project.name)
-//        archiveClassifier.set("")
-//        archiveVersion.set(project.version.toString())
-//    }
+    shadowJar {
+        // 依存関係をJARに含める
+        configurations = listOf(project.configurations.runtimeClasspath.get())
 
-//    build {
-//        dependsOn(shadowJar)
-//    }
+        // 他のプラグインとの競合を避けるためにパッケージをリロケートする
+        relocate("org.hibernate", "jp.mincra.libs.hibernate")
+        relocate("jakarta.persistence", "jp.mincra.libs.jakarta.persistence")
+        relocate("org.jboss", "jp.mincra.libs.jboss")
+        relocate("com.fasterxml", "jp.mincra.libs.fasterxml")
+        relocate("net.bytebuddy", "jp.mincra.libs.bytebuddy")
+        relocate("org.antlr", "jp.mincra.libs.antlr")
+        relocate("org.glassfish", "jp.mincra.libs.glassfish")
+
+        transform(ServiceFileTransformer::class.java)
+
+        // Paperプラグインの場合、ビルド後のJARファイル名を変更すると便利
+        archiveClassifier.set("") // `-all`のような接尾辞を削除
+    }
+
+    // `build`タスク実行時に`shadowJar`が実行されるようにする
+    build {
+        dependsOn(shadowJar)
+    }
 }
 
 java {

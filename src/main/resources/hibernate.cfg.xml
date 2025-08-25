@@ -9,7 +9,7 @@
         <property name="format_sql">true</property>
         <property name="hbm2ddl.auto">update</property>
 
-        <mapping class="com.yourdomain.yourplugin.database.entities.PlayerReward"/>
+        <mapping class="jp.mincra.mincramagics.db.model.JobReward"/>
 
     </session-factory>
 </hibernate-configuration>
