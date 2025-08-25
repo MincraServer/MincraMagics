@@ -2,17 +2,14 @@ package jp.mincra.mincramagics.gui.impl;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
-import jp.mincra.bktween.BKTween;
-import jp.mincra.bktween.TickTime;
+import jp.mincra.mincramagics.MaterialSlot;
 import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.constant.Color;
+import jp.mincra.mincramagics.gui.lib.GUIHelper;
 import jp.mincra.mincramagics.gui.InventoryGUI;
+import jp.mincra.mincramagics.gui.lib.GUI;
 import jp.mincra.mincramagics.nbt.ArtifactNBT;
-import jp.mincra.mincramagics.MaterialSlot;
 import jp.mincra.mincramagics.skill.MaterialManager;
-import jp.mincra.titleupdater.InventoryUpdate;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,22 +22,13 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class MaterialEditor extends InventoryGUI {
-    // Oraxen Glyphs
-    private static final String NEG_128 = "%oraxen_neg_shift_128%";
-    private static final String NEG_64 = "%oraxen_neg_shift_64%";
-    private static final String NEG_8 = "%oraxen_neg_shift_8%";
-    private static final String GUI_ACTIVATED = "%oraxen_gui_material_editor_activated%";
-    private static final String GUI_INACTIVATED = "%oraxen_gui_material_editor_inactivated%";
-
     // Slot Indexes
     private static final int FIRST_SLOT_INDEX = 0;
     private static final int ARTIFACT_SLOT_INDEX = 10;
@@ -50,20 +38,11 @@ public class MaterialEditor extends InventoryGUI {
 
     private final MaterialManager materialManager;
     private final Inventory inv;
-    private final JavaPlugin mincramagics;
-    private Player player;
     private final ItemStack invisibleItem;
     private final ItemStack unavailableSlotItem;
 
-    private final static String activeTitle =
-            Color.COLOR_WHITE +
-            PlaceholderAPI.setPlaceholders(null, NEG_8 + GUI_ACTIVATED)
-            + Color.COLOR_DARK_GRAY
-            + PlaceholderAPI.setPlaceholders(null, NEG_64 + NEG_128 + "マテリアル作業台");
-    private final static String inactiveTitle = Color.COLOR_WHITE +
-            PlaceholderAPI.setPlaceholders(null, NEG_8 + GUI_INACTIVATED)
-            + Color.COLOR_DARK_GRAY
-            + PlaceholderAPI.setPlaceholders(null, NEG_64 + NEG_128 + "マテリアル作業台");
+    private final static String activeTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_activated%");
+    private final static String inactiveTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_inactivated%");
 
     public MaterialEditor() {
         inv = Bukkit.createInventory(null, 27, Component.text(inactiveTitle));
@@ -76,13 +55,6 @@ public class MaterialEditor extends InventoryGUI {
         }
         unavailableSlotItem = OraxenItems.getItemById("unavailable_slot").build();
         materialManager = MincraMagics.getMaterialManager();
-        mincramagics = MincraMagics.getInstance();
-    }
-
-    @Override
-    protected void open(Player player) {
-        player.openInventory(inv);
-        this.player = player;
     }
 
     @Override
@@ -90,10 +62,15 @@ public class MaterialEditor extends InventoryGUI {
         return inv;
     }
 
+    @Override
+    protected GUI build() {
+        return null;
+    }
+
     // Event Listeners
 
     @EventHandler
-    private void onClick(InventoryClickEvent event) {
+    public void onClick(InventoryClickEvent event) {
         // MaterialEditorのインベントリかどうか
         if (!event.getInventory().equals(getInventory())) return;
         int slot = event.getRawSlot();
@@ -295,7 +272,7 @@ public class MaterialEditor extends InventoryGUI {
             }
         }
 
-        changeTitle(activeTitle);
+        GUIHelper.updateTitle(player, activeTitle);
         return true;
     }
 
@@ -304,7 +281,7 @@ public class MaterialEditor extends InventoryGUI {
         for (int i = FIRST_MATERIAL_SLOT_INDEX; i < LAST_MATERIAL_SLOT_INDEX; i++) {
             inv.setItem(i, null);
         }
-        changeTitle(inactiveTitle);
+        GUIHelper.updateTitle(player, inactiveTitle);
         return true;
     }
 
@@ -344,20 +321,6 @@ public class MaterialEditor extends InventoryGUI {
         setMaterial(null, slot);
 
         return true;
-    }
-
-    private void changeTitle(String title) {
-        new BKTween(mincramagics)
-                .delay(TickTime.TICK, 1)
-                .execute(v -> {
-                    // FIXME: タイトルが更新されないバグを修正
-                    player.getOpenInventory().setTitle(title);
-//                    final Component component = player.getOpenInventory().title().replaceText(TextReplacementConfig.builder().replacement("/[^_]/" + title + "/g").build());
-//                    player.updateInventory();
-                    InventoryUpdate.updateInventory(player, title);
-                    return true;
-                })
-                .run();
     }
 
     private boolean isFullInventory(Player player) {
