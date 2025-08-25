@@ -2,36 +2,44 @@ package jp.mincra.mincramagics.db.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.Instant;
+import java.util.UUID;
 
 /**
  * Entity class mapping to the 'job_rewards' table.
+ * Uses a single, auto-incrementing primary key and a composite index.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "job_rewards")
-@IdClass(JobRewardId.class) // Specifies the composite key class
+@Table(name = "job_rewards", indexes = {
+        // Defines a composite index for faster lookups based on these three columns.
+        @Index(name = "idx_player_job_level", columnList = "player_id, job_id, level")
+})
+@Builder
 public class JobReward {
 
     @Id
-    @Column(name = "player_id", nullable = false)
-    private Integer playerId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-    @Id
+    @Column(name = "player_id", nullable = false)
+    private UUID playerId;
+
     @Column(name = "job_id", nullable = false)
     private Integer jobId;
 
-    @Id
     @Column(name = "level", nullable = false)
     private Integer level;
 
-    @Id
-    @Column(name = "item_id", nullable = false)
-    private Integer itemId;
-
-    @Column(name = "received_at", nullable = false)
-    private String receivedAt; // Using String for simplicity as per schema (TEXT)
+    @CreationTimestamp
+    @Column(name = "received_at", nullable = false, updatable = false) // updatable=falseで更新されないようにする
+    private Instant receivedAt;
 }

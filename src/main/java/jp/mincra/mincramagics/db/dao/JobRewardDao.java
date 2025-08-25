@@ -2,13 +2,13 @@ package jp.mincra.mincramagics.db.dao;
 
 import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.db.model.JobReward;
-import jp.mincra.mincramagics.db.model.JobRewardId;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -71,8 +71,17 @@ public class JobRewardDao {
      * @param id The composite primary key.
      * @return An Optional containing the JobReward if found, otherwise empty.
      */
-    public Optional<JobReward> findById(JobRewardId id) {
+    public Optional<JobReward> findById(int id) {
         return Optional.ofNullable(executeQuery(session -> session.find(JobReward.class, id)));
+    }
+
+    public List<JobReward> findByPlayerAndJob(UUID playerId, int jobId) {
+        return executeQuery(session ->
+                session.createQuery("FROM JobReward WHERE playerId = :playerId AND jobId = :jobId", JobReward.class)
+                        .setParameter("playerId", playerId)
+                        .setParameter("jobId", jobId)
+                        .list()
+        );
     }
 
     /**
