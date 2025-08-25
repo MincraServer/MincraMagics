@@ -2,7 +2,6 @@ package jp.mincra.mincramagics;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import io.lumine.mythic.bukkit.utils.adventure.platform.bukkit.BukkitAudiences;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import jp.mincra.bkvfx.BKVfx;
@@ -29,6 +28,7 @@ import jp.mincra.mincramagics.skill.passive.HpRecovery;
 import jp.mincra.mincramagics.skill.passive.MpBoost;
 import jp.mincra.mincramagics.skill.passive.MpRecovery;
 import jp.mincra.mincramagics.skill.utility.*;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -54,19 +54,21 @@ public final class MincraMagics extends JavaPlugin {
         INSTANCE = this;
 
         // Managers
+        audiences = BukkitAudiences.create(this);
         protocolManager = ProtocolLibrary.getProtocolManager();
         playerManager = new PlayerManager();
         skillManager = new SkillManager();
         materialManager = new MaterialManager();
         hudManager = new HudManager(playerManager);
         vfxManager = BKVfx.instance().getVfxManager();
-        guiManager = new GUIManager(this);
         configManager = new ConfigManager(this);
-        audiences = BukkitAudiences.create(this);
 
         // Initialize database
-        HibernateUtil.initialize(this, configManager.getConfig("database.yml"));
+        HibernateUtil.initialize(this, configManager.getConfig("config.yml"));
         jobRewardDao = new JobRewardDao(HibernateUtil.getSessionFactory());
+
+        // DB に依存する Manager はここで初期化
+        guiManager = new GUIManager(this);
 
         // Event Listeners
         PluginManager pluginManager = getServer().getPluginManager();
@@ -164,8 +166,16 @@ public final class MincraMagics extends JavaPlugin {
         return guiManager;
     }
 
+    public static ConfigManager getConfigManager() {
+        return configManager;
+    }
+
     public static BukkitAudiences getAudiences() {
         return audiences;
+    }
+
+    public static JobRewardDao getJobRewardDao() {
+        return jobRewardDao;
     }
 
     public static boolean isDebug() {
