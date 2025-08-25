@@ -1,8 +1,7 @@
 package jp.mincra.mincramagics;
 
-import io.lumine.mythic.bukkit.utils.adventure.text.ComponentLike;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 
@@ -27,18 +26,13 @@ public class MincraLogger {
 
     private static final Component MINCRA_COMPONENT = MiniMessage.miniMessage().deserialize("<gradient:#C7FFFF:#1CE4EC>MincraMagics</gradient>");
 
-    private static Component prefix(LogLevel level) {
-        return Component.text("[").color(TextColor.fromHexString("#FFFFFF"))
-                .append(MINCRA_COMPONENT)
-                .append(Component.text(":").color(TextColor.fromHexString("#FFFFFF")))
-                .append(Component.text(level.name()).color(level.getColor()))
-                .append(Component.text("] ").color(TextColor.fromHexString("#FFFFFF")));
+    private static Component prefix() {
+        return MINCRA_COMPONENT
+                .append(Component.text(" | ").color(TextColor.fromHexString("#FFFFFF")));
     }
 
     private static void send(LogLevel level, String message) {
-        MincraMagics.getAudiences().sender(Bukkit.getConsoleSender()).sendMessage((ComponentLike)
-                prefix(level).append(Component.text(message, level.getColor()))
-        );
+        MincraMagics.getAudiences().sender(Bukkit.getConsoleSender()).sendMessage((Component) prefix().append(Component.text(message, level.getColor())));
     }
 
     public static void debug(String message) {
