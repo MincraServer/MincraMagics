@@ -1,0 +1,18 @@
+Hunter:
+  enabled: true
+  rewards:
+    - level: 1
+      items:
+        - minecraft_type: DIAMOND
+          amount: 1
+        - oraxen_item: mana_crystal
+          amount: 1
+WoodCutter:
+  enabled: false
+  rewards:
+    - level: 10
+      items:
+        - minecraft_type: STICK
+          amount: 1
+        - oraxen_item: mana_crystal
+          amount: 1
