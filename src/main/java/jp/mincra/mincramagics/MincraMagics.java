@@ -20,10 +20,7 @@ import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.*;
 import jp.mincra.mincramagics.skill.healing.Heal;
-import jp.mincra.mincramagics.skill.passive.HpBoost;
-import jp.mincra.mincramagics.skill.passive.HpRecovery;
-import jp.mincra.mincramagics.skill.passive.MpBoost;
-import jp.mincra.mincramagics.skill.passive.MpRecovery;
+import jp.mincra.mincramagics.skill.passive.*;
 import jp.mincra.mincramagics.skill.utility.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -91,6 +88,7 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("mp_boost", new MpBoost());
         skillManager.registerSkill("hp_recovery", new HpRecovery());
         skillManager.registerSkill("mp_recovery", new MpRecovery());
+        skillManager.registerSkill("blood", new Blood());
 
         // Utility
         skillManager.registerSkill("charge", new Charge());
