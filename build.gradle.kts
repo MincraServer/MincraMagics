@@ -74,8 +74,9 @@ dependencies {
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
     compileOnly(files("libs/Jobs5.2.6.3.jar")) // Jobs Reborn
     compileOnly(files("libs/oraxen-1.190.0-modified.jar")) // // 変更を加えた Oraxen を libs フォルダに配置
+    compileOnly(files("libs/InfiniteFishing-1.6.1.jar"))
     compileOnly(files("libs/GSit-2.4.2.jar"))
-    compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar")))) // NMS
+    // compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar")))) // NMS
     // Libraries
     implementation("org.hibernate:hibernate-core:7.1.0.Final")
     implementation("org.hibernate:hibernate-community-dialects:7.1.0.Final")
