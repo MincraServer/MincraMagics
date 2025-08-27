@@ -1,8 +1,8 @@
-package jp.mincra.mincramagics.nbtobject;
+package jp.mincra.mincramagics.nbt;
 
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.constant.Color;
-import jp.mincra.mincramagics.nbtobject.components.Divider;
+import jp.mincra.mincramagics.nbt.components.Divider;
 
 import java.util.ArrayList;
 import java.util.List;

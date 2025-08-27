@@ -96,7 +96,7 @@ public class GuardCommand {
                     // 一時的に権限を付与してからコマンドを実行
                     server.dispatchCommand(consoleSender, "lp user " + sender.getName() + " permission set worldguard.region.claim true");
                     server.dispatchCommand(sender, "region claim " + new RegionId(sender, id));
-                    server.dispatchCommand(consoleSender, "lp user " + sender.getName() + " permission unset worldguard.region.claim true");
+                    server.dispatchCommand(consoleSender, "lp user " + sender.getName() + " permission unset worldguard.region.claim");
                 }));
     }
 

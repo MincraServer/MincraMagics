@@ -3,6 +3,7 @@ package jp.mincra.mincramagics.skill.utility;
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
 import jp.mincra.bkvfx.Vfx;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.skill.MagicSkill;
@@ -35,7 +36,7 @@ public class Charging extends MagicSkill implements Listener {
         final String mpUpdateMethod = property.extra().getOrDefault("mp_update_method", "set").toString();
 
         if (Stream.of("add", "set").noneMatch(mpUpdateMethod::equals)) {
-            MincraMagics.getPluginLogger().warning("Invalid mp_update_method: " + mpUpdateMethod + ". Valid options are 'add' or 'set'.");
+            MincraLogger.warn("Invalid mp_update_method: " + mpUpdateMethod + ". Valid options are 'add' or 'set'.");
             return false;
         }
 
@@ -64,7 +65,7 @@ public class Charging extends MagicSkill implements Listener {
                     }
 
                     double currentMp = mPlayer.getMp();
-                    MincraMagics.getPluginLogger().info("Current MP: " + currentMp + ", Max MP: " + mPlayer.getMaxMp() + ", MP Upper Bound: " + mpUpperBound + ", MP to Add: " + mpToAdd + ", MP Update Method: " + mpUpdateMethod + ", castingTimeInTick: " + castingTimeInTick);
+                    MincraLogger.info("Current MP: " + currentMp + ", Max MP: " + mPlayer.getMaxMp() + ", MP Upper Bound: " + mpUpperBound + ", MP to Add: " + mpToAdd + ", MP Update Method: " + mpUpdateMethod + ", castingTimeInTick: " + castingTimeInTick);
                     if (currentMp >= mPlayer.getMaxMp() || (mpUpdateMethod.equals("set") && currentMp >= mpUpperBound)) return true;
 
                     // Update MP based on the method

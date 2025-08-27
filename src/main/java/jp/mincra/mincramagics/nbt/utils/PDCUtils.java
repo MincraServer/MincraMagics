@@ -1,6 +1,6 @@
-package jp.mincra.mincramagics.nbtobject.utils;
+package jp.mincra.mincramagics.nbt.utils;
 
-import jp.mincra.mincramagics.nbtobject.NamespacedKeys;
+import jp.mincra.mincramagics.nbt.NamespacedKeys;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;

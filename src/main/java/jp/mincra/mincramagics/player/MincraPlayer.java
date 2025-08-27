@@ -17,11 +17,10 @@ public class MincraPlayer {
         this.player = player;
         this.mpObject = mp;
         this.cooldown = new SkillCooldown();
-        final MincraAttributeInstance manaAttribute = new MincraAttributeInstance();
         this.attributes = Map.of(
-                MincraAttribute.MAX_MANA, manaAttribute
+                MincraAttribute.MAX_MANA, new MincraAttributeInstance()
         );
-        mpObject.setMaxManaAttribute(manaAttribute);
+        mpObject.setMaxManaAttribute(attributes.get(MincraAttribute.MAX_MANA));
     }
 
     public float getMp() {

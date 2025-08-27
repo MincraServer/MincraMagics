@@ -1,12 +1,13 @@
-package jp.mincra.mincramagics.nbtobject;
+package jp.mincra.mincramagics.nbt;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MaterialSlot;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.constant.Color;
-import jp.mincra.mincramagics.nbtobject.components.Divider;
-import jp.mincra.mincramagics.nbtobject.utils.PDCUtils;
+import jp.mincra.mincramagics.nbt.components.Divider;
+import jp.mincra.mincramagics.nbt.utils.PDCUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -46,6 +47,10 @@ public record ArtifactNBT(List<Material> materials,
     }
     // endregion
 
+    public ItemStack setNBTTag(ItemStack item) {
+        return setNBTTag(new ItemBuilder(item)).build();
+    }
+
     public ItemBuilder setNBTTag(ItemBuilder builder) {
         ItemStack item = builder.build();
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
@@ -74,8 +79,17 @@ public record ArtifactNBT(List<Material> materials,
         // Finalize the MincraMagics container
         builder.setCustomTag(NamespacedKeys.MINCRA_MAGICS_KEY, PersistentDataType.TAG_CONTAINER, mincraMagicsContainer);
 
+        // "<reset>" と一致する文字列の前までが mainDescriptionLore
+        List<String> mainDescriptionLore = descriptionLore.stream()
+                .takeWhile(line -> !line.isEmpty()) // <reset> は空文字に変換される
+                .toList();
+        List<String> flavorLore = descriptionLore.stream()
+                .dropWhile(line -> !line.isEmpty())
+                .skip(1) // "<reset>" の次の行から始める
+                .toList();
+
         /* Set Lore */
-        List<String> newLore = new ArrayList<>(descriptionLore);
+        List<String> newLore = new ArrayList<>(mainDescriptionLore);
 
         // Loreの横線
         String divider = Divider.toString(descriptionLore);
@@ -100,8 +114,19 @@ public record ArtifactNBT(List<Material> materials,
                     getMaterialGlyph(materialId) + SHIFT_1 + materialName);
         }
 
+        // availableMaterials
+//        newLore.add(Color.COLOR_WHITE + "装着可能マテリアル  " + (availableMaterials.isEmpty() ? "全て" :
+//                availableMaterials.stream()
+//                        .map(ArtifactNBT::getMaterialGlyph)
+//                        .collect(Collectors.joining(SHIFT_2))));
+
         // Loreの横線2
         newLore.add(divider);
+
+        if (!flavorLore.isEmpty()) {
+            // フレーバーテキストがある場合は追加
+            newLore.addAll(flavorLore);
+        }
 
         builder.setLore(newLore);
 
@@ -111,10 +136,13 @@ public record ArtifactNBT(List<Material> materials,
     }
 
     @Nullable
-    public static ArtifactNBT fromItem(ItemStack item) {
+    public static ArtifactNBT fromItem(@Nullable ItemStack item) {
         if (item == null) return null;
 
-        final PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        final var itemMeta = item.getItemMeta();
+        if (itemMeta == null) return null;
+
+        final PersistentDataContainer container = itemMeta.getPersistentDataContainer();
         PersistentDataContainer mincramagicsCon = container.get(NamespacedKeys.MINCRA_MAGICS_KEY, PersistentDataType.TAG_CONTAINER);
 
         if (mincramagicsCon == null) return null;
@@ -153,7 +181,7 @@ public record ArtifactNBT(List<Material> materials,
                 .collect(Collectors.toMap(material -> {
                     final var key = MaterialSlot.fromString(material.slot);
                     if (key.isEmpty()) {
-                        MincraMagics.getPluginLogger().warning("Invalid material slot: " + material.slot + ". Defaulting to LEFT slot.");
+                        MincraLogger.warn("Invalid material slot: " + material.slot + ". Defaulting to LEFT slot.");
                         return MaterialSlot.LEFT; // デフォルトはLEFTスロット
                     }
                     return key.get();
