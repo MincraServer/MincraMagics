@@ -47,6 +47,10 @@ public record ArtifactNBT(List<Material> materials,
     }
     // endregion
 
+    public ItemStack setNBTTag(ItemStack item) {
+        return setNBTTag(new ItemBuilder(item)).build();
+    }
+
     public ItemBuilder setNBTTag(ItemBuilder builder) {
         ItemStack item = builder.build();
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
@@ -132,10 +136,13 @@ public record ArtifactNBT(List<Material> materials,
     }
 
     @Nullable
-    public static ArtifactNBT fromItem(ItemStack item) {
+    public static ArtifactNBT fromItem(@Nullable ItemStack item) {
         if (item == null) return null;
 
-        final PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        final var itemMeta = item.getItemMeta();
+        if (itemMeta == null) return null;
+
+        final PersistentDataContainer container = itemMeta.getPersistentDataContainer();
         PersistentDataContainer mincramagicsCon = container.get(NamespacedKeys.MINCRA_MAGICS_KEY, PersistentDataType.TAG_CONTAINER);
 
         if (mincramagicsCon == null) return null;

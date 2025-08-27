@@ -8,9 +8,12 @@ import jp.mincra.mincramagics.gui.lib.State;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -20,10 +23,15 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public abstract class InventoryGUI implements Listener {
     protected Player player;
+    protected Inventory inv;
+    private Inventory prevInv;
     private final Map<Integer, List<Consumer<InventoryClickEvent>>> clickListeners = new HashMap<>();
+    private final Map<Integer, List<Consumer<InventoryDragEvent>>> dragListeners = new HashMap<>();
+    private final List<Consumer<InventoryCloseEvent>> closeListeners = new ArrayList<>();
 
     private final List<Object> states = new ArrayList<>();
     private final UpdateQueue updateQueue = new UpdateQueue();
@@ -47,7 +55,7 @@ public abstract class InventoryGUI implements Listener {
 
     // Rendering
     @Nullable
-    protected abstract GUI build();
+    protected abstract GUI build(BuildContext context);
 
     protected final void addClickListener(int index, Consumer<InventoryClickEvent> listener) {
         if (!clickListeners.containsKey(index)) {
@@ -56,9 +64,35 @@ public abstract class InventoryGUI implements Listener {
         clickListeners.get(index).add(listener);
     }
 
-    protected final  <T> State<T> useState(T initialValue) {
+    ///  Add global click listener
+    protected final void addClickListener(Consumer<InventoryClickEvent> listener) {
+        // -1 is the index for "any slot"
+        addClickListener(-1, listener);
+    }
+
+    protected final void addDragListener(Integer index, Consumer<InventoryDragEvent> listener) {
+        if (!dragListeners.containsKey(index)) {
+            dragListeners.put(index, new ArrayList<>());
+        }
+        dragListeners.get(index).add(listener);
+    }
+
+    protected final void addDragListener(Stream<Integer> indexes, Consumer<InventoryDragEvent> listener) {
+        indexes.forEach(index -> addDragListener(index, listener));
+    }
+
+    protected final void addCloseListener(Consumer<InventoryCloseEvent> listener) {
+        closeListeners.add(listener);
+    }
+
+    protected final void addCloseListeners(List<Consumer<InventoryCloseEvent>> listeners) {
+        closeListeners.addAll(listeners);
+    }
+
+    protected final <T> State<T> useState(@NotNull T initialValue) {
         final int thisIndex = ++lastStateIndex;
         final T currentState = getStateOrDefault(thisIndex, initialValue);
+        MincraLogger.debug("[useState] thisIndex: " + thisIndex + ", states: " + states + ", currentState: " + currentState);
         if (thisIndex < states.size()) {
             states.set(thisIndex, currentState);
         } else {
@@ -68,13 +102,16 @@ public abstract class InventoryGUI implements Listener {
         return new State<>(currentState, (setter) -> {
             final T newState = getStateOrDefault(thisIndex, initialValue);
             final T updatedState = setter.apply(newState);
+//            MincraLogger.debug("[State] states before rerender: " + states);
             if (lockRerendering) {
                 updateQueue.add(thisIndex, updatedState);
                 return null;
             }
+//            MincraLogger.debug("[State] Updating state at index " + thisIndex + " to " + updatedState);
             states.set(thisIndex, updatedState);
             // Rerender the GUI
             render();
+//            MincraLogger.debug("[State] states after rerender: " + states);
             return null;
         });
     }
@@ -98,13 +135,20 @@ public abstract class InventoryGUI implements Listener {
         lastStateIndex = -1;
         lockRerendering = true;
         clickListeners.clear();
+        dragListeners.clear();
+        closeListeners.clear();
 
-        final GUI gui = build();
+        MincraLogger.debug("prevInv: " + prevInv + ", getInventory(): " + getInventory() + ", isFirstRender: " + (prevInv == null && getInventory() != prevInv));
+        final GUI gui = build(BuildContext.builder()
+                .isFirstRender(prevInv == null && getInventory() != prevInv)
+                .build());
         if (gui == null) return;
 
         isModifiableSlot = gui.isModifiableSlot();
-        if (player.getOpenInventory().getType() != InventoryType.CHEST) {
-           player.openInventory(getInventory());
+        if (prevInv == null && getInventory() != prevInv) {
+            MincraLogger.debug("Opening inventory for the first time.");
+            player.openInventory(getInventory());
+            prevInv = getInventory();
         }
         if (prevTitle == null || !prevTitle.equals(gui.title())) {
             GUIHelper.updateTitle(player, gui.title());
@@ -122,9 +166,20 @@ public abstract class InventoryGUI implements Listener {
                     addClickListener(index, listener);
                 }
             }
+
+            for (Map.Entry<Integer, List<Consumer<InventoryDragEvent>>> entry : component.getDragListeners().entrySet()) {
+                int index = entry.getKey();
+                List<Consumer<InventoryDragEvent>> listeners = entry.getValue();
+                for (Consumer<InventoryDragEvent> listener : listeners) {
+                    addDragListener(index, listener);
+                }
+            }
+
+            addCloseListeners(component.getCloseListeners());
         }
 
         lockRerendering = false;
+        prevInv = getInventory();
         updateQueue.apply(item -> {
             int index = item.index();
             Object newValue = item.newValue();
@@ -139,6 +194,7 @@ public abstract class InventoryGUI implements Listener {
             render();
             return null;
         });
+//        MincraLogger.debug("InventoryGUI: final states: " + states);
     }
 
     // Event handlers
@@ -146,13 +202,55 @@ public abstract class InventoryGUI implements Listener {
     public void onClick(InventoryClickEvent event) {
         if (!event.getInventory().equals(getInventory())) return;
 
-        event.setCancelled(!isModifiableSlot.test(event.getSlot()));
+        final var slot = event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
+                ? GUIHelper.getTopLeftEmptySlot(event.getInventory())
+                : event.getRawSlot();
 
-        int slot = event.getSlot();
+        event.setCancelled(!isModifiableSlot.test(slot));
+
+//        MincraLogger.debug("[onClick] states: " + states);
         if (clickListeners.containsKey(slot)) {
+//            MincraLogger.debug("[onClick] clickListeners.get(slot).size: " + clickListeners.get(slot).size());
             for (Consumer<InventoryClickEvent> listener : clickListeners.get(slot)) {
+//                MincraLogger.debug("[onClick] clickListeners.get(slot)");
                 listener.accept(event);
+//                MincraLogger.debug("[onClick] after listener.accept(event) states: " + states);
             }
+        }
+
+        // Global listeners
+        for (Consumer<InventoryClickEvent> listener : clickListeners.getOrDefault(-1, new ArrayList<>())) {
+            listener.accept(event);
+        }
+    }
+
+    @EventHandler
+    public void onDrag(InventoryDragEvent event) {
+        if (!event.getInventory().equals(getInventory())) return;
+
+        for (int slot : event.getRawSlots()) {
+            if (slot >= event.getView().getTopInventory().getSize())
+                continue; // Skip if the slot is in the player's inventory
+
+            if (!isModifiableSlot.test(slot)) {
+                event.setCancelled(true);
+                return;
+            }
+
+            if (dragListeners.containsKey(slot)) {
+                for (Consumer<InventoryDragEvent> listener : dragListeners.get(slot)) {
+                    listener.accept(event);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onClose(InventoryCloseEvent event) {
+        if (!event.getInventory().equals(getInventory())) return;
+
+        for (Consumer<InventoryCloseEvent> listener : closeListeners) {
+            listener.accept(event);
         }
     }
 }
@@ -160,7 +258,8 @@ public abstract class InventoryGUI implements Listener {
 record UpdateQueueItem<T>(
         int index,
         T newValue
-) {}
+) {
+}
 
 /**
  * State 更新の待ちキュー

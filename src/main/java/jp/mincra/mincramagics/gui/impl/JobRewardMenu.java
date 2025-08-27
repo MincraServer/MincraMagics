@@ -10,6 +10,7 @@ import jp.mincra.mincramagics.config.model.JobRewardConfig;
 import jp.mincra.mincramagics.config.model.JobRewardsConfig;
 import jp.mincra.mincramagics.db.dao.JobRewardDao;
 import jp.mincra.mincramagics.db.model.JobReward;
+import jp.mincra.mincramagics.gui.BuildContext;
 import jp.mincra.mincramagics.gui.lib.GUIHelper;
 import jp.mincra.mincramagics.gui.InventoryGUI;
 import jp.mincra.mincramagics.gui.lib.GUI;
@@ -54,7 +55,7 @@ public class JobRewardMenu extends InventoryGUI {
     }
 
     @Override
-    protected GUI build() {
+    protected GUI build(BuildContext context) {
         if (job == null) {
             player.sendMessage(Component.text("§c◆職業が見つかりません"));
             return null;
@@ -136,6 +137,7 @@ public class JobRewardMenu extends InventoryGUI {
 
         return GUI.builder()
                 .title(title + " " + job.getDisplayName())
+                .isModifiableSlot(s -> s >= 36)
                 .components(List.of(
                         new LevelDisplay(new Position(0, 0, 9), currentMinLevel.value()),
                         new RewardDisplay(new Position(0, 1, 9), currentMinLevel.value(), jobConfig),
@@ -165,7 +167,6 @@ public class JobRewardMenu extends InventoryGUI {
                                 .disableNext(currentMinLevel.value() + 8 >= job.getMaxLevel())
                                 .build()
                 ))
-                .isModifiableSlot(s -> s >= 36)
                 .build();
     }
 }

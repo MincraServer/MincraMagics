@@ -6,7 +6,10 @@ import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.titleupdater.InventoryUpdate;
 import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class GUIHelper {
     public static void updateTitle(Player player, String title) {
@@ -28,5 +31,34 @@ public class GUIHelper {
                 PlaceholderAPI.setPlaceholders(null, Glyphs.NEG_8 + glyphPlaceholder)
                 + Color.COLOR_DARK_GRAY
                 + PlaceholderAPI.setPlaceholders(null, Glyphs.NEG_10 + Glyphs.NEG_32 + Glyphs.NEG_128 + name);
+    }
+
+    /**
+     * Get the lowest empty slot in the inventory.
+     * @param inv The inventory to check.
+     * @return The index of the lowest empty slot, or -1 if the inventory is full.
+     */
+    public static int getTopLeftEmptySlot(Inventory inv) {
+        ItemStack[] items = inv.getContents();
+        for (int i = 0; i < items.length; i++) {
+            ItemStack item = items[i];
+            if (item == null || item.getType() == Material.AIR) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static boolean isTopLeftEmptySlot(Inventory inv, int index) {
+        return getTopLeftEmptySlot(inv) == index;
+    }
+
+    public static boolean isInventoryFUll(Player player) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item == null || item.getType() == Material.AIR) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -52,6 +52,7 @@ public class GUIManager implements Listener {
 
     private void registerDefault() {
         registerGui("MaterialEditor", MaterialEditor.class);
+        registerGui("MaterialEditor2", MaterialEditor.class);
         registerGui("JobRewardMenu", JobRewardMenu.class);
     }
 

@@ -18,4 +18,8 @@ public class State<T> {
     public void set(Function<T, T> function) {
         setter.apply(function);
     }
+
+    public void set(T value) {
+        set(old -> value);
+    }
 }
