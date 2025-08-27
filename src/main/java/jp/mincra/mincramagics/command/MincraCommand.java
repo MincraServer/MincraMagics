@@ -6,7 +6,6 @@ import dev.jorel.commandapi.arguments.*;
 import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.GUIManager;
-import jp.mincra.mincramagics.gui.impl.MaterialEditor;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MagicSkill;
