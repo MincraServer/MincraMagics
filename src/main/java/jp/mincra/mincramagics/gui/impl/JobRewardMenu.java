@@ -156,7 +156,7 @@ public class JobRewardMenu extends GUI {
                                         )))
                                 .onReceiveClicked(handleReceiveReward)
                                 .build(),
-                        Pagination.builder()
+                        HorizontalScrollbar.builder()
                                 .pos(new Position(0, 3, 9))
                                 .onBackClick(handleBackClick)
                                 .onNextClick(handleNextClick)
@@ -281,7 +281,7 @@ class ReceiveButtons extends Component {
 }
 
 @Builder
-class Pagination extends Component {
+class HorizontalScrollbar extends Component {
     private final Position pos;
     private final Consumer<Void> onBackClick;
     private final Consumer<Void> onNextClick;
@@ -290,7 +290,7 @@ class Pagination extends Component {
     private final boolean disableBack;
     private final boolean disableNext;
 
-    public Pagination(Position pos, Consumer<Void> onBackClicked, Consumer<Void> onNextClicked, Consumer<Integer> onPageClick, int currentPageIndex, boolean disableBack, boolean disableNext) {
+    public HorizontalScrollbar(Position pos, Consumer<Void> onBackClicked, Consumer<Void> onNextClicked, Consumer<Integer> onPageClick, int currentPageIndex, boolean disableBack, boolean disableNext) {
         this.pos = pos;
         this.onBackClick = onBackClicked;
         this.onNextClick = onNextClicked;
