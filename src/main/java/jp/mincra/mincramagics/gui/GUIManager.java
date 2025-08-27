@@ -18,7 +18,7 @@ import java.util.Map;
 public class GUIManager implements Listener {
     private final JavaPlugin plugin;
     private final PluginManager pluginManager;
-    private final Map<String, Class<? extends InventoryGUI>> idToGui;
+    private final Map<String, Class<? extends GUI>> idToGui;
 //    private final Map<UUID, InventoryGUI> openedGui;
 
     public GUIManager(JavaPlugin plugin) {
@@ -29,7 +29,7 @@ public class GUIManager implements Listener {
 //        openedGui = new HashMap<>();
     }
 
-    public void registerGui(String id, Class<? extends InventoryGUI> clazz) {
+    public void registerGui(String id, Class<? extends GUI> clazz) {
         idToGui.put(id, clazz);
     }
 
@@ -38,7 +38,7 @@ public class GUIManager implements Listener {
     }
 
     @Nullable
-    private InventoryGUI instantiateGui(String id) {
+    private GUI instantiateGui(String id) {
         if (!idToGui.containsKey(id)) {
             return null;
         }
@@ -52,17 +52,16 @@ public class GUIManager implements Listener {
 
     private void registerDefault() {
         registerGui("MaterialEditor", MaterialEditor.class);
-        registerGui("MaterialEditor2", MaterialEditor.class);
         registerGui("JobRewardMenu", JobRewardMenu.class);
     }
 
     public boolean open(String guiId, Player target) {
-        InventoryGUI inventoryGUI = instantiateGui(guiId);
-        if (inventoryGUI == null) {
+        GUI gui = instantiateGui(guiId);
+        if (gui == null) {
             return false;
         } else {
-            pluginManager.registerEvents(inventoryGUI, plugin);
-            inventoryGUI.open(target);
+            pluginManager.registerEvents(gui, plugin);
+            gui.open(target);
             return true;
         }
     }

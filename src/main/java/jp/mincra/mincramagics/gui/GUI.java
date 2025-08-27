@@ -1,9 +1,9 @@
 package jp.mincra.mincramagics.gui;
 
 import jp.mincra.mincramagics.MincraLogger;
-import jp.mincra.mincramagics.gui.lib.GUI;
+import jp.mincra.mincramagics.gui.lib.Screen;
 import jp.mincra.mincramagics.gui.lib.GUIHelper;
-import jp.mincra.mincramagics.gui.lib.GuiComponent;
+import jp.mincra.mincramagics.gui.lib.Component;
 import jp.mincra.mincramagics.gui.lib.State;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +25,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public abstract class InventoryGUI implements Listener {
+public abstract class GUI implements Listener {
     protected Player player;
     protected Inventory inv;
     private Inventory prevInv;
@@ -42,7 +42,7 @@ public abstract class InventoryGUI implements Listener {
     @Nullable
     private String prevTitle = null;
 
-    public InventoryGUI() {
+    public GUI() {
     }
 
     // API
@@ -55,7 +55,7 @@ public abstract class InventoryGUI implements Listener {
 
     // Rendering
     @Nullable
-    protected abstract GUI build(BuildContext context);
+    protected abstract Screen build(BuildContext context);
 
     protected final void addClickListener(int index, Consumer<InventoryClickEvent> listener) {
         if (!clickListeners.containsKey(index)) {
@@ -139,23 +139,23 @@ public abstract class InventoryGUI implements Listener {
         closeListeners.clear();
 
         MincraLogger.debug("prevInv: " + prevInv + ", getInventory(): " + getInventory() + ", isFirstRender: " + (prevInv == null && getInventory() != prevInv));
-        final GUI gui = build(BuildContext.builder()
+        final Screen screen = build(BuildContext.builder()
                 .isFirstRender(prevInv == null && getInventory() != prevInv)
                 .build());
-        if (gui == null) return;
+        if (screen == null) return;
 
-        isModifiableSlot = gui.isModifiableSlot();
+        isModifiableSlot = screen.isModifiableSlot();
         if (prevInv == null && getInventory() != prevInv) {
             MincraLogger.debug("Opening inventory for the first time.");
             player.openInventory(getInventory());
             prevInv = getInventory();
         }
-        if (prevTitle == null || !prevTitle.equals(gui.title())) {
-            GUIHelper.updateTitle(player, gui.title());
-            prevTitle = gui.title();
+        if (prevTitle == null || !prevTitle.equals(screen.title())) {
+            GUIHelper.updateTitle(player, screen.title());
+            prevTitle = screen.title();
         }
 
-        for (GuiComponent component : gui.components()) {
+        for (Component component : screen.components()) {
             Inventory inv = getInventory();
             component.render(inv);
 
@@ -206,7 +206,11 @@ public abstract class InventoryGUI implements Listener {
                 ? GUIHelper.getTopLeftEmptySlot(event.getInventory())
                 : event.getRawSlot();
 
-        event.setCancelled(!isModifiableSlot.test(slot));
+        event.setCancelled(!isModifiableSlot.test(
+                event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
+                        ? event.getRawSlot()
+                        : slot
+        ));
 
 //        MincraLogger.debug("[onClick] states: " + states);
         if (clickListeners.containsKey(slot)) {

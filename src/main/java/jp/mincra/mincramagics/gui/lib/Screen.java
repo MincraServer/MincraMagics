@@ -12,9 +12,9 @@ import java.util.function.Predicate;
  * @param isModifiableSlot プレイヤーが操作可能なスロットを判定する関数.
  */
 @Builder
-public record GUI(
+public record Screen(
         String title,
-        List<GuiComponent> components,
+        List<Component> components,
         Predicate<Integer> isModifiableSlot
 ) {
 }

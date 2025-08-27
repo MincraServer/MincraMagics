@@ -12,13 +12,12 @@ import jp.mincra.mincramagics.db.dao.JobRewardDao;
 import jp.mincra.mincramagics.db.model.JobReward;
 import jp.mincra.mincramagics.gui.BuildContext;
 import jp.mincra.mincramagics.gui.lib.GUIHelper;
-import jp.mincra.mincramagics.gui.InventoryGUI;
-import jp.mincra.mincramagics.gui.lib.GUI;
-import jp.mincra.mincramagics.gui.lib.GuiComponent;
-import jp.mincra.mincramagics.gui.lib.GuiIcons;
+import jp.mincra.mincramagics.gui.GUI;
+import jp.mincra.mincramagics.gui.lib.Screen;
+import jp.mincra.mincramagics.gui.lib.Component;
+import jp.mincra.mincramagics.gui.lib.Icons;
 import jp.mincra.mincramagics.gui.lib.Position;
 import lombok.Builder;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
@@ -30,8 +29,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class JobRewardMenu extends InventoryGUI {
-    private static final String title = GUIHelper.guiTitle("職業報酬", "%oraxen_gui_jobs_reward%");
+public class JobRewardMenu extends GUI {
+    private static final String title = GUIHelper.guiTitle("職業報酬", "%oraxen_gui_jobs_reward%", 4);
     private final Inventory inv;
     private final Job job;
     private final JobRewardsConfig jobConfig;
@@ -43,7 +42,7 @@ public class JobRewardMenu extends InventoryGUI {
     }
 
     public JobRewardMenu(String jobName) {
-        inv = Bukkit.createInventory(null, 36, Component.text(title));
+        inv = Bukkit.createInventory(null, 36, net.kyori.adventure.text.Component.text(title));
         job = Jobs.getJob(jobName);
         jobConfig = JobRewardConfigLoader.getJobConfig(jobName);
         jobRewardDao = MincraMagics.getJobRewardDao();
@@ -55,9 +54,9 @@ public class JobRewardMenu extends InventoryGUI {
     }
 
     @Override
-    protected GUI build(BuildContext context) {
+    protected Screen build(BuildContext context) {
         if (job == null) {
-            player.sendMessage(Component.text("§c◆職業が見つかりません"));
+            player.sendMessage(net.kyori.adventure.text.Component.text("§c◆職業が見つかりません"));
             return null;
         }
         final var jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
@@ -66,17 +65,17 @@ public class JobRewardMenu extends InventoryGUI {
         ).findFirst();
 
         if (progression.isEmpty()) {
-            player.sendMessage(Component.text(String.format("§c◆%s には加入していません", job.getName())));
+            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§c◆%s には加入していません", job.getName())));
             return null;
         }
 
         if (jobConfig == null) {
-            player.sendMessage(Component.text(String.format("§c◆%s の報酬設定が見つかりません", job.getName())));
+            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§c◆%s の報酬設定が見つかりません", job.getName())));
             return null;
         }
 
         if (!jobConfig.enabled()) {
-            player.sendMessage(Component.text(String.format("§f◆%s の報酬は開発中です", job.getName())));
+            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§f◆%s の報酬は開発中です", job.getName())));
             return null;
         }
 
@@ -89,7 +88,7 @@ public class JobRewardMenu extends InventoryGUI {
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 2.0f);
             if (jobRewardDao.findByPlayerAndJob(player.getUniqueId(), job.getId()).stream()
                     .anyMatch(reward -> reward.getLevel() == jobRewardConfig.level())) {
-                player.sendMessage(Component.text("§c◆報酬はすでに受け取っています"));
+                player.sendMessage(net.kyori.adventure.text.Component.text("§c◆報酬はすでに受け取っています"));
                 return;
             }
             player.give(jobRewardConfig.items());
@@ -135,7 +134,7 @@ public class JobRewardMenu extends InventoryGUI {
             return Math.min((int) (job.getMaxLevel() * (double) pageIndex / 7.0) + 1, job.getMaxLevel() - 8);
         });
 
-        return GUI.builder()
+        return Screen.builder()
                 .title(title + " " + job.getDisplayName())
                 .isModifiableSlot(s -> s >= 36)
                 .components(List.of(
@@ -174,7 +173,7 @@ public class JobRewardMenu extends InventoryGUI {
 /**
  * レベルの数字が書いたアイコンを表示するコンポーネント
  */
-class LevelDisplay extends GuiComponent {
+class LevelDisplay extends Component {
     private final Position pos;
     private final int minLevel;
 
@@ -196,7 +195,7 @@ class LevelDisplay extends GuiComponent {
 /**
  * 各レベルの報酬アイテムを表示するコンポーネント
  */
-class RewardDisplay extends GuiComponent {
+class RewardDisplay extends Component {
     private final Position pos;
     private final int minLevel;
     private final Map<Integer, List<ItemStack>> rewards;
@@ -223,7 +222,7 @@ class RewardDisplay extends GuiComponent {
                 }
             }
 
-            inv.setItem(i + pos.startIndex(), GuiIcons.invisible); // No reward for this level
+            inv.setItem(i + pos.startIndex(), Icons.invisible); // No reward for this level
         });
     }
 }
@@ -232,7 +231,7 @@ class RewardDisplay extends GuiComponent {
  * それぞれの報酬が受け取られていなければ受け取りボタンを, そうでなければ受け取り済みのアイコンを表示するコンポーネント
  */
 @Builder
-class ReceiveButtons extends GuiComponent {
+class ReceiveButtons extends Component {
     private static final ItemStack lockedIcon = OraxenItems.getItemById("gui_job_reward_locked_icon").build();
     private static final ItemStack receiveIcon = OraxenItems.getItemById("gui_job_reward_receive_icon").build();
     private static final ItemStack receivedIcon = OraxenItems.getItemById("gui_job_reward_received_icon").build();
@@ -258,7 +257,7 @@ class ReceiveButtons extends GuiComponent {
             final var level = minLevel + i;
             final var reward = rewards.get(level);
             if (reward == null || reward.isEmpty()) {
-                inv.setItem(i + pos.startIndex(), GuiIcons.invisible); // No reward for this level
+                inv.setItem(i + pos.startIndex(), Icons.invisible); // No reward for this level
                 return;
             }
             final var rewardHistory = rewardHistories.get(level);
@@ -282,7 +281,7 @@ class ReceiveButtons extends GuiComponent {
 }
 
 @Builder
-class Pagination extends GuiComponent {
+class Pagination extends Component {
     private final Position pos;
     private final Consumer<Void> onBackClick;
     private final Consumer<Void> onNextClick;
@@ -309,21 +308,21 @@ class Pagination extends GuiComponent {
 
     @Override
     public void render(Inventory inv) {
-        inv.setItem(pos.startIndex(), disableBack ? GuiIcons.leftArrowDisabled : GuiIcons.leftArrow);
+        inv.setItem(pos.startIndex(), disableBack ? Icons.leftArrowDisabled : Icons.leftArrow);
         IntStream.range(0, pos.width() - 2)
                 .forEach(i -> {
                     final var index = i + pos.startIndex() + 1;
                     if (i == currentPageIndex) {
-                        inv.setItem(index, GuiIcons.horizontalCursor);
+                        inv.setItem(index, Icons.horizontalCursor);
                         return;
                     }
-                    inv.setItem(index, GuiIcons.invisible);
+                    inv.setItem(index, Icons.invisible);
                     addClickListener(index, e -> {
                         e.setCancelled(true);
                         onPageClick.accept(i);
                     });
                 }); // Fill empty slots with invisible items
-        inv.setItem(pos.endIndex(), disableNext ? GuiIcons.rightArrowDisabled : GuiIcons.rightArrow);
+        inv.setItem(pos.endIndex(), disableNext ? Icons.rightArrowDisabled : Icons.rightArrow);
 
         // Add click listeners for back and next arrows
         if (!disableBack) {

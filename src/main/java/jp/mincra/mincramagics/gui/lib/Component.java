@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class GuiComponent {
+public abstract class Component {
     private final Map<Integer, List<Consumer<InventoryClickEvent>>> clickListeners = new HashMap<>();
     private final Map<Integer, List<Consumer<InventoryDragEvent>>> dragListeners = new HashMap<>();
     private final List<Consumer<InventoryCloseEvent>> closeListeners = new ArrayList<>();

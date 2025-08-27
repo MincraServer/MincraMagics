@@ -5,12 +5,11 @@ import jp.mincra.mincramagics.MaterialSlot;
 import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.BuildContext;
-import jp.mincra.mincramagics.gui.InventoryGUI;
+import jp.mincra.mincramagics.gui.GUI;
 import jp.mincra.mincramagics.gui.lib.*;
 import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import lombok.Builder;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,9 +27,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-public class MaterialEditor extends InventoryGUI {
-    private final static String activeTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_activated%");
-    private final static String inactiveTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_inactivated%");
+public class MaterialEditor extends GUI {
+    private final static String activeTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_activated%", 3);
+    private final static String inactiveTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_inactivated%", 3);
     private static final int ARTIFACT_SLOT_INDEX = 10;
     private static final int FIRST_MATERIAL_SLOT_INDEX = 12;
     private static final int LAST_MATERIAL_SLOT_INDEX = 18;
@@ -39,7 +38,7 @@ public class MaterialEditor extends InventoryGUI {
     private final MaterialManager materialManager;
 
     public MaterialEditor() {
-        inv = Bukkit.createInventory(null, 27, Component.text(inactiveTitle));
+        inv = Bukkit.createInventory(null, 27, net.kyori.adventure.text.Component.text(inactiveTitle));
         materialManager = MincraMagics.getMaterialManager();
     }
 
@@ -50,7 +49,7 @@ public class MaterialEditor extends InventoryGUI {
 
     @Nullable
     @Override
-    protected GUI build(BuildContext context) {
+    protected Screen build(BuildContext context) {
         final var artifact = useState(new ItemStack(Material.AIR, 1));
         final var materials = useState((Map<MaterialSlot, String>) new HashMap<MaterialSlot, String>());
         final var artifactItem = artifact.value().getType() == Material.AIR ? null : artifact.value();
@@ -75,7 +74,7 @@ public class MaterialEditor extends InventoryGUI {
             materials.set(new HashMap<>());
         };
 
-        final  Function<MSlotAndItem, Boolean> handleMaterialPlaced = (materialInSlot) -> {
+        final Function<MSlotAndItem, Boolean> handleMaterialPlaced = (materialInSlot) -> {
             final ItemStack currentArtifactItem = artifact.value();
 //            MincraLogger.debug("[handleMaterialPlaced] materialInSlot: " + materialInSlot + ", currentArtifactItem: " + currentArtifactItem);
             if (currentArtifactItem == null || currentArtifactItem.getType() == Material.AIR) return false;
@@ -105,7 +104,7 @@ public class MaterialEditor extends InventoryGUI {
             return true;
         };
 
-        final  Function<MaterialSlot, Boolean> handleMaterialPickedUp = (slot) -> {
+        final Function<MaterialSlot, Boolean> handleMaterialPickedUp = (slot) -> {
             final ItemStack currentArtifactItem = artifact.value();
             MincraLogger.debug("[handleMaterialPickedUp] slot: " + slot + ", currentArtifactItem: " + currentArtifactItem);
             if (currentArtifactItem == null || currentArtifactItem.getType() == Material.AIR) return false;
@@ -120,18 +119,6 @@ public class MaterialEditor extends InventoryGUI {
             artifact.set(currentArtifactNBT.setNBTTag(currentArtifactItem));
             return true;
         };
-
-        addClickListener(e -> {
-            // When move to player's inventory from GUI
-            if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
-                    && e.getRawSlot() >= 0 && e.getRawSlot() < 27) {
-                if (e.getRawSlot() == ARTIFACT_SLOT_INDEX) {
-                    handleArtifactPickedUp.accept(true);
-                } else {
-                    handleMaterialPickedUp.apply(MaterialSlot.values()[e.getRawSlot() - FIRST_MATERIAL_SLOT_INDEX]);
-                }
-            }
-        });
 
         addDragListener(IntStream.range(0, 27).boxed(), e -> {
             // Prevent dragging items in the GUI
@@ -150,15 +137,15 @@ public class MaterialEditor extends InventoryGUI {
         });
 
         final Predicate<Integer> isModifiableSlot = index -> index == ARTIFACT_SLOT_INDEX
-                || (index >= FIRST_MATERIAL_SLOT_INDEX && index <= LAST_MATERIAL_SLOT_INDEX)
+                || (index >= FIRST_MATERIAL_SLOT_INDEX && index < LAST_MATERIAL_SLOT_INDEX)
                 || index >= 27; // Player's inventory
         final List<MaterialSlot> unavailableSlots = artifactNBT == null
                 ? List.of()
                 : Arrays.stream(MaterialSlot.values())
-                        .filter(materialSlot -> !artifactNBT.availableSlots().contains(materialSlot))
-                        .toList();
+                .filter(materialSlot -> !artifactNBT.availableSlots().contains(materialSlot))
+                .toList();
 
-        return GUI.builder()
+        return Screen.builder()
                 .title(artifactItem == null ? inactiveTitle : activeTitle)
                 .isModifiableSlot(isModifiableSlot)
                 .components(List.of(
@@ -185,7 +172,7 @@ public class MaterialEditor extends InventoryGUI {
 }
 
 @Builder
-class Filler extends GuiComponent {
+class Filler extends Component {
     private final Position pos;
     private final Predicate<Integer> isSlotExcluded;
 
@@ -198,13 +185,13 @@ class Filler extends GuiComponent {
     public void render(Inventory inv) {
         pos.toIndexStream().forEach(i -> {
             if (isSlotExcluded.test(i)) return;
-            inv.setItem(i, GuiIcons.invisible);
+            inv.setItem(i, Icons.invisible);
         });
     }
 }
 
 @Builder
-class ArtifactSlot extends GuiComponent {
+class ArtifactSlot extends Component {
     private final Position pos;
     private final Function<ItemStack, Boolean> onArtifactPlaced;
     private final Consumer<Boolean> onArtifactPickedUp;
@@ -233,11 +220,17 @@ class ArtifactSlot extends GuiComponent {
         addSwapListener(pos.startIndex(), (e) ->
                 // TODO: Artifact の入れ替えに対応する
                 e.event().setCancelled(true));
+        addClickListener(e -> {
+            // When move to player's inventory from GUI
+            if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getRawSlot() == pos.startIndex()) {
+                onArtifactPickedUp.accept(true);
+            }
+        });
     }
 }
 
 @Builder
-class MaterialSlots extends GuiComponent {
+class MaterialSlots extends Component {
     private static final ItemStack unavailableSlotItem = OraxenItems.getItemById("unavailable_slot").build();
     private final Position pos;
     private final Function<MSlotAndItem, Boolean> onMaterialPlaced;
@@ -284,6 +277,12 @@ class MaterialSlots extends GuiComponent {
             addSwapListener(index, (e) ->
                     e.event().setCancelled(!onMaterialPlaced.apply(
                             new MSlotAndItem(slot, e.item()))));
+            addClickListener(e -> {
+                // When move to player's inventory from GUI
+                if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getRawSlot() == index) {
+                    onMaterialPickedUp.apply(slot);
+                }
+            });
 
             if (!materials.containsKey(slot)) {
                 inv.setItem(index, null);
@@ -301,4 +300,5 @@ class MaterialSlots extends GuiComponent {
     }
 }
 
-record MSlotAndItem(MaterialSlot slot, ItemStack item) {}
+record MSlotAndItem(MaterialSlot slot, ItemStack item) {
+}
