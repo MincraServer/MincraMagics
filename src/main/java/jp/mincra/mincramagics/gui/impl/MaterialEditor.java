@@ -9,6 +9,7 @@ import jp.mincra.mincramagics.gui.GUI;
 import jp.mincra.mincramagics.gui.lib.*;
 import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
+import jp.mincra.mincramagics.utils.Strings;
 import lombok.Builder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -59,7 +60,7 @@ public class MaterialEditor extends GUI {
 
         final Function<ItemStack, Boolean> handleArtifactPlaced = (item) -> {
             if (item == null) return false;
-//            MincraLogger.debug("Handle artifact placed: " + item.getType());
+            MincraLogger.debug("[MaterialEditor] handleArtifactPlaced: " + Strings.truncate(item.toString()));
             final var newNbt = ArtifactNBT.fromItem(item);
             if (newNbt == null) return false;
 //            MincraLogger.debug("Artifact set to: " + item.getType());
@@ -69,15 +70,15 @@ public class MaterialEditor extends GUI {
         };
 
         final Consumer<Boolean> handleArtifactPickedUp = (item) -> {
-//            MincraLogger.debug("Handle artifact picked up");
+            MincraLogger.debug("[MaterialEditor] handleArtifactPickedUp");
             artifact.set(new ItemStack(Material.AIR));
             materials.set(new HashMap<>());
         };
 
         final Function<MSlotAndItem, Boolean> handleMaterialPlaced = (materialInSlot) -> {
             final ItemStack currentArtifactItem = artifact.value();
-//            MincraLogger.debug("[handleMaterialPlaced] materialInSlot: " + materialInSlot + ", currentArtifactItem: " + currentArtifactItem);
             if (currentArtifactItem == null || currentArtifactItem.getType() == Material.AIR) return false;
+            MincraLogger.debug("[MaterialEditor] handleMaterialPlaced: " + Strings.truncate(currentArtifactItem.toString()));
             final var currentArtifactNBT = ArtifactNBT.fromItem(currentArtifactItem);
 //            MincraLogger.debug("[handleMaterialPlaced] currentArtifactNBT: " + currentArtifactNBT);
             if (currentArtifactNBT == null) return false;
@@ -100,22 +101,23 @@ public class MaterialEditor extends GUI {
 
             currentArtifactNBT.setMaterial(slot.getSlot(), materialId);
             artifact.set(currentArtifactNBT.setNBTTag(artifactItem));
+            materials.set(currentArtifactNBT.getMaterialMap());
 //            MincraLogger.debug("[handleMaterialPlaced] new artifact item set.");
             return true;
         };
 
         final Function<MaterialSlot, Boolean> handleMaterialPickedUp = (slot) -> {
             final ItemStack currentArtifactItem = artifact.value();
-            MincraLogger.debug("[handleMaterialPickedUp] slot: " + slot + ", currentArtifactItem: " + currentArtifactItem);
             if (currentArtifactItem == null || currentArtifactItem.getType() == Material.AIR) return false;
+            MincraLogger.debug("[MaterialEditor] handleMaterialPickedUp: " + Strings.truncate(currentArtifactItem.toString()));
 
             // 最新の Item から NBT を再生成する
             final ArtifactNBT currentArtifactNBT = ArtifactNBT.fromItem(currentArtifactItem);
-            MincraLogger.debug("[handleMaterialPickedUp] currentArtifactNBT: " + currentArtifactNBT);
+//            MincraLogger.debug("[handleMaterialPickedUp] currentArtifactNBT: " + currentArtifactNBT);
             if (currentArtifactNBT == null) return false;
 
             currentArtifactNBT.removeMaterial(slot.getSlot());
-            MincraLogger.debug("[handleMaterialPickedUp] artifactItem: " + currentArtifactItem);
+//            MincraLogger.debug("[handleMaterialPickedUp] artifactItem: " + currentArtifactItem);
             artifact.set(currentArtifactNBT.setNBTTag(currentArtifactItem));
             return true;
         };
@@ -207,8 +209,8 @@ class ArtifactSlot extends Component {
     @Override
     public void render(Inventory inv) {
         final var currentItem = inv.getItem(pos.startIndex());
-//        MincraLogger.debug("[ArtifactSlot] artifact: " + artifact);
-        if (artifact != null && currentItem != null && currentItem.getType() != Material.AIR) {
+        MincraLogger.debug("[ArtifactSlot] artifact: " + Strings.truncate(artifact));
+        if (artifact != null && artifact.getType() != Material.AIR && currentItem != null && currentItem.getType() != Material.AIR) {
             inv.setItem(pos.startIndex(), artifact);
         }
         addMoveToOtherInventoryListener(pos.startIndex(), (e) ->
@@ -263,6 +265,12 @@ class MaterialSlots extends Component {
             if (unavailableSlots.contains(slot)) {
                 inv.setItem(index, unavailableSlotItem);
                 addClickListener(index, e -> e.setCancelled(true));
+                addClickListener(e -> {
+                    // When move to player's inventory from GUI
+                    if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getRawSlot() == index) {
+                        e.setCancelled(true);
+                    }
+                });
                 return;
             }
 

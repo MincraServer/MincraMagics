@@ -8,8 +8,12 @@ import jp.mincra.titleupdater.InventoryUpdate;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Objects;
 
 public class GUIHelper {
     public static void updateTitle(Player player, String title) {
@@ -69,6 +73,67 @@ public class GUIHelper {
                 return i;
             }
         }
+        return -1;
+    }
+
+    /**
+     * Get the highest empty slot in the inventory.
+     *
+     * @param inv The inventory to check.
+     * @return The index of the highest empty slot, or -1 if the inventory is full.
+     */
+    public static int getBottomRightEmptySlot(Inventory inv) {
+        ItemStack[] items = ((Player)inv.getHolder()).getInventory().getContents();
+        for (int i = items.length - 1; i >= 0; i--) {
+            ItemStack item = items[i];
+            if (item == null || item.getType() == Material.AIR) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int calculateDestinationSlot(InventoryClickEvent event) {
+        if (event.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+            return -1;
+        }
+
+        final ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null || clickedItem.getType() == Material.AIR) {
+            return -1;
+        }
+
+        final Inventory sourceInventory = event.getClickedInventory();
+        final Inventory destinationInventory;
+        final int destinationInventorySize;
+
+        // getInventory() は上のインベントリ、getBottomInventory() は下のプレイヤーインベントリを指す
+        if (Objects.equals(sourceInventory, event.getView().getTopInventory())) {
+            destinationInventory = event.getView().getBottomInventory();
+        } else {
+            destinationInventory = event.getView().getTopInventory();
+        }
+
+        // プレイヤーインベントリのサイズは固定ではない場合があるため、getStorageContents().length を使う
+        destinationInventorySize = destinationInventory.getStorageContents().length;
+        final ItemStack[] destinationContents = destinationInventory.getStorageContents();
+
+        // 1. まず、移動先に同種のアイテムがあり、まだスタックできるスロットを探す
+        for (int i = 0; i < destinationInventorySize; i++) {
+            ItemStack currentItem = destinationContents[i];
+            if (currentItem != null && currentItem.isSimilar(clickedItem) && currentItem.getAmount() < currentItem.getMaxStackSize()) {
+                return i;
+            }
+        }
+
+        // 2. 次に、移動先で空いているスロットを探す
+        for (int i = 0; i < destinationInventorySize; i++) {
+            if (destinationContents[i] == null || destinationContents[i].getType() == Material.AIR) {
+                return i;
+            }
+        }
+
+        // 移動先が見つからない場合
         return -1;
     }
 
