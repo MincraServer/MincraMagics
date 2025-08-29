@@ -27,8 +27,8 @@ public abstract class Component {
     // Primitive listener adders
 
     protected void addClickListener(int index, Consumer<InventoryClickEvent> listener) {
-        if (index <= -1) {
-            MincraLogger.warn("Do not use negative index except -1 (any slot). Use addClickListener(Consumer<InventoryClickEvent>) instead.");
+        if (index < -1) {
+            MincraLogger.warn("Do not use negative index except -1 (any slot). Got " + index + ". Use addClickListener(Consumer<InventoryClickEvent>) instead.");
         }
         if (!clickListeners.containsKey(index)) {
             clickListeners.put(index, new ArrayList<>());

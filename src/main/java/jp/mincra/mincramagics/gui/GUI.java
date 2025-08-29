@@ -5,13 +5,11 @@ import jp.mincra.mincramagics.gui.lib.Screen;
 import jp.mincra.mincramagics.gui.lib.GUIHelper;
 import jp.mincra.mincramagics.gui.lib.Component;
 import jp.mincra.mincramagics.gui.lib.State;
+import jp.mincra.mincramagics.utils.Strings;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,7 +90,7 @@ public abstract class GUI implements Listener {
     protected final <T> State<T> useState(@NotNull T initialValue) {
         final int thisIndex = ++lastStateIndex;
         final T currentState = getStateOrDefault(thisIndex, initialValue);
-        MincraLogger.debug("[useState] thisIndex: " + thisIndex + ", states: " + states + ", currentState: " + currentState);
+        MincraLogger.debug("[useState] lastStateIndex: " + thisIndex + ", states: " + Strings.truncate(states) + ", currentState: " + Strings.truncate(currentState));
         if (thisIndex < states.size()) {
             states.set(thisIndex, currentState);
         } else {
@@ -202,20 +200,17 @@ public abstract class GUI implements Listener {
     public void onClick(InventoryClickEvent event) {
         if (!event.getInventory().equals(getInventory())) return;
 
-        final var slot = event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
-                ? GUIHelper.getTopLeftEmptySlot(event.getInventory())
+        final var destinationSlot = event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
+                ? GUIHelper.calculateDestinationSlot(event)
                 : event.getRawSlot();
+        MincraLogger.debug("[onClick] rawSlot: " + event.getRawSlot() + ", slot: " + event.getSlot() + ", action: " + event.getAction() + ", destination slot: " + destinationSlot);
 
-        event.setCancelled(!isModifiableSlot.test(
-                event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
-                        ? event.getRawSlot()
-                        : slot
-        ));
+        event.setCancelled(!isModifiableSlot.test(event.getRawSlot()));
 
 //        MincraLogger.debug("[onClick] states: " + states);
-        if (clickListeners.containsKey(slot)) {
+        if (clickListeners.containsKey(destinationSlot)) {
 //            MincraLogger.debug("[onClick] clickListeners.get(slot).size: " + clickListeners.get(slot).size());
-            for (Consumer<InventoryClickEvent> listener : clickListeners.get(slot)) {
+            for (Consumer<InventoryClickEvent> listener : clickListeners.get(destinationSlot)) {
 //                MincraLogger.debug("[onClick] clickListeners.get(slot)");
                 listener.accept(event);
 //                MincraLogger.debug("[onClick] after listener.accept(event) states: " + states);
