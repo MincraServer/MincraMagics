@@ -139,9 +139,9 @@ public class JobRewardMenu extends GUI {
                 .run());
 
         return Screen.builder()
-                .title(GUIHelper.guiTitle("職業報酬 "
+                .title(GUIHelper.guiTitle("職業報酬 §l"
                         + job.getDisplayName()
-                        + " " + LevelStringBuilder.build(progression.get().getLevel(), job.getMaxLevel(), 30), "%oraxen_gui_jobs_reward%", 4))
+                        + "§r " + LevelStringBuilder.build(progression.get().getLevel(), job.getMaxLevel(), 30), "%oraxen_gui_jobs_reward%", 4))
                 .size(36)
                 .isModifiableSlot(s -> s >= 36)
                 .components(List.of(

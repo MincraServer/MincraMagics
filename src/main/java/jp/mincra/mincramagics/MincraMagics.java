@@ -8,6 +8,7 @@ import jp.mincra.bkvfx.BKVfx;
 import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.command.GuardCommand;
 import jp.mincra.mincramagics.command.MincraCommand;
+import jp.mincra.mincramagics.command.RewardCommand;
 import jp.mincra.mincramagics.config.ConfigManager;
 import jp.mincra.mincramagics.db.HibernateUtil;
 import jp.mincra.mincramagics.db.dao.JobRewardDao;
@@ -82,6 +83,7 @@ public final class MincraMagics extends JavaPlugin {
         // CommandAPI.onLoad(new CommandAPIConfig().initializeNBTAPI());
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
+        new RewardCommand().registerAll();
 
         // Mechanics
         MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
