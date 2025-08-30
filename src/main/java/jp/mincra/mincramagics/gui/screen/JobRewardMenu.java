@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.gui.impl;
+package jp.mincra.mincramagics.gui.screen;
 
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.container.Job;
@@ -16,8 +16,6 @@ import jp.mincra.mincramagics.gui.BuildContext;
 import jp.mincra.mincramagics.gui.GUI;
 import jp.mincra.mincramagics.gui.lib.*;
 import lombok.Builder;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;

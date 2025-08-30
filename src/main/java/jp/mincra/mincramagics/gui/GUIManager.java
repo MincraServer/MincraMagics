@@ -1,8 +1,8 @@
 package jp.mincra.mincramagics.gui;
 
-import jp.mincra.mincramagics.gui.impl.JobRewardListMenu;
-import jp.mincra.mincramagics.gui.impl.JobRewardMenu;
-import jp.mincra.mincramagics.gui.impl.MaterialEditor;
+import jp.mincra.mincramagics.gui.screen.JobRewardListMenu;
+import jp.mincra.mincramagics.gui.screen.JobRewardMenu;
+import jp.mincra.mincramagics.gui.screen.MaterialEditor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;

@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.gui.impl;
+package jp.mincra.mincramagics.gui.screen;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import jp.mincra.mincramagics.MaterialSlot;

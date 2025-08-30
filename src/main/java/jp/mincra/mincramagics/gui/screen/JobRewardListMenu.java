@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.gui.impl;
+package jp.mincra.mincramagics.gui.screen;
 
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.container.Job;
