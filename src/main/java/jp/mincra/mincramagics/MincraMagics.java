@@ -23,6 +23,9 @@ import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.*;
 import jp.mincra.mincramagics.skill.healing.Heal;
+import jp.mincra.mincramagics.skill.job.hunter.Burst;
+import jp.mincra.mincramagics.skill.job.hunter.Protect;
+import jp.mincra.mincramagics.skill.job.hunter.Provoke;
 import jp.mincra.mincramagics.skill.passive.HpBoost;
 import jp.mincra.mincramagics.skill.passive.HpRecovery;
 import jp.mincra.mincramagics.skill.passive.MpBoost;
@@ -115,6 +118,11 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("luminous", new Luminous(this));
         skillManager.registerSkill("mine", new Mine());
         skillManager.registerSkill("water_move", new WaterMove());
+        // Job
+        // - Hunter
+        skillManager.registerSkill("burst", new Burst());
+        skillManager.registerSkill("protect", new Protect());
+        skillManager.registerSkill("provoke", new Provoke());
     }
 
     @Override
