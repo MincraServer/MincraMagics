@@ -33,7 +33,7 @@ public class Mechanics extends MagicSkill {
         // Jump
         player.setVelocity(new Vector(player.getVelocity().getX(),5F,player.getVelocity().getZ()));
 
-        // PlaySounds
+        // playSounds
         world.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 0.1F, 1F);
 
         // Initialize_Variable(For Repeat)

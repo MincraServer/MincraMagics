@@ -48,7 +48,7 @@ public class Resistance extends MagicSkill {
 
         // Effect and sound
         Location playerLoc = player.getLocation();
-        player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
+        player.getWorld().playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
 
         return true;

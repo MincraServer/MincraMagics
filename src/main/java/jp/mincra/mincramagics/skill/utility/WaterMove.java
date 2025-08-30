@@ -36,7 +36,7 @@ public class WaterMove extends MagicSkill implements Listener {
         // Effect and sound
         Vfx vfx = vfxManager.getVfx("bubble_pop_hexagon");
         Location playerLoc = player.getLocation();
-        player.playSound(playerLoc, Sound.ENTITY_DOLPHIN_SPLASH, 1F, 2F);
+        player.getWorld().playSound(playerLoc, Sound.ENTITY_DOLPHIN_SPLASH, 1F, 2F);
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
 
         return true;
@@ -65,7 +65,7 @@ public class WaterMove extends MagicSkill implements Listener {
         player.setVelocity(vec);
 
         // Effect and sound
-        player.playSound(playerLoc, Sound.ENTITY_DOLPHIN_SWIM, 1F, 1F);
+        player.getWorld().playSound(playerLoc, Sound.ENTITY_DOLPHIN_SWIM, 1F, 1F);
         player.spawnParticle(Particle.BUBBLE, playerLoc.add(0, 0.5, 0), 10, 0.43F, 0.43F, 0.43F, 1F); // offset 0.43
     }
 }

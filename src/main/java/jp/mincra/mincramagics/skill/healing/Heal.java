@@ -30,7 +30,7 @@ public class Heal extends MagicSkill {
         Location playerLoc = player.getLocation();
 
         // Play Sound
-        player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
+        player.getWorld().playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
 
         Entity maybeTarget = player.getTargetEntity(MAX_DISTANCE);
         // モンスター以外

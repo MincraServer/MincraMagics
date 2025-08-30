@@ -48,7 +48,7 @@ public abstract class MagicSkill {
                 List<ItemStack> materials = nbt.getMaterialMap().values().stream().map(OraxenItems::getItemById).map(ItemBuilder::build).toList();
                 player.give(materials);
                 player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
             } else {
                 damageable.setDamage(damageable.getDamage() + 1);
                 item.setItemMeta(damageable);

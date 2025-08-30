@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 public class Charging extends MagicSkill implements Listener {
@@ -44,7 +43,7 @@ public class Charging extends MagicSkill implements Listener {
         Vfx vfx = vfxManager.getVfx("mana_charge");
         Location playerLoc = player.getLocation();
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
-        player.playSound(playerLoc, Sound.ITEM_TRIDENT_RETURN, 2F, 2F);
+        player.getWorld().playSound(playerLoc, Sound.ITEM_TRIDENT_RETURN, 2F, 2F);
 
         // Core functionality
         new BKTween(MincraMagics.getInstance())
@@ -52,7 +51,7 @@ public class Charging extends MagicSkill implements Listener {
                 .execute(v -> {
                     // level に応じて pitch が下がる
                     double pitch = Math.random() * 0.1 + 2.0 - (level * 0.1f);
-                    player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2F, (float) pitch);
+                    player.getWorld().playSound(playerLoc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2F, (float) pitch);
                     vfx.playEffect(player.getLocation().add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
                     return true;
                 })

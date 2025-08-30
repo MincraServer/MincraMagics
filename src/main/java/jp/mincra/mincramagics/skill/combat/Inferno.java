@@ -45,7 +45,7 @@ public class Inferno extends MagicSkill implements Listener {
         final int shootCount = 2 * level - 1;
         final int shootIntervalInTick = 5;
 
-        // PlaySound
+        // playSound
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
         world.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.1F, 2F);
