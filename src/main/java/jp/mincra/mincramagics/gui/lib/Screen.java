@@ -15,6 +15,21 @@ import java.util.function.Predicate;
 public record Screen(
         String title,
         List<Component> components,
-        Predicate<Integer> isModifiableSlot
+        Predicate<Integer> isModifiableSlot,
+        int size
 ) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Screen other)) return false;
+        return title.equals(other.title) && size == other.size && components.size() == other.components.size();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = title.hashCode();
+        result = 31 * result + components.size();
+        result = 31 * result + size;
+        return result;
+    }
 }

@@ -31,7 +31,6 @@ import java.util.stream.IntStream;
 
 public class JobRewardMenu extends GUI {
     private static final String title = GUIHelper.guiTitle("職業報酬", "%oraxen_gui_jobs_reward%", 4);
-    private final Inventory inv;
     private final Job job;
     private final JobRewardsConfig jobConfig;
     private final JobRewardDao jobRewardDao;
@@ -42,15 +41,9 @@ public class JobRewardMenu extends GUI {
     }
 
     public JobRewardMenu(String jobName) {
-        inv = Bukkit.createInventory(null, 36, net.kyori.adventure.text.Component.text(title));
         job = Jobs.getJob(jobName);
         jobConfig = JobRewardConfigLoader.getJobConfig(jobName);
         jobRewardDao = MincraMagics.getJobRewardDao();
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return inv;
     }
 
     @Override
@@ -136,6 +129,7 @@ public class JobRewardMenu extends GUI {
 
         return Screen.builder()
                 .title(title + " " + job.getDisplayName())
+                .size(36)
                 .isModifiableSlot(s -> s >= 36)
                 .components(List.of(
                         new LevelDisplay(new Position(0, 0, 9), currentMinLevel.value()),

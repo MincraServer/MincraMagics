@@ -29,23 +29,16 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 public class MaterialEditor extends GUI {
-    private final static String activeTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_activated%", 3);
-    private final static String inactiveTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_inactivated%", 3);
+    private static final String activeTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_activated%", 3);
+    private static final String inactiveTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_inactivated%", 3);
     private static final int ARTIFACT_SLOT_INDEX = 10;
     private static final int FIRST_MATERIAL_SLOT_INDEX = 12;
     private static final int LAST_MATERIAL_SLOT_INDEX = 18;
 
-    private final Inventory inv;
     private final MaterialManager materialManager;
 
     public MaterialEditor() {
-        inv = Bukkit.createInventory(null, 27, net.kyori.adventure.text.Component.text(inactiveTitle));
         materialManager = MincraMagics.getMaterialManager();
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return inv;
     }
 
     @Nullable
@@ -149,6 +142,7 @@ public class MaterialEditor extends GUI {
 
         return Screen.builder()
                 .title(artifactItem == null ? inactiveTitle : activeTitle)
+                .size(27)
                 .isModifiableSlot(isModifiableSlot)
                 .components(List.of(
                         Filler.builder()
