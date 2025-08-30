@@ -139,7 +139,7 @@ public abstract class GUI implements Listener {
         if (screen == null) return;
 
         isModifiableSlot = screen.isModifiableSlot();
-        if (prevScreen == null || screen.equals(prevScreen)) {
+        if (screen.shouldReopen(prevScreen)) {
             MincraLogger.debug("Opening inventory for the first time.");
             inv = Bukkit.createInventory(null, screen.size(), net.kyori.adventure.text.Component.text(screen.title()));
             player.openInventory(inv);

@@ -55,17 +55,17 @@ public class JobRewardMenu extends GUI {
         ).findFirst();
 
         if (progression.isEmpty()) {
-            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§c◆%s には加入していません", job.getName())));
+            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§c◆%s§c には加入していません", job.getDisplayName())));
             return null;
         }
 
         if (jobConfig == null) {
-            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§c◆%s の報酬設定が見つかりません", job.getName())));
+            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§c◆%s§c の報酬設定が見つかりません", job.getDisplayName())));
             return null;
         }
 
         if (!jobConfig.enabled()) {
-            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§f◆%s の報酬は開発中です", job.getName())));
+            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§f◆%s§c の報酬は開発中です", job.getDisplayName())));
             return null;
         }
 

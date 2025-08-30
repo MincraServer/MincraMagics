@@ -90,7 +90,7 @@ class JobList extends Component {
                 ));
             } else {
                 meta.lore(List.of(
-                        net.kyori.adventure.text.Component.text("[クリックして報酬を確認]").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
+                        net.kyori.adventure.text.Component.text("クリックして報酬を確認").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                         net.kyori.adventure.text.Component.text("lv" + jobProgression.get().getLevel()).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
                 ));
                 meta.addEnchant(Enchantment.FORTUNE, 1, true);

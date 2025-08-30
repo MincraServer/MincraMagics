@@ -1,6 +1,7 @@
 package jp.mincra.mincramagics.gui.lib;
 
 import lombok.Builder;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -18,6 +19,11 @@ public record Screen(
         Predicate<Integer> isModifiableSlot,
         int size
 ) {
+    public boolean shouldReopen(@Nullable Screen other) {
+        if (other == null) return true;
+        return size != other.size;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
