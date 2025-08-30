@@ -3,6 +3,8 @@ package jp.mincra.mincramagics.gui.impl;
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.container.Job;
 import io.th0rgal.oraxen.api.OraxenItems;
+import jp.mincra.bktween.BKTween;
+import jp.mincra.bktween.TickTime;
 import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.config.JobRewardConfigLoader;
@@ -14,6 +16,8 @@ import jp.mincra.mincramagics.gui.BuildContext;
 import jp.mincra.mincramagics.gui.GUI;
 import jp.mincra.mincramagics.gui.lib.*;
 import lombok.Builder;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +29,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class JobRewardMenu extends GUI {
-    private static final String title = GUIHelper.guiTitle("職業報酬", "%oraxen_gui_jobs_reward%", 4);
     private final Job job;
     private final JobRewardsConfig jobConfig;
     private final JobRewardDao jobRewardDao;
@@ -37,7 +40,7 @@ public class JobRewardMenu extends GUI {
 
     public JobRewardMenu(Job job) {
         this.job = job;
-        jobConfig = JobRewardConfigLoader.getJobConfig(job.getName());
+        jobConfig = JobRewardConfigLoader.getJobConfig(job);
         jobRewardDao = MincraMagics.getJobRewardDao();
     }
 
@@ -81,6 +84,10 @@ public class JobRewardMenu extends GUI {
                 return;
             }
             player.give(jobRewardConfig.items());
+            MincraLogger.info(String.format(
+                    "Player %s received job reward for job %s level %d. Items: %s",
+                    player.getName(), job.getName(), jobRewardConfig.level(), jobRewardConfig.items()
+            ));
 
             final var jobReward = JobReward.builder()
                     .playerId(player.getUniqueId())
@@ -123,8 +130,20 @@ public class JobRewardMenu extends GUI {
             return Math.min((int) (job.getMaxLevel() * (double) pageIndex / 7.0) + 1, job.getMaxLevel() - 8);
         });
 
+        // Close the menu and return to the job list menu
+        addCloseListener(e -> new BKTween(MincraMagics.getInstance())
+                .execute((v) -> {
+                    player.playSound(player.getLocation(), Sound.UI_TOAST_OUT, 1.0f, 1.2f);
+                    new JobRewardListMenu().open(player);
+                    return true;
+                })
+                .delay(TickTime.TICK, 1)
+                .run());
+
         return Screen.builder()
-                .title(title + " " + job.getDisplayName())
+                .title(GUIHelper.guiTitle("職業報酬 "
+                        + job.getDisplayName()
+                        + " " + LevelStringBuilder.build(progression.get().getLevel(), job.getMaxLevel(), 30), "%oraxen_gui_jobs_reward%", 4))
                 .size(36)
                 .isModifiableSlot(s -> s >= 36)
                 .components(List.of(
@@ -157,6 +176,26 @@ public class JobRewardMenu extends GUI {
                                 .build()
                 ))
                 .build();
+    }
+}
+
+class LevelStringBuilder {
+    /**
+     * Build a string representing the levels from `level` to `maxLevel`.
+     * Example: "§fLv.§l8 §a┃┃┃┃§7┃┃┃┃┃┃┃┃┃┃┃┃┃┃┃┃" for level=8, maxLevel=40
+     *
+     * @param level    current level
+     * @param maxLevel maximum level
+     * @return kyori text component representing the levels
+     */
+    public static String build(int level, int maxLevel, int length) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("§8lv").append(level).append(" §a");
+        int filledLength = (int) Math.round((double) level / maxLevel * length);
+        sb.append("┃".repeat(Math.max(0, filledLength)));
+        sb.append("§7");
+        sb.append("┃".repeat(Math.max(0, length - filledLength)));
+        return sb.toString();
     }
 }
 

@@ -13,8 +13,8 @@ import jp.mincra.mincramagics.db.HibernateUtil;
 import jp.mincra.mincramagics.db.dao.JobRewardDao;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.HudManager;
-import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.artifact.ArtifactMechanicFactory;
+import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
 import jp.mincra.mincramagics.player.MPRecoverer;
 import jp.mincra.mincramagics.player.MPRepository;
@@ -31,8 +31,6 @@ import jp.mincra.mincramagics.skill.utility.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Logger;
 
 public final class MincraMagics extends JavaPlugin {
     private static MincraMagics INSTANCE;
@@ -68,7 +66,7 @@ public final class MincraMagics extends JavaPlugin {
         jobRewardDao = new JobRewardDao(HibernateUtil.getSessionFactory());
 
         // DB に依存する Manager はここで初期化
-        guiManager = new GUIManager(this);
+        guiManager = new GUIManager();
 
         // Event Listeners
         PluginManager pluginManager = getServer().getPluginManager();

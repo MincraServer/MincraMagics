@@ -1,6 +1,7 @@
 package jp.mincra.mincramagics.gui;
 
 import jp.mincra.mincramagics.MincraLogger;
+import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.lib.Screen;
 import jp.mincra.mincramagics.gui.lib.GUIHelper;
 import jp.mincra.mincramagics.gui.lib.Component;
@@ -42,6 +43,7 @@ public abstract class GUI implements Listener {
     // API
     public final void open(Player player) {
         this.player = player;
+        Bukkit.getPluginManager().registerEvents(this, MincraMagics.getInstance());
         render();
     }
 
@@ -236,7 +238,7 @@ public abstract class GUI implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = org.bukkit.event.EventPriority.MONITOR)
     public void onClose(InventoryCloseEvent event) {
         if (!event.getInventory().equals(inv)) return;
 
