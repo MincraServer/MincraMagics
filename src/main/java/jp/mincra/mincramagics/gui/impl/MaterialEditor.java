@@ -11,7 +11,6 @@ import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.utils.Strings;
 import lombok.Builder;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryAction;
@@ -48,6 +47,7 @@ public class MaterialEditor extends GUI {
         final var materials = useState((Map<MaterialSlot, String>) new HashMap<MaterialSlot, String>());
         final var artifactItem = artifact.value().getType() == Material.AIR ? null : artifact.value();
         final var artifactNBT = ArtifactNBT.fromItem(artifactItem);
+        final var player = context.player();
 
         MincraLogger.debug("[build()] artifactItem: " + artifact.value().getType());
 

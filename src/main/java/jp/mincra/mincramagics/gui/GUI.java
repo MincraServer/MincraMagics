@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public abstract class GUI implements Listener {
-    protected Player player;
+    private Player player;
 
     private final Map<Integer, List<Consumer<InventoryClickEvent>>> clickListeners = new HashMap<>();
     private final Map<Integer, List<Consumer<InventoryDragEvent>>> dragListeners = new HashMap<>();
@@ -131,6 +131,7 @@ public abstract class GUI implements Listener {
         closeListeners.clear();
 
         final Screen screen = build(BuildContext.builder()
+                .player(player)
                 .isFirstRender(prevScreen == null)
                 .build());
         if (screen == null) return;

@@ -11,14 +11,9 @@ import jp.mincra.mincramagics.config.model.JobRewardsConfig;
 import jp.mincra.mincramagics.db.dao.JobRewardDao;
 import jp.mincra.mincramagics.db.model.JobReward;
 import jp.mincra.mincramagics.gui.BuildContext;
-import jp.mincra.mincramagics.gui.lib.GUIHelper;
 import jp.mincra.mincramagics.gui.GUI;
-import jp.mincra.mincramagics.gui.lib.Screen;
-import jp.mincra.mincramagics.gui.lib.Component;
-import jp.mincra.mincramagics.gui.lib.Icons;
-import jp.mincra.mincramagics.gui.lib.Position;
+import jp.mincra.mincramagics.gui.lib.*;
 import lombok.Builder;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -37,21 +32,22 @@ public class JobRewardMenu extends GUI {
 
     // Required for reflection-based instantiation
     public JobRewardMenu() {
-        this(Jobs.getJobs().getFirst().getName());
+        this(Jobs.getJobs().getFirst());
     }
 
-    public JobRewardMenu(String jobName) {
-        job = Jobs.getJob(jobName);
-        jobConfig = JobRewardConfigLoader.getJobConfig(jobName);
+    public JobRewardMenu(Job job) {
+        this.job = job;
+        jobConfig = JobRewardConfigLoader.getJobConfig(job.getName());
         jobRewardDao = MincraMagics.getJobRewardDao();
     }
 
     @Override
     protected Screen build(BuildContext context) {
         if (job == null) {
-            player.sendMessage(net.kyori.adventure.text.Component.text("§c◆職業が見つかりません"));
+            context.player().sendMessage(net.kyori.adventure.text.Component.text("§c◆職業が見つかりません"));
             return null;
         }
+        final var player = context.player();
         final var jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
         final var progression = jobsPlayer.getJobProgression().stream().filter(
                 jobProgression -> jobProgression.getJob().equals(job)
