@@ -18,7 +18,7 @@ public class Wraith extends MagicSkill {
         // Change Gamemode
         GameMode gameMode = player.getGameMode();
         player.setGameMode(GameMode.SPECTATOR);
-        player.playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0);
         World world = player.getWorld();
 
         // Vfx
@@ -39,7 +39,7 @@ public class Wraith extends MagicSkill {
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
                     player.setGameMode(gameMode);
-                    player.playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0);
+                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0);
                     vfxManager.getVfx("wraith")
                             .playEffect(player.getLocation(), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
                     return true;

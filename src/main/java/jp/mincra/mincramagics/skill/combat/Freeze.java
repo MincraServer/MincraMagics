@@ -39,7 +39,7 @@ public class Freeze extends MagicSkill implements Listener {
 
         World world = player.getWorld();
 
-        // PlaySound
+        // playSound
         world.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.1F, 2);
 
         // 2ブロック間隔で探索する

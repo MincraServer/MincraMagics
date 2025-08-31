@@ -32,7 +32,7 @@ public class HpRecovery extends MagicSkill {
         Vfx vfx = vfxManager.getVfx("instant_effect_pentagon");
         Location playerLoc = player.getLocation();
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
-        player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
+        player.getWorld().playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
 
         player.setMetadata(METADATA_KEY, new FixedMetadataValue(MincraMagics.getInstance(), true));
 

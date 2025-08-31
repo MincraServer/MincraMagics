@@ -1,4 +1,4 @@
-package jp.mincra.mincramagics.gui.impl;
+package jp.mincra.mincramagics.gui.screen;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import jp.mincra.mincramagics.MaterialSlot;
@@ -11,7 +11,6 @@ import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.utils.Strings;
 import lombok.Builder;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryAction;
@@ -29,23 +28,16 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 public class MaterialEditor extends GUI {
-    private final static String activeTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_activated%", 3);
-    private final static String inactiveTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_inactivated%", 3);
+    private static final String activeTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_activated%", 3);
+    private static final String inactiveTitle = GUIHelper.guiTitle("マテリアル作業台", "%oraxen_gui_material_editor_inactivated%", 3);
     private static final int ARTIFACT_SLOT_INDEX = 10;
     private static final int FIRST_MATERIAL_SLOT_INDEX = 12;
     private static final int LAST_MATERIAL_SLOT_INDEX = 18;
 
-    private final Inventory inv;
     private final MaterialManager materialManager;
 
     public MaterialEditor() {
-        inv = Bukkit.createInventory(null, 27, net.kyori.adventure.text.Component.text(inactiveTitle));
         materialManager = MincraMagics.getMaterialManager();
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return inv;
     }
 
     @Nullable
@@ -55,6 +47,7 @@ public class MaterialEditor extends GUI {
         final var materials = useState((Map<MaterialSlot, String>) new HashMap<MaterialSlot, String>());
         final var artifactItem = artifact.value().getType() == Material.AIR ? null : artifact.value();
         final var artifactNBT = ArtifactNBT.fromItem(artifactItem);
+        final var player = context.player();
 
         MincraLogger.debug("[build()] artifactItem: " + artifact.value().getType());
 
@@ -149,6 +142,7 @@ public class MaterialEditor extends GUI {
 
         return Screen.builder()
                 .title(artifactItem == null ? inactiveTitle : activeTitle)
+                .size(27)
                 .isModifiableSlot(isModifiableSlot)
                 .components(List.of(
                         Filler.builder()

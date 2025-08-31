@@ -2,11 +2,9 @@ package jp.mincra.mincramagics.config.model;
 
 import jp.mincra.mincramagics.MincraLogger;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Represents the configuration for a single job (e.g., "Hunter").
@@ -41,6 +39,34 @@ public record JobRewardsConfig(
         }
 
         return new JobRewardsConfig(enabled, rewards);
+    }
+
+    /**
+     * Merges this configuration with a default configuration.
+     * If a level is defined in both, the current config's reward takes precedence.
+     * @param def The default JobRewardsConfig to merge with.
+     * @return A new JobRewardsConfig instance with merged rewards.
+     */
+    public JobRewardsConfig mergeDefault(JobRewardsConfig def) {
+        if (def == null) return this;
+        if (!def.enabled) return this;
+
+        final Map<Integer, List<ItemStack>> mergedRewards = new HashMap<>();
+        for (JobRewardConfig reward : this.rewards) {
+            mergedRewards.put(reward.level(), new ArrayList<>(reward.items()));
+        }
+        for (JobRewardConfig reward : def.rewards) {
+            if (!mergedRewards.containsKey(reward.level())) {
+                mergedRewards.put(reward.level(), new ArrayList<>(reward.items()));
+            }
+        }
+        return new JobRewardsConfig(
+                this.enabled,
+                mergedRewards.entrySet().stream()
+                        .map(entry -> new JobRewardConfig(entry.getKey(), entry.getValue()))
+                        .sorted(Comparator.comparingInt(JobRewardConfig::level))
+                        .toList()
+        );
     }
 }
 

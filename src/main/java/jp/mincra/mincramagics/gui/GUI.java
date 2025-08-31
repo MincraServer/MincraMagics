@@ -1,11 +1,13 @@
 package jp.mincra.mincramagics.gui;
 
 import jp.mincra.mincramagics.MincraLogger;
+import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.lib.Screen;
 import jp.mincra.mincramagics.gui.lib.GUIHelper;
 import jp.mincra.mincramagics.gui.lib.Component;
 import jp.mincra.mincramagics.gui.lib.State;
 import jp.mincra.mincramagics.utils.Strings;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,30 +26,24 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public abstract class GUI implements Listener {
-    protected Player player;
-    protected Inventory inv;
-    private Inventory prevInv;
+    private Player player;
+
     private final Map<Integer, List<Consumer<InventoryClickEvent>>> clickListeners = new HashMap<>();
     private final Map<Integer, List<Consumer<InventoryDragEvent>>> dragListeners = new HashMap<>();
     private final List<Consumer<InventoryCloseEvent>> closeListeners = new ArrayList<>();
 
     private final List<Object> states = new ArrayList<>();
     private final UpdateQueue updateQueue = new UpdateQueue();
+    private Inventory inv;
+    private Screen prevScreen;
     private int lastStateIndex = -1;
     private boolean lockRerendering = false;
     private Predicate<Integer> isModifiableSlot = (index) -> false;
 
-    @Nullable
-    private String prevTitle = null;
-
-    public GUI() {
-    }
-
     // API
-    public abstract Inventory getInventory();
-
     public final void open(Player player) {
         this.player = player;
+        Bukkit.getPluginManager().registerEvents(this, MincraMagics.getInstance());
         render();
     }
 
@@ -136,25 +132,24 @@ public abstract class GUI implements Listener {
         dragListeners.clear();
         closeListeners.clear();
 
-        MincraLogger.debug("prevInv: " + prevInv + ", getInventory(): " + getInventory() + ", isFirstRender: " + (prevInv == null && getInventory() != prevInv));
         final Screen screen = build(BuildContext.builder()
-                .isFirstRender(prevInv == null && getInventory() != prevInv)
+                .player(player)
+                .isFirstRender(prevScreen == null)
                 .build());
         if (screen == null) return;
 
         isModifiableSlot = screen.isModifiableSlot();
-        if (prevInv == null && getInventory() != prevInv) {
+        if (screen.shouldReopen(prevScreen)) {
             MincraLogger.debug("Opening inventory for the first time.");
-            player.openInventory(getInventory());
-            prevInv = getInventory();
+            inv = Bukkit.createInventory(null, screen.size(), net.kyori.adventure.text.Component.text(screen.title()));
+            player.openInventory(inv);
         }
-        if (prevTitle == null || !prevTitle.equals(screen.title())) {
+
+        if (!screen.equals(prevScreen)) {
             GUIHelper.updateTitle(player, screen.title());
-            prevTitle = screen.title();
         }
 
         for (Component component : screen.components()) {
-            Inventory inv = getInventory();
             component.render(inv);
 
             for (Map.Entry<Integer, List<Consumer<InventoryClickEvent>>> entry : component.getClickListeners().entrySet()) {
@@ -177,7 +172,7 @@ public abstract class GUI implements Listener {
         }
 
         lockRerendering = false;
-        prevInv = getInventory();
+        prevScreen = screen;
         updateQueue.apply(item -> {
             int index = item.index();
             Object newValue = item.newValue();
@@ -192,13 +187,12 @@ public abstract class GUI implements Listener {
             render();
             return null;
         });
-//        MincraLogger.debug("InventoryGUI: final states: " + states);
     }
 
     // Event handlers
     @EventHandler // TODO: Make this method final
     public void onClick(InventoryClickEvent event) {
-        if (!event.getInventory().equals(getInventory())) return;
+        if (!event.getInventory().equals(inv)) return;
 
         final var destinationSlot = event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY
                 ? GUIHelper.calculateDestinationSlot(event)
@@ -225,7 +219,7 @@ public abstract class GUI implements Listener {
 
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
-        if (!event.getInventory().equals(getInventory())) return;
+        if (!event.getInventory().equals(inv)) return;
 
         for (int slot : event.getRawSlots()) {
             if (slot >= event.getView().getTopInventory().getSize())
@@ -244,9 +238,9 @@ public abstract class GUI implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = org.bukkit.event.EventPriority.MONITOR)
     public void onClose(InventoryCloseEvent event) {
-        if (!event.getInventory().equals(getInventory())) return;
+        if (!event.getInventory().equals(inv)) return;
 
         for (Consumer<InventoryCloseEvent> listener : closeListeners) {
             listener.accept(event);

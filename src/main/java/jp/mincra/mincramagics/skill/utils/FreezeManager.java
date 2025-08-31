@@ -42,7 +42,7 @@ public class FreezeManager {
         target.damage(0, caster);
         World world = caster.getWorld();
 
-        // PlaySound
+        // playSound
         world.playSound(target.getLocation(), Sound.BLOCK_GLASS_BREAK, 0.5F, 1F);
 
         // 氷消去

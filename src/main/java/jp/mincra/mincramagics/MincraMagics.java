@@ -8,13 +8,14 @@ import jp.mincra.bkvfx.BKVfx;
 import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.command.GuardCommand;
 import jp.mincra.mincramagics.command.MincraCommand;
+import jp.mincra.mincramagics.command.RewardCommand;
 import jp.mincra.mincramagics.config.ConfigManager;
 import jp.mincra.mincramagics.db.HibernateUtil;
 import jp.mincra.mincramagics.db.dao.JobRewardDao;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.HudManager;
-import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.artifact.ArtifactMechanicFactory;
+import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
 import jp.mincra.mincramagics.player.MPRecoverer;
 import jp.mincra.mincramagics.player.MPRepository;
@@ -23,6 +24,9 @@ import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.*;
 import jp.mincra.mincramagics.skill.healing.Heal;
+import jp.mincra.mincramagics.skill.job.hunter.Burst;
+import jp.mincra.mincramagics.skill.job.hunter.Protect;
+import jp.mincra.mincramagics.skill.job.hunter.Provoke;
 import jp.mincra.mincramagics.skill.passive.HpBoost;
 import jp.mincra.mincramagics.skill.passive.HpRecovery;
 import jp.mincra.mincramagics.skill.passive.MpBoost;
@@ -31,8 +35,6 @@ import jp.mincra.mincramagics.skill.utility.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Logger;
 
 public final class MincraMagics extends JavaPlugin {
     private static MincraMagics INSTANCE;
@@ -59,16 +61,16 @@ public final class MincraMagics extends JavaPlugin {
         playerManager = new PlayerManager();
         skillManager = new SkillManager();
         materialManager = new MaterialManager();
-        hudManager = new HudManager(playerManager);
-        vfxManager = BKVfx.instance().getVfxManager();
         configManager = new ConfigManager(this);
+        hudManager = new HudManager(playerManager, configManager);
+        vfxManager = BKVfx.instance().getVfxManager();
 
         // Initialize database
         HibernateUtil.initialize(this, configManager.getConfig("config.yml"));
         jobRewardDao = new JobRewardDao(HibernateUtil.getSessionFactory());
 
         // DB に依存する Manager はここで初期化
-        guiManager = new GUIManager(this);
+        guiManager = new GUIManager();
 
         // Event Listeners
         PluginManager pluginManager = getServer().getPluginManager();
@@ -81,6 +83,7 @@ public final class MincraMagics extends JavaPlugin {
         // CommandAPI.onLoad(new CommandAPIConfig().initializeNBTAPI());
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
+        new RewardCommand().registerAll();
 
         // Mechanics
         MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
@@ -117,6 +120,11 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("luminous", new Luminous(this));
         skillManager.registerSkill("mine", new Mine());
         skillManager.registerSkill("water_move", new WaterMove());
+        // Job
+        // - Hunter
+        skillManager.registerSkill("burst", new Burst());
+        skillManager.registerSkill("protect", new Protect());
+        skillManager.registerSkill("provoke", new Provoke());
     }
 
     @Override

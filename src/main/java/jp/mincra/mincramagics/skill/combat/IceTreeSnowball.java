@@ -46,7 +46,7 @@ public class IceTreeSnowball extends MagicSkill implements Listener {
         summonedSnowballs.put(snowball.getUniqueId(), new MagicSnowball(snowball, player, duration, extraDamage));
 
         // Effect and sound
-        player.playSound(playerLoc, Sound.ENTITY_BREEZE_SHOOT, 0.2F, 2F);
+        player.getWorld().playSound(playerLoc, Sound.ENTITY_BREEZE_SHOOT, 0.2F, 2F);
         Vfx vfx = vfxManager.getVfx("ice");
         Vector axis = new Vector(0, 1, 0);
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, axis, 0);

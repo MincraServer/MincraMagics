@@ -1,3 +1,18 @@
+default:
+  enabled: true
+  rewards:
+    - level: 1
+      items:
+        - minecraft_type: experience_bottle
+          amount: 12
+    - level: 2
+      items:
+        - minecraft_type: emerald
+          amount: 3
+    - level: 3
+      items:
+        - minecraft_type: mana_crystal
+          amount: 1
 Hunter:
   enabled: true
   rewards:
