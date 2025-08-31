@@ -13,14 +13,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
-public class Blood extends MagicSkill implements Listener {
+public class Bleeding extends MagicSkill implements Listener {
     private final Logger logger = MincraMagics.getPluginLogger();
-    private static final String METADATA_KEY = "blood";
+    private final Map<UUID, MincraMagics> UserInstance = new HashMap<>();
     double healRate = 0;
 
     @Override
@@ -37,15 +39,15 @@ public class Blood extends MagicSkill implements Listener {
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
         player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
 
-        player.setMetadata(METADATA_KEY, new FixedMetadataValue(MincraMagics.getInstance(), true));
+        UserInstance.put(player.getUniqueId(), MincraMagics.getInstance());
     }
 
     @Override
     public void onUnequip(Player player, MaterialProperty property) {
         super.onUnequip(player, property);
 
-        if (player.hasMetadata(METADATA_KEY)) {
-            player.removeMetadata(METADATA_KEY, MincraMagics.getInstance());
+        if (UserInstance.containsKey(player.getUniqueId())) {
+            UserInstance.remove(player.getUniqueId());
         } else {
             logger.warning("Player " + player.getName() + " does not have hp_recovery metadata.");
         }
@@ -65,7 +67,7 @@ public class Blood extends MagicSkill implements Listener {
         // Core functionality
         new BKTween(MincraMagics.getInstance())
                 .execute(v -> {
-                    if (!player.hasMetadata(METADATA_KEY)) {
+                    if (!UserInstance.containsKey(player.getUniqueId())) {
                         return false; // Stop if the player has unequipped the skill
                     }
 
