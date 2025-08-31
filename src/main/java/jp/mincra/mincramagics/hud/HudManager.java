@@ -38,15 +38,18 @@ public class HudManager implements Listener {
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         scheduler.scheduleSyncRepeatingTask(MincraMagics.getInstance(), () -> {
             for (MincraPlayer mPlayer : players) {
-                String mpHud = mpHudController.generateMpBar((int) mPlayer.getMaxMp(), (int) mPlayer.getMp());
-                String cooldownHud = cooldownHudController.generateCooldownHud(mPlayer.getCooldown());
-
                 Player player = mPlayer.getPlayer();
                 final var item = player.getInventory().getItemInMainHand();
-                if (disableHudItemsConfig.shouldDisable(item)) {
-                    // HUD表示が無効な場合、アクションバーを空にする
-                    continue;
-                }
+                // HUD表示が無効な場合、アクションバーを空にする
+                if (disableHudItemsConfig.shouldDisable(item)) continue;
+
+                final var isDisplayingOxygenBar = player.isSwimming() || player.getRemainingAir() < 300;
+
+                String mpHud = mpHudController.generateMpBar((int) mPlayer.getMaxMp(), (int) mPlayer.getMp(),
+                        // 水中にいる場合は一段上から表示
+                        isDisplayingOxygenBar ? 1 : 0);
+                String cooldownHud = cooldownHudController.generateCooldownHud(mPlayer.getCooldown());
+
                 TextComponent component = Component
                         .text(SHIFT_HUD + SHIFT_COOLDOWN + cooldownHud + NEG_SHIFT_COOLDOWN + mpHud).shadowColor(new Transparent());
                 player.sendActionBar(component);
