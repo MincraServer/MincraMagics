@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 public class Bleeding extends MagicSkill implements Listener {
     private final Logger logger = MincraMagics.getPluginLogger();
-    private final Map<UUID, MincraMagics> bleedingInstance = new HashMap<>();
+    private final Map<UUID, MincraMagics> bleedingInstanceMap = new HashMap<>();
     double healRate = 0;
 
     @Override
@@ -38,15 +38,15 @@ public class Bleeding extends MagicSkill implements Listener {
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
         player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
 
-        bleedingInstance.put(player.getUniqueId(), MincraMagics.getInstance());
+        bleedingInstanceMap.put(player.getUniqueId(), MincraMagics.getInstance());
     }
 
     @Override
     public void onUnequip(Player player, MaterialProperty property) {
         super.onUnequip(player, property);
 
-        if (bleedingInstance.containsKey(player.getUniqueId())) {
-            bleedingInstance.remove(player.getUniqueId());
+        if (bleedingInstanceMap.containsKey(player.getUniqueId())) {
+            bleedingInstanceMap.remove(player.getUniqueId());
         } else {
             logger.warning("Player " + player.getName() + " does not have hp_recovery metadata.");
         }
@@ -62,7 +62,7 @@ public class Bleeding extends MagicSkill implements Listener {
         }
 
         // Core functionality
-        if (!bleedingInstance.containsKey(player.getUniqueId())) {
+        if (!bleedingInstanceMap.containsKey(player.getUniqueId())) {
             return; // Stop if the player has unequipped the skill
         }
 
