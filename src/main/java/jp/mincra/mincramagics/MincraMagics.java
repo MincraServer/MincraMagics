@@ -88,7 +88,7 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("mp_boost", new MpBoost());
         skillManager.registerSkill("hp_recovery", new HpRecovery());
         skillManager.registerSkill("mp_recovery", new MpRecovery());
-        skillManager.registerSkill("blood", new Blood());
+        skillManager.registerSkill("bleeding", new Blood());
 
         // Utility
         skillManager.registerSkill("charge", new Charge());
