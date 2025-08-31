@@ -61,9 +61,9 @@ public final class MincraMagics extends JavaPlugin {
         playerManager = new PlayerManager();
         skillManager = new SkillManager();
         materialManager = new MaterialManager();
-        hudManager = new HudManager(playerManager);
-        vfxManager = BKVfx.instance().getVfxManager();
         configManager = new ConfigManager(this);
+        hudManager = new HudManager(playerManager, configManager);
+        vfxManager = BKVfx.instance().getVfxManager();
 
         // Initialize database
         HibernateUtil.initialize(this, configManager.getConfig("config.yml"));

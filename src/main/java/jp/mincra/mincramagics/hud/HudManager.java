@@ -1,6 +1,8 @@
 package jp.mincra.mincramagics.hud;
 
 import jp.mincra.mincramagics.MincraMagics;
+import jp.mincra.mincramagics.config.ConfigManager;
+import jp.mincra.mincramagics.config.DisableHudItemsConfigLoader;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -28,8 +30,9 @@ public class HudManager implements Listener {
     private static final String SHIFT_COOLDOWN = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_cooldown%");
     private static final String NEG_SHIFT_COOLDOWN = PlaceholderAPI.setPlaceholders(null, "%oraxen_neg_shift_cooldown%");
 
-    public HudManager(PlayerManager playerManager) {
+    public HudManager(PlayerManager playerManager, ConfigManager configManager) {
         this.playerManager = playerManager;
+        final var disableHudItemsConfig = DisableHudItemsConfigLoader.load(configManager);
         players = playerManager.getPlayers();
 
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
@@ -39,6 +42,11 @@ public class HudManager implements Listener {
                 String cooldownHud = cooldownHudController.generateCooldownHud(mPlayer.getCooldown());
 
                 Player player = mPlayer.getPlayer();
+                final var item = player.getInventory().getItemInMainHand();
+                if (disableHudItemsConfig.shouldDisable(item)) {
+                    // HUD表示が無効な場合、アクションバーを空にする
+                    continue;
+                }
                 TextComponent component = Component
                         .text(SHIFT_HUD + SHIFT_COOLDOWN + cooldownHud + NEG_SHIFT_COOLDOWN + mpHud).shadowColor(new Transparent());
                 player.sendActionBar(component);
