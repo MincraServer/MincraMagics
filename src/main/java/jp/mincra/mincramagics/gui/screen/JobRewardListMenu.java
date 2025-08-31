@@ -80,19 +80,23 @@ class JobList extends Component {
             final var item = job.getGuiItem();
             final var meta = item.getItemMeta();
             meta.displayName(net.kyori.adventure.text.Component.text(job.getDisplayName()));
-            if (jobProgression.isEmpty()) {
-                meta.lore(List.of(
-                        net.kyori.adventure.text.Component.text("未加入").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
-                ));
-            } else if (config == null) {
+
+            if (config == null) {
                 meta.lore(List.of(
                         net.kyori.adventure.text.Component.text("準備中").color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false)
+                ));
+            } else if (jobProgression.isEmpty()) {
+                meta.lore(List.of(
+                        net.kyori.adventure.text.Component.text("未加入").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
                 ));
             } else {
                 meta.lore(List.of(
                         net.kyori.adventure.text.Component.text("クリックして報酬を確認").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                         net.kyori.adventure.text.Component.text("lv" + jobProgression.get().getLevel()).color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
                 ));
+            }
+
+            if (jobProgression.isPresent()) {
                 meta.addEnchant(Enchantment.FORTUNE, 1, true);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             }

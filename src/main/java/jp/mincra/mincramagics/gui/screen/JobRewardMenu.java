@@ -2,6 +2,7 @@ package jp.mincra.mincramagics.gui.screen;
 
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.container.Job;
+import com.gamingmesh.jobs.container.JobProgression;
 import io.th0rgal.oraxen.api.OraxenItems;
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
@@ -45,7 +46,7 @@ public class JobRewardMenu extends GUI {
     @Override
     protected Screen build(BuildContext context) {
         if (job == null) {
-            context.player().sendMessage(net.kyori.adventure.text.Component.text("§c◆職業が見つかりません"));
+            context.player().sendMessage(net.kyori.adventure.text.Component.text("§c ◆職業が見つかりません"));
             return null;
         }
         final var player = context.player();
@@ -54,22 +55,13 @@ public class JobRewardMenu extends GUI {
                 jobProgression -> jobProgression.getJob().equals(job)
         ).findFirst();
 
-        if (progression.isEmpty()) {
-            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§c◆%s§c には加入していません", job.getDisplayName())));
+        if (jobConfig == null || !jobConfig.enabled()) {
+            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§c ◆%s§c の報酬は準備中です", job.getDisplayName())));
             return null;
         }
 
-        if (jobConfig == null) {
-            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§c◆%s§c の報酬設定が見つかりません", job.getDisplayName())));
-            return null;
-        }
-
-        if (!jobConfig.enabled()) {
-            player.sendMessage(net.kyori.adventure.text.Component.text(String.format("§f◆%s§c の報酬は開発中です", job.getDisplayName())));
-            return null;
-        }
-
-        final var currentMinLevel = useState(Math.max(1, progression.get().getLevel() - 7));
+        final int jobLevel = progression.map(JobProgression::getLevel).orElse(0);
+        final var currentMinLevel = useState(Math.max(1, jobLevel));
         final var jobRewards = useState(jobRewardDao.findByPlayerAndJob(player.getUniqueId(), job.getId()));
 
         final Consumer<JobRewardConfig> handleReceiveReward = (jobRewardConfig) -> {
@@ -78,7 +70,7 @@ public class JobRewardMenu extends GUI {
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 2.0f);
             if (jobRewardDao.findByPlayerAndJob(player.getUniqueId(), job.getId()).stream()
                     .anyMatch(reward -> reward.getLevel() == jobRewardConfig.level())) {
-                player.sendMessage(net.kyori.adventure.text.Component.text("§c◆報酬はすでに受け取っています"));
+                player.sendMessage(net.kyori.adventure.text.Component.text("§c ◆報酬はすでに受け取っています"));
                 return;
             }
             player.give(jobRewardConfig.items());
@@ -141,7 +133,7 @@ public class JobRewardMenu extends GUI {
         return Screen.builder()
                 .title(GUIHelper.guiTitle("職業報酬 §l"
                         + job.getDisplayName()
-                        + "§r " + LevelStringBuilder.build(progression.get().getLevel(), job.getMaxLevel(), 30), "%oraxen_gui_jobs_reward%", 4))
+                        + "§r " + LevelStringBuilder.build(jobLevel, job.getMaxLevel(), 30), "%oraxen_gui_jobs_reward%", 4))
                 .size(36)
                 .isModifiableSlot(s -> s >= 36)
                 .components(List.of(
@@ -150,7 +142,7 @@ public class JobRewardMenu extends GUI {
                         ReceiveButtons.builder()
                                 .pos(new Position(0, 2, 9))
                                 .minLevel(currentMinLevel.value())
-                                .currentLevel(progression.get().getLevel())
+                                .currentLevel(jobLevel)
                                 .rewards(jobConfig.rewards().stream()
                                         .collect(Collectors.toMap(
                                                 JobRewardConfig::level,
