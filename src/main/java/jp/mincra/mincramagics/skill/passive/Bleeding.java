@@ -1,6 +1,5 @@
 package jp.mincra.mincramagics.skill.passive;
 
-import jp.mincra.bktween.BKTween;
 import jp.mincra.bkvfx.Vfx;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.skill.MagicSkill;
@@ -22,7 +21,7 @@ import java.util.logging.Logger;
 
 public class Bleeding extends MagicSkill implements Listener {
     private final Logger logger = MincraMagics.getPluginLogger();
-    private final Map<UUID, MincraMagics> UserInstance = new HashMap<>();
+    private final Map<UUID, MincraMagics> BleedingInstance = new HashMap<>();
     double healRate = 0;
 
     @Override
@@ -39,15 +38,15 @@ public class Bleeding extends MagicSkill implements Listener {
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
         player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
 
-        UserInstance.put(player.getUniqueId(), MincraMagics.getInstance());
+        BleedingInstance.put(player.getUniqueId(), MincraMagics.getInstance());
     }
 
     @Override
     public void onUnequip(Player player, MaterialProperty property) {
         super.onUnequip(player, property);
 
-        if (UserInstance.containsKey(player.getUniqueId())) {
-            UserInstance.remove(player.getUniqueId());
+        if (BleedingInstance.containsKey(player.getUniqueId())) {
+            BleedingInstance.remove(player.getUniqueId());
         } else {
             logger.warning("Player " + player.getName() + " does not have hp_recovery metadata.");
         }
@@ -62,31 +61,27 @@ public class Bleeding extends MagicSkill implements Listener {
             return;
         }
 
+        // Core functionality
+        if (!BleedingInstance.containsKey(player.getUniqueId())) {
+            return; // Stop if the player has unequipped the skill
+        }
+
         final double damage = e.getFinalDamage();
 
-        // Core functionality
-        new BKTween(MincraMagics.getInstance())
-                .execute(v -> {
-                    if (!UserInstance.containsKey(player.getUniqueId())) {
-                        return false; // Stop if the player has unequipped the skill
-                    }
+        // Effect and sound
+        Vfx vfx = vfxManager.getVfx("happy_villager_hexagon");
+        Location playerLoc = player.getLocation();
+        vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
+        player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
 
-                    // Effect and sound
-                    Vfx vfx = vfxManager.getVfx("happy_villager_hexagon");
-                    Location playerLoc = player.getLocation();
-                    vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
-                    player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
-
-                    // heal healRate HP
-                    double currentHealth = player.getHealth();
-                    double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
-                    double healHealth = damage * healRate;
-                    if (currentHealth < maxHealth) {
-                        double newHealth = Math.min(currentHealth + healHealth, maxHealth);
-                        player.setHealth(newHealth);
-                    }
-                    return true;
-                })
-                .run();
+        // heal healRate HP
+        double currentHealth = player.getHealth();
+        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double healHealth = damage * healRate;
+        if (currentHealth < maxHealth) {
+            double newHealth = Math.min(currentHealth + healHealth, maxHealth);
+            player.setHealth(newHealth);
+        }
+        return;
     }
 }
