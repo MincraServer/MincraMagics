@@ -93,7 +93,7 @@ public class MineralDetection extends MagicSkill {
                     // マップに登録された鉱石かチェック
                     if (ORE_COLORS.containsKey(blockType)) {
                         // ブロックの中心にシュルカーをスポーン
-                        Location shulkerLoc = block.getLocation().add(0.5, 0.5, 0.5);
+                        Location shulkerLoc = block.getLocation().add(0.5, 0, 0.5);
 
                         world.spawn(shulkerLoc, Shulker.class, shulker -> {
                             // 無敵・無音・AIなし・重力オフに設定
