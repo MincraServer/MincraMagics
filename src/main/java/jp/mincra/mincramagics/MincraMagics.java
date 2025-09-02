@@ -140,13 +140,10 @@ public final class MincraMagics extends JavaPlugin {
 
     public void reload() {
         configManager.reloadConfigs();
-        try {
-            // FIXME: onEnable() の中身を切り出して reload() が onEnable() を呼ばないようにする
-            onEnable();
-            MincraLogger.info("MincraMagics reloaded successfully.");
-        } catch (Exception e) {
-            MincraLogger.fatal("Failed to reload MincraMagics", e);
-        }
+        MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
+        MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
+        MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
+        OraxenItems.loadItems();
     }
 
     public static MincraMagics getInstance() {
