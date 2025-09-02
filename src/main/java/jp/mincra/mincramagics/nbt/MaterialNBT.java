@@ -16,8 +16,8 @@ public record MaterialNBT(double cooldown, double mp) {
         newLore.add(divider);
 
         // Cooldown, MP 表示
-        newLore.add(Color.COLOR_AQUA + "MP       " + String.format( "%.1f", mp ));
-        newLore.add(Color.COLOR_AQUA + "Cooldown " + String.format( "%.1f", cooldown ));
+        newLore.add(Color.COLOR_WHITE + "消費マナ       " + Color.COLOR_YELLOW + String.format( "%.1f", mp ));
+        newLore.add(Color.COLOR_WHITE + "クールダウン  " + Color.COLOR_YELLOW + String.format( "%.1f", cooldown ));
 
         newLore.add(divider);
 

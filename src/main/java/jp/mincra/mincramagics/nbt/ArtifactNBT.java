@@ -4,8 +4,8 @@ import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MaterialSlot;
 import jp.mincra.mincramagics.MincraLogger;
-import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.constant.Color;
+import jp.mincra.mincramagics.font.Fonts;
 import jp.mincra.mincramagics.nbt.components.Divider;
 import jp.mincra.mincramagics.nbt.utils.PDCUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -35,16 +35,6 @@ public record ArtifactNBT(List<Material> materials,
     );
     private static final String SHIFT_1 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%");
     private static final String SHIFT_2 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_2%");
-    private static final Map<String, String> MATERIAL_ID_TO_GLYPH = new HashMap<>();
-
-    private static String getMaterialGlyph(String materialId) {
-        if (MATERIAL_ID_TO_GLYPH.containsKey(materialId)) {
-            return MATERIAL_ID_TO_GLYPH.get(materialId);
-        }
-        String glyph = PlaceholderAPI.setPlaceholders(null, "%oraxen_material_" + materialId + "%");
-        MATERIAL_ID_TO_GLYPH.put(materialId, glyph);
-        return glyph;
-    }
     // endregion
 
     public ItemStack setNBTTag(ItemStack item) {
@@ -111,7 +101,7 @@ public record ArtifactNBT(List<Material> materials,
             }
 
             newLore.add(Color.COLOR_WHITE + SLOT_TO_GLYPH.get(material.slot) + SHIFT_2 +
-                    getMaterialGlyph(materialId) + SHIFT_1 + materialName);
+                    Fonts.getMaterialFont(materialId, false) + SHIFT_1 + materialName);
         }
 
         // availableMaterials
