@@ -3,7 +3,6 @@ package jp.mincra.mincramagics.skill.job.miner;
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.actions.BlockActionInfo;
 import com.gamingmesh.jobs.container.ActionType;
-import com.gamingmesh.jobs.listeners.JobsPaymentListener;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
@@ -14,6 +13,7 @@ import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -74,6 +74,7 @@ public class Hammer extends MagicSkill implements Listener {
     @Override
     public void onEquip(Player player, MaterialProperty property) {
         super.onEquip(player, property);
+        player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, 1, 0.8f);
         activeHammers.put(player.getUniqueId(), property);
     }
 
@@ -193,6 +194,12 @@ public class Hammer extends MagicSkill implements Listener {
             }
 
             Block targetBlock = origin.getWorld().getBlockAt(originLoc.clone().add(worldOffset));
+
+            // includeBelow が false の場合、playerPos より下のブロックを除外
+            if (!includeBelow && targetBlock.getY() < playerPos.getBlockY()) {
+                continue;
+            }
+
             blocks.add(targetBlock);
         }
         return blocks;

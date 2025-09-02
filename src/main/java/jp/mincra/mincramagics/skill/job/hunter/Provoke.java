@@ -18,7 +18,7 @@ public class Provoke extends MagicSkill {
 
         // Parameters
         final float level = property.level();
-        final float range = 25 * level;
+        final float range = 15 * level;
         // Effect and sound
         Vfx vfx = vfxManager.getVfx(Vfx.WAX_OFF_PENTAGON);
         Location playerLoc = player.getLocation();

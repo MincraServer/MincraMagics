@@ -56,7 +56,7 @@ public class MineralDetection extends MagicSkill {
 
         // Parameters
         final float level = property.level();
-        final float range = 5 + 5 * level;
+        final float range = 4 + 4 * level;
 
         Location playerLoc = player.getLocation();
         World world = player.getWorld();

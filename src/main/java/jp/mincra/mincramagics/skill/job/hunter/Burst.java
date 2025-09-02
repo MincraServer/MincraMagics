@@ -17,7 +17,7 @@ public class Burst extends MagicSkill {
 
         // Parameters
         final float level = property.level();
-        final float durationInTick = 20 * (60 + level * 2); // 60秒 + レベル×2秒
+        final float durationInTick = 20 * (60 + level * 20); // 60秒 + レベル×20秒
         final float potionLevel = Math.min(1 + (int) (level / 2), 4); // 最大レベル4
 
         // Effect and sound

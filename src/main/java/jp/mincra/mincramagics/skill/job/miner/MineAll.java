@@ -21,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -50,6 +51,29 @@ public class MineAll extends MagicSkill implements Listener {
             Material.NETHER_GOLD_ORE, Material.NETHER_QUARTZ_ORE,
             Material.ANCIENT_DEBRIS
     );
+    private static final Map<Material, Integer> ORE_EXP_AMOUNT = new EnumMap<>(Material.class);
+
+    static {
+        ORE_EXP_AMOUNT.put(Material.COAL_ORE, 1);
+        ORE_EXP_AMOUNT.put(Material.DEEPSLATE_COAL_ORE, 1);
+        ORE_EXP_AMOUNT.put(Material.IRON_ORE, 1);
+        ORE_EXP_AMOUNT.put(Material.DEEPSLATE_IRON_ORE, 1);
+        ORE_EXP_AMOUNT.put(Material.COPPER_ORE, 1);
+        ORE_EXP_AMOUNT.put(Material.DEEPSLATE_COPPER_ORE, 1);
+        ORE_EXP_AMOUNT.put(Material.GOLD_ORE, 2);
+        ORE_EXP_AMOUNT.put(Material.DEEPSLATE_GOLD_ORE, 2);
+        ORE_EXP_AMOUNT.put(Material.REDSTONE_ORE, 2);
+        ORE_EXP_AMOUNT.put(Material.DEEPSLATE_REDSTONE_ORE, 2);
+        ORE_EXP_AMOUNT.put(Material.EMERALD_ORE, 3);
+        ORE_EXP_AMOUNT.put(Material.DEEPSLATE_EMERALD_ORE, 3);
+        ORE_EXP_AMOUNT.put(Material.LAPIS_ORE, 2);
+        ORE_EXP_AMOUNT.put(Material.DEEPSLATE_LAPIS_ORE, 2);
+        ORE_EXP_AMOUNT.put(Material.DIAMOND_ORE, 3);
+        ORE_EXP_AMOUNT.put(Material.DEEPSLATE_DIAMOND_ORE, 3);
+        ORE_EXP_AMOUNT.put(Material.NETHER_GOLD_ORE, 2);
+        ORE_EXP_AMOUNT.put(Material.NETHER_QUARTZ_ORE, 2);
+        ORE_EXP_AMOUNT.put(Material.ANCIENT_DEBRIS, 4);
+    }
 
     // 連鎖破壊による無限ループを防ぐためのフラグ
     private final Set<Location> processedByMineAll = new HashSet<>();
@@ -58,6 +82,7 @@ public class MineAll extends MagicSkill implements Listener {
     public void onEquip(Player player, MaterialProperty property) {
         super.onEquip(player, property);
         activeMiners.put(player.getUniqueId(), property);
+        player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_IRON, 1, 0.9f);
         MincraLogger.debug("MineAll skill equipped by " + player.getName());
     }
 
@@ -89,7 +114,7 @@ public class MineAll extends MagicSkill implements Listener {
 
         // Parameters
         final float level = property.level();
-        final int maxBlockAmount = (int) (10 + level * 5);
+        final int maxBlockAmount = (int) (5 + level * 5);
 
         // Effect and sound=
         Vfx vfx = vfxManager.getVfx(Vfx.ENCHANT_PENTAGON);
@@ -163,6 +188,8 @@ public class MineAll extends MagicSkill implements Listener {
             processedByMineAll.add(loc);
             // アイテムがドロップするように自然破壊
             blockToBreak.breakNaturally(tool);
+            blockToBreak.getWorld().spawn(loc, ExperienceOrb.class, orb -> orb.setExperience(ORE_EXP_AMOUNT.get(oreType)));
+
             // 破壊処理が完了したらマークを解除
             processedByMineAll.remove(loc);
         }
