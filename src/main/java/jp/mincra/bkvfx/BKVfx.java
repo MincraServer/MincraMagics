@@ -116,6 +116,11 @@ public class BKVfx {
                         8, Particle.WAX_OFF)
                         .setSpeed(1f)
                         .setOffset(new Vector(0.003, 0.003, 0.003)));
+        vfxManager.registerVfx(Vfx.ENCHANT_PENTAGON,
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
+                        8, Particle.ENCHANT)
+                        .setSpeed(1f)
+                        .setOffset(new Vector(0.003, 0.003, 0.003)));
     }
 
     public VfxManager getVfxManager() {

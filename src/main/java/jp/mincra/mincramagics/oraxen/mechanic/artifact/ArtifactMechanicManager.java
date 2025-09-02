@@ -139,18 +139,18 @@ public class ArtifactMechanicManager implements Listener {
         // 新しいアイテムと古いアイテムのマテリアルスキルが同じ場合は何もしない
         if (materialSkills != null && materialSkills.equals(oldMaterialSkills)) return;
 
-        if (materialSkills != null) {
-            if (isOnItemHeldEvent && isNotEquippable(newItem.getType())) return;
-
-            for (MaterialSkill materialSkill : materialSkills) {
-                materialSkill.skill.onEquip(caster, materialSkill.materialProperty);
-            }
-        }
         if (oldMaterialSkills != null) {
-            if (isOnItemHeldEvent && isNotEquippable(oldItem.getType())) return;
+            if (!isOnItemHeldEvent && isNotEquippable(oldItem.getType())) return;
 
             for (MaterialSkill materialSkill : oldMaterialSkills) {
                 materialSkill.skill.onUnequip(caster, materialSkill.materialProperty);
+            }
+        }
+        if (materialSkills != null) {
+            if (!isOnItemHeldEvent && isNotEquippable(newItem.getType())) return;
+
+            for (MaterialSkill materialSkill : materialSkills) {
+                materialSkill.skill.onEquip(caster, materialSkill.materialProperty);
             }
         }
     }

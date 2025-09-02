@@ -54,7 +54,7 @@ public class Jump extends MagicSkill implements Listener {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
         if (castedPlayer.contains(uuid)) {
-            if (new NBTEntity(player).getBoolean("OnGround")) {
+            if (player.isOnGround()) {
                 // if on ground
                 castedPlayer.remove(uuid);
                 player.stopSound(Sound.ITEM_ELYTRA_FLYING);

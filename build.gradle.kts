@@ -72,6 +72,7 @@ dependencies {
     compileOnly("dev.jorel:commandapi-bukkit-core:10.1.1")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
+    compileOnly("net.luckperms:api:5.5")
     compileOnly(files("libs/Jobs5.2.6.3.jar")) // Jobs Reborn
     compileOnly(files("libs/oraxen-1.190.0-modified.jar")) // // 変更を加えた Oraxen を libs フォルダに配置
 //    compileOnly(files("libs/InfiniteCrops-1.4.8.jar"))

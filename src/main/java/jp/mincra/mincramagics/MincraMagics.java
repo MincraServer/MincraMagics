@@ -27,6 +27,9 @@ import jp.mincra.mincramagics.skill.healing.Heal;
 import jp.mincra.mincramagics.skill.job.hunter.Burst;
 import jp.mincra.mincramagics.skill.job.hunter.Protect;
 import jp.mincra.mincramagics.skill.job.hunter.Provoke;
+import jp.mincra.mincramagics.skill.job.miner.Hammer;
+import jp.mincra.mincramagics.skill.job.miner.MineAll;
+import jp.mincra.mincramagics.skill.job.miner.MineralDetection;
 import jp.mincra.mincramagics.skill.passive.HpBoost;
 import jp.mincra.mincramagics.skill.passive.HpRecovery;
 import jp.mincra.mincramagics.skill.passive.MpBoost;
@@ -125,6 +128,10 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("burst", new Burst());
         skillManager.registerSkill("protect", new Protect());
         skillManager.registerSkill("provoke", new Provoke());
+        // - Miner
+        skillManager.registerSkill("mineral_detection", new MineralDetection());
+        skillManager.registerSkill("mine_all", new MineAll());
+        skillManager.registerSkill("hammer", new Hammer());
     }
 
     @Override

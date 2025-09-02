@@ -11,6 +11,8 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.node.Node;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -91,12 +93,12 @@ public class GuardCommand {
                         server.dispatchCommand(sender, "/expand vert");
                     }
 
-                    CommandSender consoleSender = server.getConsoleSender();
-                    
                     // 一時的に権限を付与してからコマンドを実行
-                    server.dispatchCommand(consoleSender, "lp user " + sender.getName() + " permission set worldguard.region.claim true");
+                    final var lp = LuckPermsProvider.get();
+                    final var user = lp.getUserManager().loadUser(sender.getUniqueId()).join();
+                    user.data().add(Node.builder("worldguard.region.claim").build());
                     server.dispatchCommand(sender, "region claim " + new RegionId(sender, id));
-                    server.dispatchCommand(consoleSender, "lp user " + sender.getName() + " permission unset worldguard.region.claim");
+                    user.data().remove(Node.builder("worldguard.region.claim").build());
                 }));
     }
 
