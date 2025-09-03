@@ -71,7 +71,7 @@ public class MaterialEditor extends GUI {
         final Function<MSlotAndItem, Boolean> handleMaterialPlaced = (materialInSlot) -> {
             final ItemStack currentArtifactItem = artifact.value();
             if (currentArtifactItem == null || currentArtifactItem.getType() == Material.AIR) return false;
-            MincraLogger.debug("[MaterialEditor] handleMaterialPlaced: " + Strings.truncate(currentArtifactItem.toString()));
+            // MincraLogger.debug("[MaterialEditor] handleMaterialPlaced: " + Strings.truncate(currentArtifactItem.toString()));
             final var currentArtifactNBT = ArtifactNBT.fromItem(currentArtifactItem);
 //            MincraLogger.debug("[handleMaterialPlaced] currentArtifactNBT: " + currentArtifactNBT);
             if (currentArtifactNBT == null) return false;
@@ -268,18 +268,56 @@ class MaterialSlots extends Component {
                 return;
             }
 
-            addMoveToOtherInventoryListener(index, (e) ->
-                    e.event().setCancelled(!onMaterialPlaced.apply(
-                            new MSlotAndItem(slot, e.item()))));
-            addPlaceListener(index, (e) ->
-                    e.event().setCancelled(!onMaterialPlaced.apply(
-                            new MSlotAndItem(slot, e.item()))));
-            addPickupListener(index, (e) ->
-                    e.event().setCancelled(!onMaterialPickedUp.apply(slot)));
-            addSwapListener(index, (e) ->
-                    e.event().setCancelled(!onMaterialPlaced.apply(
-                            new MSlotAndItem(slot, e.item()))));
+            addMoveToOtherInventoryListener(index, (e) -> {
+                e.event().setCancelled(true);
+                final var itemInSlot = inv.getItem(index);
+                MincraLogger.debug("[MaterialSlots] getCursor: " + Strings.truncate(e.event().getCursor()) + ", getCurrentItem: " + Strings.truncate(e.event().getCurrentItem()));
+                if (itemInSlot != null && itemInSlot.getAmount() > 0) return;
+                MincraLogger.debug("[MaterialSlots] MoveToOtherInventoryListener: index=" + index);
+                final var succeeded = onMaterialPlaced.apply(new MSlotAndItem(slot, e.item()));
+                // 成功した場合、移動元のスロットのアイテムを消去する
+                if (succeeded) {
+                    e.event().setCurrentItem(null);
+                }
+            });
+            addPlaceListener(index, (e) -> {
+                e.event().setCancelled(true);
+                final var itemInSlot = inv.getItem(index);
+                if (itemInSlot != null && itemInSlot.getAmount() > 0) return;
+
+                MincraLogger.debug("[MaterialSlots] call onMaterialPlaced for slot " + slot);
+                final var succeeded = onMaterialPlaced.apply(new MSlotAndItem(slot, e.item()));
+                MincraLogger.debug("[MaterialSlots] onMaterialPlaced returned: " + succeeded);
+                if (succeeded) {
+                    MincraLogger.debug("[MaterialSlots] Material placed in slot " + slot + ": " + Strings.truncate(e.item()));
+                    ItemStack cursor = e.event().getCursor();
+                    if (cursor.getAmount() > 1) {
+                        MincraLogger.debug("[MaterialSlots] Cursor amount decreased by 1.");
+                        cursor.setAmount(cursor.getAmount() - 1);
+                        e.event().getWhoClicked().getOpenInventory().setCursor(cursor);
+                    } else {
+                        MincraLogger.debug("[MaterialSlots] Cursor cleared.");
+                        e.event().getWhoClicked().getOpenInventory().setCursor(null);
+                    }
+                }
+            });
+            addPickupListener(index, (e) -> {
+                MincraLogger.debug("[MaterialSlots] onMaterialPickedUp called for slot " + slot);
+                e.event().setCancelled(!onMaterialPickedUp.apply(slot));
+            });
+            addSwapListener(index, (e) -> {
+                e.event().setCancelled(true);
+                final var itemInSlot = inv.getItem(index);
+                MincraLogger.debug("[MaterialSlots] SwapListener: index=" + index + ", item: " + e.event().getCursor());
+                final var res = onMaterialPickedUp.apply(slot);
+                if (!res) return;
+                final var succeeded = onMaterialPlaced.apply(new MSlotAndItem(slot, e.event().getCursor()));
+                if (succeeded) {
+                    e.event().getWhoClicked().getOpenInventory().setCursor(itemInSlot);
+                }
+            });
             addClickListener(e -> {
+                MincraLogger.debug("[MaterialSlots] ClickListener: rawSlot=" + e.getRawSlot() + ", index=" + index);
                 // When move to player's inventory from GUI
                 if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getRawSlot() == index) {
                     onMaterialPickedUp.apply(slot);
@@ -296,7 +334,7 @@ class MaterialSlots extends Component {
             final var materialItem = OraxenItems.getItemById(materials.get(slot)).build();
 
             // artifact がセットされたときだけ更新する
-            // material がプレイヤ＜によって置されたときは更新しない
+            // material がプレイヤーによって置されたときは更新しない
             inv.setItem(index, materialItem);
         });
     }
