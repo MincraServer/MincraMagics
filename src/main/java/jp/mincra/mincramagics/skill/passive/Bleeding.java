@@ -21,8 +21,8 @@ import java.util.logging.Logger;
 
 public class Bleeding extends MagicSkill implements Listener {
     private final Logger logger = MincraMagics.getPluginLogger();
-    private final Map<UUID, MincraMagics> bleedingInstanceMap = new HashMap<>();
-    double healRate = 0;
+    private final Map<UUID, BleedingInstance> bleedingInstances = new HashMap<>();
+    private record BleedingInstance(double healRate) {}
 
     @Override
     public void onEquip(Player player, MaterialProperty property) {
@@ -30,7 +30,8 @@ public class Bleeding extends MagicSkill implements Listener {
 
         // Parameters
         final double level = property.level();
-        healRate = 1.25D * Math.sqrt(level);
+        BleedingInstance bleedingInstance = new BleedingInstance(0.15D * Math.sqrt(level));
+        player.sendMessage("healRateSet: "+String.valueOf(bleedingInstance.healRate));
 
         // Effect and sound
         Vfx vfx = vfxManager.getVfx("happy_villager_hexagon");
@@ -38,15 +39,15 @@ public class Bleeding extends MagicSkill implements Listener {
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
         player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
 
-        bleedingInstanceMap.put(player.getUniqueId(), MincraMagics.getInstance());
+        bleedingInstances.put(player.getUniqueId(), bleedingInstance);
     }
 
     @Override
     public void onUnequip(Player player, MaterialProperty property) {
         super.onUnequip(player, property);
 
-        if (bleedingInstanceMap.containsKey(player.getUniqueId())) {
-            bleedingInstanceMap.remove(player.getUniqueId());
+        if (bleedingInstances.containsKey(player.getUniqueId())) {
+            bleedingInstances.remove(player.getUniqueId());
         } else {
             logger.warning("Player " + player.getName() + " does not have hp_recovery metadata.");
         }
@@ -62,7 +63,7 @@ public class Bleeding extends MagicSkill implements Listener {
         }
 
         // Core functionality
-        if (!bleedingInstanceMap.containsKey(player.getUniqueId())) {
+        if (!bleedingInstances.containsKey(player.getUniqueId())) {
             return; // Stop if the player has unequipped the skill
         }
 
@@ -74,14 +75,16 @@ public class Bleeding extends MagicSkill implements Listener {
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
         player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
 
+        final BleedingInstance bleedingInstance = bleedingInstances.get(player.getUniqueId());
         // heal healRate HP
         double currentHealth = player.getHealth();
         double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
-        double healHealth = damage * healRate;
+        double healHealth = damage * bleedingInstance.healRate;
+        player.sendMessage("healRateGet: "+String.valueOf(bleedingInstance.healRate));
+        player.sendMessage("healHealth: "+String.valueOf(healHealth));
         if (currentHealth < maxHealth) {
             double newHealth = Math.min(currentHealth + healHealth, maxHealth);
             player.setHealth(newHealth);
         }
-        return;
     }
 }
