@@ -85,6 +85,7 @@ public final class MincraMagics extends JavaPlugin {
         pluginManager.registerEvents(hudManager, this);
         pluginManager.registerEvents(new MPRecoverer(this, playerManager), this);
         pluginManager.registerEvents(new MPRepository(playerManager), this);
+        pluginManager.registerEvents(new DamageIndicator(this), this);
 
         // Command API
         // CommandAPI.onLoad(new CommandAPIConfig().initializeNBTAPI());
