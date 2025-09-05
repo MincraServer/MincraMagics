@@ -49,6 +49,11 @@ repositories {
     maven {
         url = uri("https://repo.oraxen.com/releases")
     }
+
+    maven {
+        name = "alessiodp-repo"
+        url = uri("https://repo.alessiodp.com/releases/")
+    }
 }
 
 val pluginVersion = project.properties["pluginVersion"]
@@ -73,11 +78,14 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
     compileOnly("net.luckperms:api:5.5")
+    compileOnly("com.alessiodp.parties:parties-api:3.2.16")
+    compileOnly(files("libs/DungeonMMO.jar"))
+    compileOnly(files("libs/OBTeam.jar"))
+    compileOnly(files("libs/GSit-2.4.2.jar"))
     compileOnly(files("libs/Jobs5.2.6.3.jar")) // Jobs Reborn
     compileOnly(files("libs/oraxen-1.190.0-modified.jar")) // // 変更を加えた Oraxen を libs フォルダに配置
-//    compileOnly(files("libs/InfiniteCrops-1.4.8.jar"))
-    compileOnly(files("libs/InfiniteFishing-1.6.1.jar"))
-    compileOnly(files("libs/GSit-2.4.2.jar"))
+    // compileOnly(files("libs/InfiniteCrops-1.4.8.jar"))
+    // compileOnly(files("libs/InfiniteFishing-1.6.1.jar"))
     // compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar")))) // NMS
     // Libraries
     implementation("org.hibernate:hibernate-core:7.1.0.Final")
