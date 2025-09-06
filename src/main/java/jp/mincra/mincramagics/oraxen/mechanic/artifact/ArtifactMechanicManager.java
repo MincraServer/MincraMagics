@@ -124,7 +124,7 @@ public class ArtifactMechanicManager implements Listener {
         if (materialSkills == null) return false;
 
         // 一つでもスキルがトリガーされたら true を返す
-        return materialSkills.stream().anyMatch(materialSkill -> materialSkill.skill.onTrigger(caster, materialSkill.materialProperty));
+        return materialSkills.stream().anyMatch(materialSkill -> materialSkill.skill.onTrigger(caster, materialSkill.materialProperty.applyEffect(caster, item)));
     }
 
     /**
@@ -143,14 +143,14 @@ public class ArtifactMechanicManager implements Listener {
             if (!isOnItemHeldEvent && isNotEquippable(oldItem.getType())) return;
 
             for (MaterialSkill materialSkill : oldMaterialSkills) {
-                materialSkill.skill.onUnequip(caster, materialSkill.materialProperty);
+                materialSkill.skill.onUnequip(caster, materialSkill.materialProperty.applyEffect(caster, oldItem));
             }
         }
         if (materialSkills != null) {
             if (!isOnItemHeldEvent && isNotEquippable(newItem.getType())) return;
 
             for (MaterialSkill materialSkill : materialSkills) {
-                materialSkill.skill.onEquip(caster, materialSkill.materialProperty);
+                materialSkill.skill.onEquip(caster, materialSkill.materialProperty.applyEffect(caster, newItem));
             }
         }
     }
