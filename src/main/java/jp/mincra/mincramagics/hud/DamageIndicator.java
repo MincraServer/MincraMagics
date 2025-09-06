@@ -2,7 +2,7 @@ package jp.mincra.mincramagics.hud;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Location;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -13,43 +13,45 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
  * エンティティの頭上にダメージインジケータを表示・管理するクラス (Passenger方式)。
  */
 public final class DamageIndicator implements Listener {
+    static final String METADATA_KEY = "DamageIndicator";
 
     private final JavaPlugin plugin;
-    private final Map<UUID, ArmorStand> indicatorMap = new HashMap<>();
-    private final Map<UUID, ArmorStand> customNameMap = new HashMap<>();
-    private final Map<UUID, Entity> parentEntityMap = new HashMap<>(); // Indicator UUID -> Parent Entity
+    // 1行目 (モブの場合は CustomName, プレイヤーの場合は体力バー)
+    private final Map<UUID, ArmorStand> lowerLineArmorStands = new HashMap<>();
+    // 2行目 (モブの場合は元の名前、プレイヤーの場合はなし)
+    private final Map<UUID, ArmorStand> upperLineArmorStands = new HashMap<>();
     private final Map<UUID, BukkitTask> cleanupTasks = new HashMap<>();
 
     public DamageIndicator(final JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public void register() {
-        this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
-    }
-
-    public void unregister() {
-        this.cleanupTasks.values().forEach(BukkitTask::cancel);
-        this.cleanupTasks.clear();
-        this.indicatorMap.values().forEach(Entity::remove);
-        this.indicatorMap.clear();
+    public void removeAll() {
+        final var parentIds = this.lowerLineArmorStands.keySet().stream().toList();
+        for (final var entityId : parentIds) {
+            this.removeIndicator(entityId);
+        }
     }
 
     // 他のプラグインによるダメージキャンセルを考慮し、EventPriorityをMONITORに設定
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityDamage(final EntityDamageEvent event) {
+    private void onEntityDamage(final EntityDamageEvent event) {
         if (!(event.getEntity() instanceof LivingEntity entity) || event.getEntity() instanceof ArmorStand) {
             return;
         }
@@ -76,54 +78,74 @@ public final class DamageIndicator implements Listener {
     }
 
     @EventHandler
-    public void onEntityDeath(final EntityDeathEvent event) {
+    private void onEntityDeath(final EntityDeathEvent event) {
         this.removeIndicator(event.getEntity().getUniqueId());
     }
 
+    @EventHandler
+    private void onPlayerQuit(final PlayerQuitEvent event) {
+        this.removeIndicator(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    private void onPlayerKick(final PlayerKickEvent event) {
+        this.removeIndicator(event.getPlayer().getUniqueId());
+    }
+
+    /**
+     * プレイヤー: 下段なし, 上段に体力バー
+     * モブ: 下段に体力バー, 上段に元の名前
+     * @param entity HPバーを表示するエンティティ
+     */
     private void updateIndicator(final LivingEntity entity) {
         final UUID entityId = entity.getUniqueId();
-        var indicator = this.indicatorMap.get(entityId);
-
-        if (indicator == null || !indicator.isValid()) {
-            // ★ 変更点: インジケータをエンティティの頭上付近にスポーンさせる
-            final Location loc = entity.getLocation().add(0, entity.getHeight(), 0);
-
-            indicator = loc.getWorld().spawn(loc, ArmorStand.class, as -> {
-                as.setGravity(false);
-                as.setVisible(false);
-                as.setInvisible(true);
-                as.setCustomNameVisible(true);
-                as.setMarker(true);
-            });
-
-            // ★ 変更点: エンティティにArmorStandを乗せる
-            entity.addPassenger(indicator);
-            this.indicatorMap.put(entityId, indicator);
-            this.parentEntityMap.put(indicator.getUniqueId(), entity);
-        }
-
-        var customName = this.customNameMap.get(entityId);
-        if (customName == null || !customName.isValid()) {
-            if (entity instanceof Player || entity.customName() != null) {
-                final Location loc = entity.getLocation().add(0, entity.getHeight(), 0);
-                customName = loc.getWorld().spawn(loc, ArmorStand.class, as -> {
-                    as.setGravity(false);
-                    as.setVisible(false);
-                    as.setInvisible(true);
-                    as.setCustomNameVisible(true);
-                    as.registerAttribute(Attribute.SCALE);
-                    final var scaleAttr = as.getAttribute(Attribute.SCALE);
-                    if (scaleAttr != null) {
-                        scaleAttr.setBaseValue(0.15); // 非常に小さくする
-                    }
+        final var lowerLine = Optional.ofNullable(this.lowerLineArmorStands.get(entityId))
+                .orElseGet(() -> {
+                    if (entity instanceof Player) return null;
+                    final var loc = entity.getLocation().add(0, entity.getHeight(), 0);
+                    final var armorStand = loc.getWorld().spawn(loc, ArmorStand.class, as -> {
+                        as.setGravity(false);
+                        as.setVisible(false);
+                        as.setInvisible(true);
+                        as.setCustomNameVisible(true);
+                        as.setMarker(true);
+                        as.setMetadata(METADATA_KEY, new FixedMetadataValue(this.plugin, true));
+                    });
+                    entity.addPassenger(armorStand);
+                    this.lowerLineArmorStands.put(entityId, armorStand);
+                    return armorStand;
                 });
-                entity.addPassenger(customName);
-                this.customNameMap.put(entityId, customName);
-                customName.customName(entity instanceof Player player ? player.displayName() : entity.customName());
+        final var upperLine = Optional.ofNullable(this.upperLineArmorStands.get(entityId))
+                .orElseGet(() -> {
+                    final var loc = entity.getLocation().add(0, entity.getHeight(), 0);
+                    final var armorStand = loc.getWorld().spawn(loc, ArmorStand.class, as -> {
+                        as.setGravity(false);
+                        as.setVisible(false);
+                        as.setInvisible(true);
+                        as.setCustomNameVisible(true);
+                        as.setMetadata(METADATA_KEY, new FixedMetadataValue(this.plugin, true));
+                        as.registerAttribute(Attribute.SCALE);
+                        final var scaleAttr = as.getAttribute(Attribute.SCALE);
+                        if (scaleAttr != null) {
+                            scaleAttr.setBaseValue(0.15); // 非常に小さくする
+                        }
+                    });
+                    entity.addPassenger(armorStand);
+                    this.upperLineArmorStands.put(entityId, armorStand);
+                    return armorStand;
+                });
+        var customNameEnt = entity instanceof Player ? null : upperLine;
+        var healthBarEnt = entity instanceof Player ? upperLine : lowerLine;
+
+        healthBarEnt.customName(generateHealthBar(entity));
+        if (customNameEnt != null) {
+            if (entity.customName() == null) {
+                customNameEnt.remove();
+                this.upperLineArmorStands.remove(entityId);
+            } else {
+                customNameEnt.customName(entity.customName());
             }
         }
-
-        indicator.customName(generateHealthBar(entity));
 
         if (this.cleanupTasks.containsKey(entityId)) {
             this.cleanupTasks.get(entityId).cancel();
@@ -140,13 +162,13 @@ public final class DamageIndicator implements Listener {
     }
 
     private void removeIndicator(final UUID entityId) {
-        final ArmorStand indicator = this.indicatorMap.remove(entityId);
-        final ArmorStand customName = this.customNameMap.remove(entityId);
-        if (indicator != null) {
-            indicator.remove();
+        final ArmorStand lowerLine = this.lowerLineArmorStands.remove(entityId);
+        final ArmorStand upperLine = this.upperLineArmorStands.remove(entityId);
+        if (lowerLine != null) {
+            lowerLine.remove();
         }
-        if (customName != null) {
-            customName.remove();
+        if (upperLine != null) {
+            upperLine.remove();
         }
 
         final BukkitTask task = this.cleanupTasks.remove(entityId);
