@@ -7,6 +7,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -82,7 +83,6 @@ public final class DamageIndicator implements Listener {
     private void updateIndicator(final LivingEntity entity) {
         final UUID entityId = entity.getUniqueId();
         var indicator = this.indicatorMap.get(entityId);
-        var customName = this.customNameMap.get(entityId);
 
         if (indicator == null || !indicator.isValid()) {
             // ★ 変更点: インジケータをエンティティの頭上付近にスポーンさせる
@@ -96,27 +96,33 @@ public final class DamageIndicator implements Listener {
                 as.setMarker(true);
             });
 
-            customName = loc.getWorld().spawn(loc, ArmorStand.class, as -> {
-                as.setGravity(false);
-                as.setVisible(false);
-                as.setInvisible(true);
-                as.setCustomNameVisible(true);
-                as.registerAttribute(Attribute.SCALE);
-                final var scaleAttr = as.getAttribute(Attribute.SCALE);
-                if (scaleAttr != null) {
-                    scaleAttr.setBaseValue(0.15); // 非常に小さくする
-                }
-            });
-
             // ★ 変更点: エンティティにArmorStandを乗せる
             entity.addPassenger(indicator);
-            entity.addPassenger(customName);
             this.indicatorMap.put(entityId, indicator);
-            this.customNameMap.put(entityId, customName);
             this.parentEntityMap.put(indicator.getUniqueId(), entity);
         }
 
-        customName.customName(entity.customName());
+        var customName = this.customNameMap.get(entityId);
+        if (customName == null || !customName.isValid()) {
+            if (entity instanceof Player || entity.customName() != null) {
+                final Location loc = entity.getLocation().add(0, entity.getHeight(), 0);
+                customName = loc.getWorld().spawn(loc, ArmorStand.class, as -> {
+                    as.setGravity(false);
+                    as.setVisible(false);
+                    as.setInvisible(true);
+                    as.setCustomNameVisible(true);
+                    as.registerAttribute(Attribute.SCALE);
+                    final var scaleAttr = as.getAttribute(Attribute.SCALE);
+                    if (scaleAttr != null) {
+                        scaleAttr.setBaseValue(0.15); // 非常に小さくする
+                    }
+                });
+                entity.addPassenger(customName);
+                this.customNameMap.put(entityId, customName);
+                customName.customName(entity instanceof Player player ? player.displayName() : entity.customName());
+            }
+        }
+
         indicator.customName(generateHealthBar(entity));
 
         if (this.cleanupTasks.containsKey(entityId)) {
