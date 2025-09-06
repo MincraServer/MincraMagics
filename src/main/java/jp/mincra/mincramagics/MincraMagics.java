@@ -20,7 +20,7 @@ import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.artifact.ArtifactMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
-import jp.mincra.mincramagics.player.MPRecoverer;
+import jp.mincra.mincramagics.player.MPRegenerate;
 import jp.mincra.mincramagics.player.MPRepository;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MaterialManager;
@@ -39,7 +39,6 @@ import jp.mincra.mincramagics.skill.passive.MpBoost;
 import jp.mincra.mincramagics.skill.passive.MpRecovery;
 import jp.mincra.mincramagics.skill.utility.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -83,7 +82,7 @@ public final class MincraMagics extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(playerManager, this);
         pluginManager.registerEvents(hudManager, this);
-        pluginManager.registerEvents(new MPRecoverer(this, playerManager), this);
+        pluginManager.registerEvents(new MPRegenerate(this, playerManager), this);
         pluginManager.registerEvents(new MPRepository(playerManager), this);
         pluginManager.registerEvents(new DamageIndicator(this), this);
 
