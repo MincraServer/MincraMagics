@@ -20,6 +20,7 @@ import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.artifact.ArtifactMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
+import jp.mincra.mincramagics.party.OBTeamWrapper;
 import jp.mincra.mincramagics.player.MPRegenerate;
 import jp.mincra.mincramagics.player.MPRepository;
 import jp.mincra.mincramagics.player.PlayerManager;
@@ -54,6 +55,7 @@ public final class MincraMagics extends JavaPlugin {
     private static GUIManager guiManager;
     private static ConfigManager configManager;
     private static BukkitAudiences audiences;
+    private static DamageIndicator damageIndicator;
 
     private static JobRewardDao jobRewardDao;
 
@@ -70,6 +72,7 @@ public final class MincraMagics extends JavaPlugin {
         configManager = new ConfigManager(this);
         hudManager = new HudManager(playerManager, configManager);
         vfxManager = BKVfx.instance().getVfxManager();
+        damageIndicator = new DamageIndicator(this);
 
         // Initialize database
         HibernateUtil.initialize(this, configManager.getConfig("config.yml"));
@@ -84,7 +87,8 @@ public final class MincraMagics extends JavaPlugin {
         pluginManager.registerEvents(hudManager, this);
         pluginManager.registerEvents(new MPRegenerate(this, playerManager), this);
         pluginManager.registerEvents(new MPRepository(playerManager), this);
-        pluginManager.registerEvents(new DamageIndicator(this), this);
+        pluginManager.registerEvents(damageIndicator, this);
+        pluginManager.registerEvents(new OBTeamWrapper(), this);
 
         // Command API
         // CommandAPI.onLoad(new CommandAPIConfig().initializeNBTAPI());
@@ -153,6 +157,7 @@ public final class MincraMagics extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        damageIndicator.removeAll();
     }
 
     public void reload() {

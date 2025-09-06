@@ -1,13 +1,18 @@
 package jp.mincra.mincramagics.command;
 
 
+import com.alessiodp.parties.api.Parties;
 import com.civious.dungeonmmo.events.InventoryItemAction;
 import com.civious.dungeonmmo.instances.InstanceStatus;
 import com.civious.dungeonmmo.instances.InstancesManager;
+import com.civious.dungeonmmo.utils.PlayerStatusUtils;
+import com.civious.obteam.mechanics.TeamManager;
+import com.civious.obteam.mechanics.TeamMember;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class DungeonCommand {
@@ -30,6 +35,7 @@ public class DungeonCommand {
     public void registerAll() {
         new CommandAPICommand("dungeon")
                 .withSubcommand(startCommand())
+                .withSubcommand(readyCommand())
                 .register();
     }
 
@@ -49,12 +55,12 @@ public class DungeonCommand {
                     final var dungeonName = (String) args.get(1);
 
                     if (player == null) {
-                        sender.sendMessage("§cプレイヤーが見つかりません。");
+                        sender.sendMessage("§c◆ プレイヤーが見つかりません。");
                         return;
                     }
 
                     if (dungeonName == null || dungeonName.isEmpty()) {
-                        sender.sendMessage("§cダンジョンIDを指定してください。");
+                        sender.sendMessage("§c◆ ダンジョンIDを指定してください。");
                         return;
                     }
 
@@ -65,11 +71,55 @@ public class DungeonCommand {
                             .findFirst();
 
                     if (instance.isEmpty()) {
-                        sender.sendMessage("§cダンジョンが満員です");
+                        sender.sendMessage("§c◆ ダンジョンが満員です");
                         return;
                     }
 
+                    final var teamManager = TeamManager.getInstance();
+                    final var team = teamManager.getTeam(player);
+                    final var party = Parties.getApi().getPartyOfPlayer(player.getUniqueId());
+                    if (party == null) {
+                        sender.sendMessage("§c◆ /party create 名前 でパーティを作成してからダンジョンに参加してください。");
+                        return;
+                    }
+
+                    // Add all party members to the team
+                    for (var partyMemberUUID : party.getMembers()) {
+                        final var partyMember = Bukkit.getPlayer(partyMemberUUID);
+                        var teamMember = team.getMember(partyMember);
+                        if (teamMember == null) {
+                            teamMember = new TeamMember(partyMember);
+                            team.addMember(teamMember);
+                        }
+                        teamMember.setValue("player.ready", false);
+                    }
+
                     InventoryItemAction.askForDungeonLaunch(player, instance.get().getConfiguration().getInstanceName());
+                }));
+    }
+
+    private CommandAPICommand readyCommand() {
+        return new CommandAPICommand("ready")
+                .executesPlayer(((player, args) -> {
+                    final var teamManager = TeamManager.getInstance();
+                    final var team = teamManager.getTeam(player);
+                    if (team == null) {
+                        player.sendMessage("§c◆ パーティを組んでから実行してください。");
+                        return;
+                    }
+                    final var member = team.getMember(player);
+                    if (member == null) {
+                        player.sendMessage("§c◆ パーティを組んでから実行してください。");
+                        return;
+                    }
+
+                    boolean isReady = !PlayerStatusUtils.isReady(player);
+                    if (isReady) {
+                        player.sendMessage("§a◆ 既に準備完了になっています。");
+                        return;
+                    }
+                    PlayerStatusUtils.setReady(player, true);
+                    player.sendMessage("§a◆ 準備を完了しました。");
                 }));
     }
 
