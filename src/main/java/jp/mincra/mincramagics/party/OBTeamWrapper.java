@@ -101,7 +101,7 @@ public class OBTeamWrapper implements Listener {
             // ValueRegisterUtils#registerValue() を先に呼び出す必要がある
             final var teamMember = new TeamMember(leader);
             teamManager.addTeam(new Team(teamMember));
-            teamMember.setValue("player.ready", false);
+            teamMember.setValue("player.ready", true);
         }
 
         private static void removeTeam(UUID leaderUUID) {
@@ -131,7 +131,7 @@ public class OBTeamWrapper implements Listener {
             // ValueRegisterUtils#registerValue() を先に呼び出す必要がある
             final var teamMember = new TeamMember(member);
             TeamManager.getInstance().getTeam(leader).addMember(teamMember);
-            teamMember.setValue("player.ready", false);
+            teamMember.setValue("player.ready", true);
         }
     }
 }

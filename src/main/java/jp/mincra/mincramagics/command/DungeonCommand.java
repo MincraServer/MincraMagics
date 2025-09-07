@@ -75,8 +75,8 @@ public class DungeonCommand {
                         return;
                     }
 
-                    final var teamManager = TeamManager.getInstance();
-                    final var team = teamManager.getTeam(player);
+//                    final var teamManager = TeamManager.getInstance();
+//                    final var team = teamManager.getTeam(player);
                     final var party = Parties.getApi().getPartyOfPlayer(player.getUniqueId());
                     if (party == null) {
                         sender.sendMessage("§c◆ /party create 名前 でパーティを作成してからダンジョンに参加してください。");
@@ -84,15 +84,15 @@ public class DungeonCommand {
                     }
 
                     // Add all party members to the team
-                    for (var partyMemberUUID : party.getMembers()) {
-                        final var partyMember = Bukkit.getPlayer(partyMemberUUID);
-                        var teamMember = team.getMember(partyMember);
-                        if (teamMember == null) {
-                            teamMember = new TeamMember(partyMember);
-                            team.addMember(teamMember);
-                        }
-                        teamMember.setValue("player.ready", false);
-                    }
+//                    for (var partyMemberUUID : party.getMembers()) {
+//                        final var partyMember = Bukkit.getPlayer(partyMemberUUID);
+//                        var teamMember = team.getMember(partyMember);
+//                        if (teamMember == null) {
+//                            teamMember = new TeamMember(partyMember);
+//                            team.addMember(teamMember);
+//                        }
+//                        teamMember.setValue("player.ready", true);
+//                    }
 
                     InventoryItemAction.askForDungeonLaunch(player, instance.get().getConfiguration().getInstanceName());
                 }));
@@ -107,14 +107,8 @@ public class DungeonCommand {
                         player.sendMessage("§c◆ パーティを組んでから実行してください。");
                         return;
                     }
-                    final var member = team.getMember(player);
-                    if (member == null) {
-                        player.sendMessage("§c◆ パーティを組んでから実行してください。");
-                        return;
-                    }
 
-                    boolean isReady = !PlayerStatusUtils.isReady(player);
-                    if (isReady) {
+                    if (PlayerStatusUtils.isReady(player)) {
                         player.sendMessage("§a◆ 既に準備完了になっています。");
                         return;
                     }

@@ -83,7 +83,7 @@ dependencies {
     compileOnly(files("libs/OBTeam.jar"))
     compileOnly(files("libs/GSit-2.4.2.jar"))
     compileOnly(files("libs/Jobs5.2.6.3.jar")) // Jobs Reborn
-    compileOnly(files("libs/oraxen-1.190.0-modified.jar")) // // 変更を加えた Oraxen を libs フォルダに配置
+    compileOnly(files("libs/oraxen-1.193.0.jar")) // // 変更を加えた Oraxen を libs フォルダに配置
     // compileOnly(files("libs/InfiniteCrops-1.4.8.jar"))
     // compileOnly(files("libs/InfiniteFishing-1.6.1.jar"))
     // compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar")))) // NMS
