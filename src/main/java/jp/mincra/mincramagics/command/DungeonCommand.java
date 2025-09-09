@@ -2,16 +2,20 @@ package jp.mincra.mincramagics.command;
 
 
 import com.alessiodp.parties.api.Parties;
+import com.civious.dungeonmmo.dependencies.team.obteam.ValueRegisterUtils;
 import com.civious.dungeonmmo.events.InventoryItemAction;
 import com.civious.dungeonmmo.instances.InstanceStatus;
 import com.civious.dungeonmmo.instances.InstancesManager;
 import com.civious.dungeonmmo.utils.PlayerStatusUtils;
+import com.civious.obteam.mechanics.Team;
 import com.civious.obteam.mechanics.TeamManager;
 import com.civious.obteam.mechanics.TeamMember;
+import com.civious.obteam.mechanics.team_values.TeamValueException;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+import jp.mincra.mincramagics.MincraLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -83,16 +87,47 @@ public class DungeonCommand {
                         return;
                     }
 
-                    // Add all party members to the team
-//                    for (var partyMemberUUID : party.getMembers()) {
-//                        final var partyMember = Bukkit.getPlayer(partyMemberUUID);
-//                        var teamMember = team.getMember(partyMember);
-//                        if (teamMember == null) {
-//                            teamMember = new TeamMember(partyMember);
-//                            team.addMember(teamMember);
-//                        }
-//                        teamMember.setValue("player.ready", true);
-//                    }
+                    // パーティーメンバー = チームメンバーの状態にする
+                    // パーティーに入っているのにチームに入っていない or パーティーメンバー以外がチームに入っている場合がある
+
+                    // 1. パーティーに入っているのにチームが存在しない場合は新規作成
+                    final var teamManager = TeamManager.getInstance();
+                    var team = teamManager.getTeam(player);
+                    if (team == null) {
+                        team = new Team(new TeamMember(player));
+                        teamManager.addTeam(team);
+                    }
+
+                    // 2. パーティーメンバー以外がチームに入っている場合は削除
+                    final var teamMembers = team.getMembers();
+                    final var membersToRemove = teamMembers.stream()
+                            .filter(tm -> !party.getMembers().contains(tm.getOfflinePlayer().getUniqueId()))
+                            .toList();
+                    for (var memberToRemove : membersToRemove) {
+                        team.removePlayer(memberToRemove);
+                    }
+
+                    // 3. パーティーメンバーがチームに入っていない場合は追加
+                    final var membersToAdd = party.getMembers().stream()
+                            .filter(uuid -> teamMembers.stream().noneMatch(tm -> tm.getOfflinePlayer().getUniqueId().equals(uuid)))
+                            .toList();
+                    for (var uuid : membersToAdd) {
+                        final var partyMember = Bukkit.getPlayer(uuid);
+                        if (partyMember != null) {
+                            team.addMember(new TeamMember(partyMember));
+                        }
+                    }
+
+                    // 4. setValue("player.ready", true) を全員に付与
+                    try {
+                        ValueRegisterUtils.registerValue();
+                    } catch (TeamValueException e) {
+                        MincraLogger.warn("TeamValue already registered. Skipping...");
+                    }
+
+                    for (var  teamMember : team.getMembers()) {
+                        teamMember.setValue("player.ready", true);
+                    }
 
                     InventoryItemAction.askForDungeonLaunch(player, instance.get().getConfiguration().getInstanceName());
                 }));
