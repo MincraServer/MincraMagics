@@ -25,6 +25,7 @@ public record ArtifactNBT(List<Material> materials,
                           List<String> availableMaterials,
                           List<String> descriptionLore) {
     // region Oraxen Tag
+    // FIXME: Change the key type to MaterialSlot
     private static final Map<String, String> SLOT_TO_GLYPH = Map.of(
             "left", PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%%oraxen_mouse_left%%oraxen_shift_1%"),
             "right", PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%%oraxen_mouse_right%%oraxen_shift_1%"),
@@ -90,18 +91,28 @@ public record ArtifactNBT(List<Material> materials,
         List<Material> sortedMaterials = materials.stream()
                 .sorted(Comparator.comparingInt(a -> MaterialSlot.getIndexOf(a.slot)))
                 .toList();
-        for (Material material : sortedMaterials) {
-            String materialId = material.id;
-            ItemBuilder materialItemBuilder = OraxenItems.getItemById(materialId);
+        for (final MaterialSlot slot : MaterialSlot.values()) {
+            if (availableSlots.isEmpty() || !availableSlots.contains(slot)) {
+                // 使用可能スロットに含まれていない場合はスキップ
+                continue;
+            }
+            final var material = sortedMaterials.stream()
+                    .filter(m -> m.slot.equals(slot.getSlot()))
+                    .findFirst();
             String materialName;
-            if (materialItemBuilder != null) {
-                materialName = materialItemBuilder.getItemName();
+            if (material.isPresent()) {
+                String materialId = material.get().id();
+                ItemBuilder materialItemBuilder = OraxenItems.getItemById(materialId);
+                if (materialItemBuilder != null) {
+                    materialName = Fonts.getMaterialFont(materialId, false) + SHIFT_1 + materialItemBuilder.getItemName();
+                } else {
+                    materialName = Fonts.getMaterialFont(materialId, false) + SHIFT_1 + materialId;
+                }
             } else {
-                materialName = materialId;
+                materialName = "-";
             }
 
-            newLore.add(Color.COLOR_WHITE + SLOT_TO_GLYPH.get(material.slot) + SHIFT_2 +
-                    Fonts.getMaterialFont(materialId, false) + SHIFT_1 + materialName);
+            newLore.add(Color.COLOR_WHITE + SLOT_TO_GLYPH.get(slot.getSlot()) + SHIFT_2 + materialName);
         }
 
         // availableMaterials

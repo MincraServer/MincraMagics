@@ -1,11 +1,13 @@
 package jp.mincra.mincramagics;
 
+import com.civious.dungeonmmo.api.DungeonMMOAPI;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import jp.mincra.bkvfx.BKVfx;
 import jp.mincra.bkvfx.VfxManager;
+import jp.mincra.mincramagics.command.DungeonCommand;
 import jp.mincra.mincramagics.command.GuardCommand;
 import jp.mincra.mincramagics.command.MincraCommand;
 import jp.mincra.mincramagics.command.RewardCommand;
@@ -13,11 +15,13 @@ import jp.mincra.mincramagics.config.ConfigManager;
 import jp.mincra.mincramagics.db.HibernateUtil;
 import jp.mincra.mincramagics.db.dao.JobRewardDao;
 import jp.mincra.mincramagics.gui.GUIManager;
+import jp.mincra.mincramagics.hud.DamageIndicator;
 import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.artifact.ArtifactMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
-import jp.mincra.mincramagics.player.MPRecoverer;
+import jp.mincra.mincramagics.party.OBTeamWrapper;
+import jp.mincra.mincramagics.player.MPRegenerate;
 import jp.mincra.mincramagics.player.MPRepository;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.skill.MaterialManager;
@@ -51,6 +55,7 @@ public final class MincraMagics extends JavaPlugin {
     private static GUIManager guiManager;
     private static ConfigManager configManager;
     private static BukkitAudiences audiences;
+    private static DamageIndicator damageIndicator;
 
     private static JobRewardDao jobRewardDao;
 
@@ -67,6 +72,7 @@ public final class MincraMagics extends JavaPlugin {
         configManager = new ConfigManager(this);
         hudManager = new HudManager(playerManager, configManager);
         vfxManager = BKVfx.instance().getVfxManager();
+        damageIndicator = new DamageIndicator(this);
 
         // Initialize database
         HibernateUtil.initialize(this, configManager.getConfig("config.yml"));
@@ -79,14 +85,17 @@ public final class MincraMagics extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(playerManager, this);
         pluginManager.registerEvents(hudManager, this);
-        pluginManager.registerEvents(new MPRecoverer(this, playerManager), this);
+        pluginManager.registerEvents(new MPRegenerate(this, playerManager), this);
         pluginManager.registerEvents(new MPRepository(playerManager), this);
+        pluginManager.registerEvents(damageIndicator, this);
+        pluginManager.registerEvents(new OBTeamWrapper(), this);
 
         // Command API
         // CommandAPI.onLoad(new CommandAPIConfig().initializeNBTAPI());
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
         new RewardCommand().registerAll();
+        new DungeonCommand().registerAll();
 
         // Mechanics
         MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
@@ -132,10 +141,23 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("mineral_detection", new MineralDetection());
         skillManager.registerSkill("mine_all", new MineAll());
         skillManager.registerSkill("hammer", new Hammer());
+
+        // check if DungeonMMO is present
+        if (getServer().getPluginManager().getPlugin("DungeonMMO") != null) {
+            DungeonMMOAPI.getInstance().registerItemProvider("Oraxen", s -> {
+                final var builder = OraxenItems.getItemById(s);
+                if (builder == null) {
+                    MincraLogger.warn("DungeonMMO: Oraxen item not found: " + s);
+                    return null;
+                }
+                return builder.build();
+            });
+        }
     }
 
     @Override
     public void onDisable() {
+        damageIndicator.removeAll();
     }
 
     public void reload() {

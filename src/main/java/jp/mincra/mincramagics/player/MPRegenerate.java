@@ -5,20 +5,22 @@ import dev.geco.gsit.api.event.EntitySitEvent;
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
 import jp.mincra.mincramagics.MincraMagics;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class MPRecoverer implements Listener {
+public class MPRegenerate implements Listener {
     private final PlayerManager playerManager;
 //    private final Map<UUID, MincraPlayer> inCombatPlayers = new HashMap<>();
     private final Map<UUID, MincraPlayer> sittingPlayers = new HashMap<>();
 
-    public MPRecoverer(MincraMagics instance, PlayerManager playerManager) {
+    public MPRegenerate(MincraMagics instance, PlayerManager playerManager) {
         this.playerManager = playerManager;
 
         // sitting regeneration
@@ -60,6 +62,31 @@ public class MPRecoverer implements Listener {
         if (event.getEntity() instanceof Player player) {
             sittingPlayers.remove(player.getUniqueId());
         }
+    }
+
+    @EventHandler
+    private void regenerateOnAttack(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player player)) return;
+
+        final var mPlayer = playerManager.getPlayer(player.getUniqueId());
+        if (mPlayer == null) return;
+
+        // 攻撃MP回復. TODO: 装備品で回復量を変化
+        mPlayer.addMp(0.1f, false);
+
+        if (!(event.getEntity() instanceof LivingEntity target)) return;
+
+        // 攻撃した相手が倒れたらMP回復
+        new BKTween(MincraMagics.getInstance())
+                .execute(v -> {
+                    if (target.isDead()) {
+                        mPlayer.addMp(1f, false);
+                        return true;
+                    }
+                    return false;
+                })
+                .delay(TickTime.TICK, 1)
+                .run();
     }
 
 //    @EventHandler

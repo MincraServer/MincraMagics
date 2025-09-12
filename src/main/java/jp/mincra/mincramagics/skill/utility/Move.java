@@ -24,7 +24,7 @@ public class Move extends MagicSkill {
         Location targetLoc = playerLoc.clone().add(velocity.multiply(strength * 1).setY(-0.5));
 
         // Sound
-        world.playSound(targetLoc, Sound.ENTITY_WITHER_SHOOT, 1F, 1F);
+        world.playSound(playerLoc, Sound.ENTITY_WITHER_SHOOT, 1F, 1F);
 
         // Vfx
         Vector axis = new Vector(0, 1, 0);

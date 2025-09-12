@@ -23,6 +23,7 @@ public class HudManager implements Listener {
     private final PlayerManager playerManager;
     private final MpHudController mpHudController = new MpHudController();
     private final CooldownHudController cooldownHudController = new CooldownHudController();
+    private final DungeonHudController dungeonHudController = new DungeonHudController();
 
     private Collection<MincraPlayer> players;
 
@@ -49,9 +50,10 @@ public class HudManager implements Listener {
                         // 水中にいる場合は一段上から表示
                         isDisplayingOxygenBar ? 1 : 0);
                 String cooldownHud = cooldownHudController.generateCooldownHud(mPlayer.getCooldown());
+                String dungeonHud = dungeonHudController.getDungeonHud(player);
 
                 TextComponent component = Component
-                        .text(SHIFT_HUD + SHIFT_COOLDOWN + cooldownHud + NEG_SHIFT_COOLDOWN + mpHud).shadowColor(new Transparent());
+                        .text(SHIFT_HUD + SHIFT_COOLDOWN + cooldownHud + NEG_SHIFT_COOLDOWN + mpHud + dungeonHud).shadowColor(new Transparent());
                 player.sendActionBar(component);
             }
         }, 0L, 2L);
