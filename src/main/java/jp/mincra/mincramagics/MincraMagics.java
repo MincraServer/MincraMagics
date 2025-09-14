@@ -28,6 +28,8 @@ import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.*;
 import jp.mincra.mincramagics.skill.healing.Heal;
+import jp.mincra.mincramagics.skill.job.hunter.*;
+import jp.mincra.mincramagics.skill.job.miner.*;
 import jp.mincra.mincramagics.skill.passive.*;
 import jp.mincra.mincramagics.skill.utility.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -114,7 +116,6 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("hp_recovery", new HpRecovery());
         skillManager.registerSkill("mp_recovery", new MpRecovery());
         skillManager.registerSkill("bleeding", new Bleeding());
-
         // Utility
         skillManager.registerSkill("charge", new Charge());
         skillManager.registerSkill("charging", new Charging());
