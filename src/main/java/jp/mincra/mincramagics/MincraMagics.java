@@ -95,7 +95,7 @@ public final class MincraMagics extends JavaPlugin {
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
         new RewardCommand().registerAll();
-        new DungeonCommand().registerAll();
+        new DungeonCommand(this).registerAll();
 
         // Mechanics
         MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
