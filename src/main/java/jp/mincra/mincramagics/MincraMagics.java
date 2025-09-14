@@ -28,16 +28,7 @@ import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.*;
 import jp.mincra.mincramagics.skill.healing.Heal;
-import jp.mincra.mincramagics.skill.job.hunter.Burst;
-import jp.mincra.mincramagics.skill.job.hunter.Protect;
-import jp.mincra.mincramagics.skill.job.hunter.Provoke;
-import jp.mincra.mincramagics.skill.job.miner.Hammer;
-import jp.mincra.mincramagics.skill.job.miner.MineAll;
-import jp.mincra.mincramagics.skill.job.miner.MineralDetection;
-import jp.mincra.mincramagics.skill.passive.HpBoost;
-import jp.mincra.mincramagics.skill.passive.HpRecovery;
-import jp.mincra.mincramagics.skill.passive.MpBoost;
-import jp.mincra.mincramagics.skill.passive.MpRecovery;
+import jp.mincra.mincramagics.skill.passive.*;
 import jp.mincra.mincramagics.skill.utility.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.PluginManager;
@@ -122,6 +113,8 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("mp_boost", new MpBoost());
         skillManager.registerSkill("hp_recovery", new HpRecovery());
         skillManager.registerSkill("mp_recovery", new MpRecovery());
+        skillManager.registerSkill("bleeding", new Bleeding());
+
         // Utility
         skillManager.registerSkill("charge", new Charge());
         skillManager.registerSkill("charging", new Charging());
