@@ -31,7 +31,6 @@ public class Bleeding extends MagicSkill implements Listener {
         // Parameters
         final double level = property.level();
         BleedingInstance bleedingInstance = new BleedingInstance(0.15D * Math.sqrt(level));
-        player.sendMessage("healRateSet: "+String.valueOf(bleedingInstance.healRate));
 
         // Effect and sound
         Vfx vfx = vfxManager.getVfx("happy_villager_hexagon");
@@ -80,8 +79,6 @@ public class Bleeding extends MagicSkill implements Listener {
         double currentHealth = player.getHealth();
         double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
         double healHealth = damage * bleedingInstance.healRate;
-        player.sendMessage("healRateGet: "+String.valueOf(bleedingInstance.healRate));
-        player.sendMessage("healHealth: "+String.valueOf(healHealth));
         if (currentHealth < maxHealth) {
             double newHealth = Math.min(currentHealth + healHealth, maxHealth);
             player.setHealth(newHealth);
