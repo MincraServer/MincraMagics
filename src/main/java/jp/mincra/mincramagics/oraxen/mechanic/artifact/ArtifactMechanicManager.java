@@ -4,8 +4,9 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.mincramagics.MaterialSlot;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.nbtobject.ArtifactNBT;
+import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.MaterialProperty;
@@ -123,7 +124,7 @@ public class ArtifactMechanicManager implements Listener {
         if (materialSkills == null) return false;
 
         // 一つでもスキルがトリガーされたら true を返す
-        return materialSkills.stream().anyMatch(materialSkill -> materialSkill.skill.onTrigger(caster, materialSkill.materialProperty));
+        return materialSkills.stream().anyMatch(materialSkill -> materialSkill.skill.onTrigger(caster, materialSkill.materialProperty.applyEffect(caster, item)));
     }
 
     /**
@@ -138,18 +139,18 @@ public class ArtifactMechanicManager implements Listener {
         // 新しいアイテムと古いアイテムのマテリアルスキルが同じ場合は何もしない
         if (materialSkills != null && materialSkills.equals(oldMaterialSkills)) return;
 
-        if (materialSkills != null) {
-            if (isOnItemHeldEvent && isNotEquippable(newItem.getType())) return;
-
-            for (MaterialSkill materialSkill : materialSkills) {
-                materialSkill.skill.onEquip(caster, materialSkill.materialProperty);
-            }
-        }
         if (oldMaterialSkills != null) {
-            if (isOnItemHeldEvent && isNotEquippable(oldItem.getType())) return;
+            if (!isOnItemHeldEvent && isNotEquippable(oldItem.getType())) return;
 
             for (MaterialSkill materialSkill : oldMaterialSkills) {
-                materialSkill.skill.onUnequip(caster, materialSkill.materialProperty);
+                materialSkill.skill.onUnequip(caster, materialSkill.materialProperty.applyEffect(caster, oldItem));
+            }
+        }
+        if (materialSkills != null) {
+            if (!isOnItemHeldEvent && isNotEquippable(newItem.getType())) return;
+
+            for (MaterialSkill materialSkill : materialSkills) {
+                materialSkill.skill.onEquip(caster, materialSkill.materialProperty.applyEffect(caster, newItem));
             }
         }
     }
@@ -210,7 +211,7 @@ public class ArtifactMechanicManager implements Listener {
                     // Get the skill for the material
                     String skillId = material.skillId();
                     if (!skillManager.isRegistered(skillId)) {
-                        MincraMagics.getPluginLogger().warning("Skill " + skillId + " is not registered for material " + material.materialId() + ". Skipping.");
+                        MincraLogger.warn("Skill " + skillId + " is not registered for material " + material.materialId() + ". Skipping.");
                         return null;
                     }
                     MagicSkill skill = skillManager.getSkill(skillId);

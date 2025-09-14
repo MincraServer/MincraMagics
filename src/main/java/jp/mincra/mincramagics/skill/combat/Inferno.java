@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -45,7 +46,7 @@ public class Inferno extends MagicSkill implements Listener {
         final int shootCount = 2 * level - 1;
         final int shootIntervalInTick = 5;
 
-        // PlaySound
+        // playSound
         Location playerLoc = player.getLocation();
         World world = player.getLocation().getWorld();
         world.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.1F, 2F);
@@ -141,5 +142,17 @@ public class Inferno extends MagicSkill implements Listener {
 
         // Fireball のブロック破壊を無効化
         event.blockList().clear();
+    }
+
+    @EventHandler
+    private void onEntityDamaged(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Fireball fireball)) return;
+
+        if (!fireball.hasMetadata(FIREBALL_METADATA)) return;
+
+        final Entity hitEntity = event.getEntity();
+        if (hitEntity instanceof Item || hitEntity instanceof ExperienceOrb) {
+            event.setCancelled(true);
+        }
     }
 }

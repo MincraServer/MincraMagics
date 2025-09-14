@@ -1,6 +1,7 @@
 package jp.mincra.mincramagics.skill.passive;
 
 import jp.mincra.bkvfx.Vfx;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
@@ -13,10 +14,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.logging.Logger;
-
 public class HpBoost extends MagicSkill {
-    private final Logger logger = MincraMagics.getPluginLogger();
     private static final NamespacedKey MODIFIER_KEY = new NamespacedKey(MincraMagics.getInstance(), "hp_boost");
 
     @Override
@@ -30,7 +28,7 @@ public class HpBoost extends MagicSkill {
         // Core functionality
         final AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (attribute == null) {
-            logger.warning("Player " + player.getName() + " does not have MAX_HEALTH attribute.");
+            MincraLogger.warn("Player " + player.getName() + " does not have MAX_HEALTH attribute.");
             return;
         }
         if (attribute.getModifier(MODIFIER_KEY) == null) {
@@ -42,7 +40,7 @@ public class HpBoost extends MagicSkill {
             Vfx vfx = vfxManager.getVfx("instant_effect_pentagon");
             Location playerLoc = player.getLocation();
             vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
-            player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
+            player.getWorld().playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
         }
     }
 
@@ -52,7 +50,7 @@ public class HpBoost extends MagicSkill {
 
         final AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (attribute == null) {
-            logger.warning("Player " + player.getName() + " does not have MAX_HEALTH attribute.");
+            MincraLogger.warn("Player " + player.getName() + " does not have MAX_HEALTH attribute.");
             return;
         }
 

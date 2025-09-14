@@ -3,6 +3,7 @@ package jp.mincra.mincramagics.skill.passive;
 import jp.mincra.bktween.BKTween;
 import jp.mincra.bktween.TickTime;
 import jp.mincra.bkvfx.Vfx;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
@@ -20,7 +21,6 @@ import java.util.logging.Logger;
 public class MpRecovery extends MagicSkill {
     private static final String METADATA_KEY = "mp_recovery";
 
-    private final Logger logger = MincraMagics.getPluginLogger();
     private final PlayerManager playerManager = MincraMagics.getPlayerManager();
 
     @Override
@@ -37,13 +37,13 @@ public class MpRecovery extends MagicSkill {
         Vfx vfx = vfxManager.getVfx("mana_charge");
         Location playerLoc = player.getLocation();
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
-        player.playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
+        player.getWorld().playSound(playerLoc, Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1F);
 
         player.setMetadata(METADATA_KEY, new FixedMetadataValue(MincraMagics.getInstance(), true));
 
         MincraPlayer mincraPlayer = playerManager.getPlayer(player.getUniqueId());
         if (mincraPlayer == null) {
-            logger.warning("Player " + player.getName() + " is not registered in PlayerManager.");
+            MincraLogger.warn("Player " + player.getName() + " is not registered in PlayerManager.");
             return;
         }
 
@@ -69,7 +69,7 @@ public class MpRecovery extends MagicSkill {
         if (player.hasMetadata(METADATA_KEY)) {
             player.removeMetadata(METADATA_KEY, MincraMagics.getInstance());
         } else {
-            logger.warning("Player " + player.getName() + " does not have hp_recovery metadata.");
+            MincraLogger.warn("Player " + player.getName() + " does not have hp_recovery metadata.");
         }
     }
 }

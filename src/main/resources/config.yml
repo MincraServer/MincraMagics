@@ -1,0 +1,11 @@
+# Enable debug logging
+debug: false
+# Database settings
+database:
+  filename: "mincra.sqlite.db"
+# Do not show action bar hud while a player is holding one of these items
+disable_hud_items:
+  - oraxen_item: watering_can_1
+  - oraxen_item: watering_can_2
+  - oraxen_item: watering_can_3
+  - oraxen_item: watering_can_4

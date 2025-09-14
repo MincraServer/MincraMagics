@@ -101,6 +101,26 @@ public class BKVfx {
                         ))
                         .setSpeed(0.1f)
                         .setOffset(new Vector(0.003, 0.003, 0.003)));
+        vfxManager.registerVfx(Vfx.LAVA_HEXAGON,
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
+                        8, Particle.LAVA)
+                        .setSpeed(1f)
+                        .setOffset(new Vector(0.003, 0.003, 0.003)));
+        vfxManager.registerVfx(Vfx.WAX_ON_PENTAGON,
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
+                        8, Particle.WAX_ON)
+                        .setSpeed(1f)
+                        .setOffset(new Vector(0.003, 0.003, 0.003)));
+        vfxManager.registerVfx(Vfx.WAX_OFF_PENTAGON,
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
+                        8, Particle.WAX_OFF)
+                        .setSpeed(1f)
+                        .setOffset(new Vector(0.003, 0.003, 0.003)));
+        vfxManager.registerVfx(Vfx.ENCHANT_PENTAGON,
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("five_pointed_star_dual_circle")),
+                        8, Particle.ENCHANT)
+                        .setSpeed(1f)
+                        .setOffset(new Vector(0.003, 0.003, 0.003)));
     }
 
     public VfxManager getVfxManager() {

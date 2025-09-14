@@ -54,7 +54,7 @@ public class Jump extends MagicSkill implements Listener {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
         if (castedPlayer.contains(uuid)) {
-            if (new NBTEntity(player).getBoolean("OnGround")) {
+            if (player.isOnGround()) {
                 // if on ground
                 castedPlayer.remove(uuid);
                 player.stopSound(Sound.ITEM_ELYTRA_FLYING);
@@ -67,7 +67,7 @@ public class Jump extends MagicSkill implements Listener {
 
                 int currentTick = Bukkit.getServer().getCurrentTick();
                 if (!soundInterval.containsKey(uuid) || soundInterval.get(uuid) < currentTick) {
-                    player.playSound(player, Sound.ITEM_ELYTRA_FLYING, 0.5f, 1);
+                    player.getWorld().playSound(player, Sound.ITEM_ELYTRA_FLYING, 0.5f, 1);
                     soundInterval.put(uuid, 160 + currentTick);
                 }
             }

@@ -4,7 +4,7 @@ import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.bkvfx.VfxManager;
 import jp.mincra.mincramagics.MincraMagics;
-import jp.mincra.mincramagics.nbtobject.ArtifactNBT;
+import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.player.SkillCooldown;
@@ -13,6 +13,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -38,21 +39,30 @@ public abstract class MagicSkill {
         // 耐久値
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
+
+        // 100% / (L+1) の確率で耐久値を減らす
+
         if (meta instanceof Damageable damageable && player.getGameMode() != GameMode.CREATIVE) {
-            if (item.getType().getMaxDurability() - damageable.getDamage() == 0) {
-                // break the artifact if it has no durability left
-                ArtifactNBT nbt = ArtifactNBT.fromItem(item);
-                if (nbt == null) {
-                    return false;
+            final int unbreakingLevel = meta.getEnchantLevel(Enchantment.UNBREAKING);
+            final double breakProb = 1.0d / (unbreakingLevel + 1);
+
+            if (Math.random() < breakProb) {
+                if (item.getType().getMaxDurability() - damageable.getDamage() == 0) {
+                    // break the artifact if it has no durability left
+                    ArtifactNBT nbt = ArtifactNBT.fromItem(item);
+                    if (nbt == null) {
+                        return false;
+                    }
+                    List<ItemStack> materials = nbt.getMaterialMap().values().stream().map(OraxenItems::getItemById).map(ItemBuilder::build).toList();
+                    player.give(materials);
+                    player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+                } else {
+                    damageable.setDamage(damageable.getDamage() + 1);
+                    item.setItemMeta(damageable);
                 }
-                List<ItemStack> materials = nbt.getMaterialMap().values().stream().map(OraxenItems::getItemById).map(ItemBuilder::build).toList();
-                player.give(materials);
-                player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
-            } else {
-                damageable.setDamage(damageable.getDamage() + 1);
-                item.setItemMeta(damageable);
             }
+
         }
 
         return true;

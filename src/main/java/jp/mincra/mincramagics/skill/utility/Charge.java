@@ -26,7 +26,7 @@ public class Charge extends MagicSkill {
         vfx.playEffect(vfxLoc, 5, axis, Math.toRadians(player.getEyeLocation().getYaw()));
 
         // Play Sound
-        player.playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
+        player.getWorld().playSound(playerLoc, Sound.ENTITY_ILLUSIONER_CAST_SPELL, 1, 1);
         MincraPlayer mPlayer = playerManager.getPlayer(player.getUniqueId());
 
         int strength = (int) property.level();

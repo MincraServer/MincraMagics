@@ -33,7 +33,7 @@ public class Mechanics extends MagicSkill {
         // Jump
         player.setVelocity(new Vector(player.getVelocity().getX(),5F,player.getVelocity().getZ()));
 
-        // PlaySounds
+        // playSounds
         world.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 0.1F, 1F);
 
         // Initialize_Variable(For Repeat)
@@ -55,7 +55,7 @@ public class Mechanics extends MagicSkill {
                                 // 範囲攻撃処理
                                 for (Entity entity : player.getNearbyEntities(range, 1, range)) {
                                     if (entity instanceof Monster monster) {// モンスターのみ
-                                        monster.damage(fallDistance * damagePerDist);
+                                        monster.damage(fallDistance * damagePerDist, player);
                                         world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.3F, 1.75F);
                                         player.setFallDistance(0);
                                         monster.setVelocity(new Vector(entity.getVelocity().getX(), 2F, entity.getVelocity().getZ()));

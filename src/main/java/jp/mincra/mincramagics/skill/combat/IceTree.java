@@ -39,7 +39,7 @@ public class IceTree extends MagicSkill {
 
         Vfx vfx = vfxManager.getVfx("ice");
         Vector axis = new Vector(0, 1, 0);
-        player.playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.2F, 2F);
+        player.getWorld().playSound(playerLoc, Sound.BLOCK_PORTAL_TRAVEL, 0.2F, 2F);
 
         for (var monster : monsters) {
             world.playSound(playerLoc, Sound.BLOCK_GLASS_BREAK, 0.5F, 1F);

@@ -4,6 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public interface Vfx {
+    String LAVA_HEXAGON = "lava_hexagon";
+    String WAX_ON_PENTAGON = "wax_on_pentagon";
+    String WAX_OFF_PENTAGON = "wax_off_pentagon";
+    String ENCHANT_PENTAGON = "enchant_pentagon";
+
     /**
      *
      * @param loc 描画するパーティクルの中心の座標

@@ -5,4 +5,5 @@ public class Color {
     public static final String COLOR_GRAY = "<gray>";
     public static final String COLOR_WHITE = "<white>";
     public static final String COLOR_AQUA = "<aqua>";
+    public static final String COLOR_YELLOW = "<yellow>";
 }

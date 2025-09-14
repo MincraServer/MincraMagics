@@ -1,5 +1,6 @@
 package jp.mincra.mincramagics.hud;
 
+import jp.mincra.mincramagics.font.Fonts;
 import jp.mincra.mincramagics.player.SkillCooldown;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -46,10 +47,9 @@ public class CooldownHudController {
                 continue;
             }
 
-            String materialPlaceholder;
+            String materialPlaceholder = Fonts.getMaterialFont(materialId, true);
 
             if (!MATERIAL_HUD_MAP.containsKey(materialId)) {
-                materialPlaceholder = PlaceholderAPI.setPlaceholders(null, "%oraxen_hud_material_" + materialId + "%");
                 MATERIAL_HUD_MAP.put(materialId, materialPlaceholder);
             } else {
                 materialPlaceholder = MATERIAL_HUD_MAP.get(materialId);

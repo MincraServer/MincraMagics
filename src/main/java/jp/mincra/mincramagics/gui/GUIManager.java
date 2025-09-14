@@ -1,37 +1,36 @@
 package jp.mincra.mincramagics.gui;
 
-import jp.mincra.mincramagics.gui.impl.MaterialEditor;
-import org.bukkit.Bukkit;
+import jp.mincra.mincramagics.gui.screen.JobRewardListMenu;
+import jp.mincra.mincramagics.gui.screen.JobRewardMenu;
+import jp.mincra.mincramagics.gui.screen.MaterialEditor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GUIManager implements Listener {
-    private final JavaPlugin plugin;
-    private final PluginManager pluginManager;
-    private final Map<String, Class<? extends InventoryGUI>> idToGui;
-//    private final Map<UUID, InventoryGUI> openedGui;
+    private final Map<String, Class<? extends GUI>> idToGui;
 
-    public GUIManager(JavaPlugin plugin) {
-        this.plugin = plugin;
-        pluginManager = Bukkit.getPluginManager();
+    public GUIManager() {
         idToGui = new HashMap<>();
         registerDefault();
-//        openedGui = new HashMap<>();
     }
 
-    public void registerGui(String id, Class<? extends InventoryGUI> clazz) {
+    public void registerGui(String id, Class<? extends GUI> clazz) {
         idToGui.put(id, clazz);
     }
 
+    public List<String> getRegisteredGuiIds() {
+        return new ArrayList<>(idToGui.keySet());
+    }
+
     @Nullable
-    private InventoryGUI instantiateGui(String id) {
+    private GUI instantiateGui(String id) {
         if (!idToGui.containsKey(id)) {
             return null;
         }
@@ -45,32 +44,17 @@ public class GUIManager implements Listener {
 
     private void registerDefault() {
         registerGui("MaterialEditor", MaterialEditor.class);
-    }
-
-    public void open(InventoryGUI gui, Player target) {
-        pluginManager.registerEvents(gui, plugin);
-//        openedGui.put(target.getUniqueId(), gui);
-        gui.open(target);
+        registerGui("JobRewardMenu", JobRewardMenu.class);
+        registerGui("JobRewardListMenu", JobRewardListMenu.class);
     }
 
     public boolean open(String guiId, Player target) {
-        InventoryGUI inventoryGUI = instantiateGui(guiId);
-        if (inventoryGUI == null) {
+        GUI gui = instantiateGui(guiId);
+        if (gui == null) {
             return false;
         } else {
-            open(inventoryGUI, target);
+            gui.open(target);
             return true;
         }
     }
-
-//    @EventHandler
-//    private void onClose(InventoryCloseEvent e) {
-//        Inventory closedInv = e.getInventory();
-//        for (InventoryGUI gui : openedGui.values()) {
-//            if (gui.getInventory().equals(closedInv)) {
-//                gui.onClose();
-//                pluginManager.even
-//            }
-//        }
-//    }
 }
