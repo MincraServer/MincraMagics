@@ -1,6 +1,7 @@
 package jp.mincra.mincramagics.skill.passive;
 
 import jp.mincra.bkvfx.Vfx;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
@@ -20,7 +21,6 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 public class Bleeding extends MagicSkill implements Listener {
-    private final Logger logger = MincraMagics.getPluginLogger();
     private final Map<UUID, BleedingInstance> bleedingInstances = new HashMap<>();
     private record BleedingInstance(double healRate) {}
 
@@ -48,7 +48,7 @@ public class Bleeding extends MagicSkill implements Listener {
         if (bleedingInstances.containsKey(player.getUniqueId())) {
             bleedingInstances.remove(player.getUniqueId());
         } else {
-            logger.warning("Player " + player.getName() + " does not have hp_recovery metadata.");
+            MincraLogger.warn("Player " + player.getName() + " does not have bleedingInstance.");
         }
     }
 
