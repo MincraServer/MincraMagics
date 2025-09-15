@@ -3,8 +3,10 @@ package jp.mincra.mincramagics.skill;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import jp.mincra.bkvfx.VfxManager;
+import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.nbt.ArtifactNBT;
+import jp.mincra.mincramagics.nbt.utils.ItemMetas;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import jp.mincra.mincramagics.player.SkillCooldown;
@@ -12,12 +14,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 
@@ -47,7 +51,7 @@ public abstract class MagicSkill {
             final double breakProb = 1.0d / (unbreakingLevel + 1);
 
             if (Math.random() < breakProb) {
-                if (item.getType().getMaxDurability() - damageable.getDamage() == 0) {
+                if (ItemMetas.getMaxDamage(item) - damageable.getDamage() == 0) {
                     // break the artifact if it has no durability left
                     ArtifactNBT nbt = ArtifactNBT.fromItem(item);
                     if (nbt == null) {
