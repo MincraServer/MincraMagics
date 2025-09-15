@@ -6,6 +6,7 @@ import jp.mincra.bkvfx.Vfx;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.skill.MagicSkill;
 import jp.mincra.mincramagics.skill.MaterialProperty;
+import jp.mincra.mincramagics.skill.utils.StrikeLightning;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -51,15 +52,13 @@ public class Lightning extends MagicSkill {
                         final var tmpTargets = player.getWorld().getNearbyLivingEntities(targetLocation, 2, 2, 2, e -> !e.equals(player));
                         final var nearestEntity = tmpTargets.stream()
                                 .min(Comparator.comparingDouble(e -> e.getLocation().distanceSquared(targetLocation)));
-                        if (nearestEntity.isPresent()) {
+                        if (nearestEntity.isPresent() && !nearestEntity.get().equals(player)) {
                             final var target = nearestEntity.get();
                             // Apply extra damage
-                            target.damage(extraDamage, player);
-                            // Strike lightning at the nearest entity
-                            target.getWorld().strikeLightning(target.getLocation());
+                            new StrikeLightning(MincraMagics.getInstance()).execute(player, target, extraDamage, StrikeLightning.Mode.DAMAGE);
                         } else {
                             // If no entity is found, strike lightning at the target location
-                            targetLocation.getWorld().strikeLightning(targetLocation);
+                            new StrikeLightning(MincraMagics.getInstance()).execute(player, targetLocation, StrikeLightning.Mode.DAMAGE);
                         }
                     }
 
@@ -71,8 +70,8 @@ public class Lightning extends MagicSkill {
         // Effect and sound
         Vfx vfx = vfxManager.getVfx("electric_spark_hexagon");
         Location playerLoc = player.getLocation();
-        player.getWorld().playSound(playerLoc, Sound.ENTITY_WITHER_SHOOT, 0.15F, 1F);
         vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
+        player.getWorld().playSound(playerLoc, Sound.ENTITY_WITHER_SHOOT, 0.15F, 1F);
 
         return true;
     }
