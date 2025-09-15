@@ -31,6 +31,9 @@ import jp.mincra.mincramagics.skill.healing.Heal;
 import jp.mincra.mincramagics.skill.job.hunter.Burst;
 import jp.mincra.mincramagics.skill.job.hunter.Protect;
 import jp.mincra.mincramagics.skill.job.hunter.Provoke;
+import jp.mincra.mincramagics.skill.job.magician.Blizzard;
+import jp.mincra.mincramagics.skill.job.magician.Fire;
+import jp.mincra.mincramagics.skill.job.magician.Thunder;
 import jp.mincra.mincramagics.skill.job.miner.Hammer;
 import jp.mincra.mincramagics.skill.job.miner.MineAll;
 import jp.mincra.mincramagics.skill.job.miner.MineralDetection;
@@ -141,6 +144,10 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("mineral_detection", new MineralDetection());
         skillManager.registerSkill("mine_all", new MineAll());
         skillManager.registerSkill("hammer", new Hammer());
+        // - Magician
+        skillManager.registerSkill("blizzard", new Blizzard());
+        skillManager.registerSkill("thunder", new Thunder());
+        skillManager.registerSkill("fire", new Fire());
 
         // check if DungeonMMO is present
         if (getServer().getPluginManager().getPlugin("DungeonMMO") != null) {
