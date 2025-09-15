@@ -58,8 +58,14 @@ public class ArtifactMechanicManager implements Listener {
             return;
         }
 
-        boolean triggered = triggerMaterial(e.getPlayer(), item, isLeft ? TriggerType.LEFT : TriggerType.RIGHT);
-        e.setCancelled(triggered);
+        // getAction == Action.PHYSICAL などの場合があるので, 冗長に書いている
+        if (e.getAction().isLeftClick()) {
+            boolean triggered = triggerMaterial(e.getPlayer(), item, TriggerType.LEFT);
+            e.setCancelled(triggered);
+        } else if (e.getAction().isRightClick()) {
+            boolean triggered = triggerMaterial(e.getPlayer(), item, TriggerType.RIGHT);
+            e.setCancelled(triggered);
+        }
     }
 
     @EventHandler
@@ -114,8 +120,9 @@ public class ArtifactMechanicManager implements Listener {
 
     /**
      * Trigger the material skill based on the trigger type.
-     * @param caster The player who triggers the material.
-     * @param item The item that contains the material.
+     *
+     * @param caster      The player who triggers the material.
+     * @param item        The item that contains the material.
      * @param triggerType The trigger type of the material (LEFT, RIGHT, SWAP, DROP, PASSIVE).
      * @return True if the skill was successfully triggered, false otherwise.
      */
@@ -130,8 +137,8 @@ public class ArtifactMechanicManager implements Listener {
     /**
      * Equip the material to the player.
      *
-     * @param caster The player who equips the material.
-     * @param newItem   The item that contains the material.
+     * @param caster  The player who equips the material.
+     * @param newItem The item that contains the material.
      */
     private void equipMaterial(Player caster, ItemStack newItem, ItemStack oldItem, boolean isOnItemHeldEvent) {
         List<MaterialSkill> materialSkills = findMaterial(newItem, TriggerType.PASSIVE);
