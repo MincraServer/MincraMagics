@@ -22,11 +22,11 @@ public class Fire extends MagicSkill {
         // Core functionality
         final var targets = player.getWorld().getNearbyLivingEntities(player.getLocation(), radius, radius * 0.5, radius, e -> !e.equals(player));
         for (var target : targets) {
+            target.damage(damage, player);
             target.setFireTicks((int) fireDurationTicks);
             // 視線方向にノックバック
-            final var knockBackVec = player.getLocation().getDirection().setY(0).normalize().setY(1.5).normalize().multiply(knockbackMultiplier);
+            final var knockBackVec = player.getLocation().getDirection().setY(0).normalize().setY(3).normalize().multiply(knockbackMultiplier);
             target.setVelocity(target.getVelocity().add(knockBackVec));
-            target.damage(damage, player);
         }
 
         // Effects and sound
