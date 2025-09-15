@@ -14,6 +14,7 @@ import jp.mincra.mincramagics.command.RewardCommand;
 import jp.mincra.mincramagics.config.ConfigManager;
 import jp.mincra.mincramagics.db.HibernateUtil;
 import jp.mincra.mincramagics.db.dao.JobRewardDao;
+import jp.mincra.mincramagics.font.Fonts;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.DamageIndicator;
 import jp.mincra.mincramagics.hud.HudManager;
@@ -28,9 +29,19 @@ import jp.mincra.mincramagics.skill.MaterialManager;
 import jp.mincra.mincramagics.skill.SkillManager;
 import jp.mincra.mincramagics.skill.combat.*;
 import jp.mincra.mincramagics.skill.healing.Heal;
-import jp.mincra.mincramagics.skill.job.hunter.*;
-import jp.mincra.mincramagics.skill.job.miner.*;
-import jp.mincra.mincramagics.skill.passive.*;
+import jp.mincra.mincramagics.skill.job.hunter.Burst;
+import jp.mincra.mincramagics.skill.job.hunter.Protect;
+import jp.mincra.mincramagics.skill.job.hunter.Provoke;
+import jp.mincra.mincramagics.skill.job.magician.Blizzard;
+import jp.mincra.mincramagics.skill.job.magician.Fire;
+import jp.mincra.mincramagics.skill.job.magician.Thunder;
+import jp.mincra.mincramagics.skill.job.miner.Hammer;
+import jp.mincra.mincramagics.skill.job.miner.MineAll;
+import jp.mincra.mincramagics.skill.job.miner.MineralDetection;
+import jp.mincra.mincramagics.skill.passive.HpBoost;
+import jp.mincra.mincramagics.skill.passive.HpRecovery;
+import jp.mincra.mincramagics.skill.passive.MpBoost;
+import jp.mincra.mincramagics.skill.passive.MpRecovery;
 import jp.mincra.mincramagics.skill.utility.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.PluginManager;
@@ -88,7 +99,7 @@ public final class MincraMagics extends JavaPlugin {
         new MincraCommand().registerAll();
         new GuardCommand(getServer()).registerAll();
         new RewardCommand().registerAll();
-        new DungeonCommand().registerAll();
+        new DungeonCommand(this).registerAll();
 
         // Mechanics
         MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
@@ -135,6 +146,10 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("mineral_detection", new MineralDetection());
         skillManager.registerSkill("mine_all", new MineAll());
         skillManager.registerSkill("hammer", new Hammer());
+        // - Magician
+        skillManager.registerSkill("blizzard", new Blizzard());
+        skillManager.registerSkill("thunder", new Thunder());
+        skillManager.registerSkill("fire", new Fire());
 
         // check if DungeonMMO is present
         if (getServer().getPluginManager().getPlugin("DungeonMMO") != null) {
@@ -160,6 +175,7 @@ public final class MincraMagics extends JavaPlugin {
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
         OraxenItems.loadItems();
+        Fonts.reload();
     }
 
     public static MincraMagics getInstance() {

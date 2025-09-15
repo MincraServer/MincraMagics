@@ -3,6 +3,7 @@ package jp.mincra.mincramagics.hud;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.config.ConfigManager;
 import jp.mincra.mincramagics.config.DisableHudItemsConfigLoader;
+import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.player.MincraPlayer;
 import jp.mincra.mincramagics.player.PlayerManager;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -24,6 +25,7 @@ public class HudManager implements Listener {
     private final MpHudController mpHudController = new MpHudController();
     private final CooldownHudController cooldownHudController = new CooldownHudController();
     private final DungeonHudController dungeonHudController = new DungeonHudController();
+    private final SkillHudController skillHudController = new SkillHudController();
 
     private Collection<MincraPlayer> players;
 
@@ -46,6 +48,7 @@ public class HudManager implements Listener {
 
                 final var isDisplayingOxygenBar = player.isSwimming() || player.getRemainingAir() < 300;
 
+                final var skillHud = skillHudController.draw(mPlayer.getPlayer().getInventory().getItemInMainHand());
                 String mpHud = mpHudController.generateMpBar((int) mPlayer.getMaxMp(), (int) mPlayer.getMp(),
                         // 水中にいる場合は一段上から表示
                         isDisplayingOxygenBar ? 1 : 0);
@@ -53,7 +56,7 @@ public class HudManager implements Listener {
                 String dungeonHud = dungeonHudController.getDungeonHud(player);
 
                 TextComponent component = Component
-                        .text(SHIFT_HUD + SHIFT_COOLDOWN + cooldownHud + NEG_SHIFT_COOLDOWN + mpHud + dungeonHud).shadowColor(new Transparent());
+                        .text(skillHud.prefix() + SHIFT_HUD + SHIFT_COOLDOWN + cooldownHud + NEG_SHIFT_COOLDOWN + mpHud + dungeonHud + skillHud.suffix()).shadowColor(new Transparent());
                 player.sendActionBar(component);
             }
         }, 0L, 2L);

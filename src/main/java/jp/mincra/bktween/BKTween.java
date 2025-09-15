@@ -8,7 +8,9 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * BKTween(BukkitTween).
@@ -35,6 +37,10 @@ public class BKTween {
             tmpFunction = tmpFunction.andThen(v -> func.apply(null));
         }
         return this;
+    }
+
+    public BKTween execute(Supplier<Boolean> func) {
+        return execute(v -> func.get());
     }
 
     public BKTween delay(TickTime tickTime, long delay) {

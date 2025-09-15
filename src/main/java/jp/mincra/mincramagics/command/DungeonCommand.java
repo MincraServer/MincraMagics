@@ -2,6 +2,7 @@ package jp.mincra.mincramagics.command;
 
 
 import com.alessiodp.parties.api.Parties;
+import com.civious.dungeonmmo.api.events.DungeonPlayerLeaveEvent;
 import com.civious.dungeonmmo.events.InventoryItemAction;
 import com.civious.dungeonmmo.instances.InstanceStatus;
 import com.civious.dungeonmmo.instances.InstancesManager;
@@ -11,15 +12,18 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
+import jp.mincra.mincramagics.MincraLogger;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class DungeonCommand {
+public class DungeonCommand implements Listener {
     private enum Permission {
         DUNGEON_START("dungeon.start"),
         DUNGEON_BACK("dungeon.back");
@@ -34,7 +38,8 @@ public class DungeonCommand {
     private final InstancesManager manager;
     private final Map<UUID, Location> previousLocations = new HashMap<>();
 
-    public DungeonCommand() {
+    public DungeonCommand(JavaPlugin plugin) {
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
         manager = InstancesManager.getInstance();
     }
 
@@ -192,4 +197,16 @@ public class DungeonCommand {
                 });
     }
 
+    @EventHandler
+    private void onDungeonLeave(DungeonPlayerLeaveEvent event) {
+        final var player = event.getPlayer();
+        MincraLogger.info("Player " + player.getName() + " is leaving the dungeon.");
+
+        final var previousLocation = previousLocations.remove(player.getUniqueId());
+        if (previousLocation != null) {
+            player.teleport(previousLocation);
+            previousLocations.remove(player.getUniqueId());
+            MincraLogger.info("Teleported " + player.getName() + " back to their previous location.");
+        }
+    }
 }
