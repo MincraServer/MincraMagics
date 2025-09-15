@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.function.Consumer;
 
 @Builder
-public class CloseButton extends Button {
+public class CloseButton extends BaseButton {
     private Position pos;
     private Consumer<Void> onClick;
 
