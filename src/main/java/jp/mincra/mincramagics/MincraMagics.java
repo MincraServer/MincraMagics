@@ -14,6 +14,7 @@ import jp.mincra.mincramagics.command.RewardCommand;
 import jp.mincra.mincramagics.config.ConfigManager;
 import jp.mincra.mincramagics.db.HibernateUtil;
 import jp.mincra.mincramagics.db.dao.JobRewardDao;
+import jp.mincra.mincramagics.font.Fonts;
 import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.DamageIndicator;
 import jp.mincra.mincramagics.hud.HudManager;
@@ -173,6 +174,7 @@ public final class MincraMagics extends JavaPlugin {
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
         OraxenItems.loadItems();
+        Fonts.reload();
     }
 
     public static MincraMagics getInstance() {

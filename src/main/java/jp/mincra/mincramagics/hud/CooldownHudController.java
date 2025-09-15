@@ -47,7 +47,7 @@ public class CooldownHudController {
                 continue;
             }
 
-            String materialPlaceholder = Fonts.getMaterialFont(materialId, true);
+            String materialPlaceholder = Fonts.material(materialId, true);
 
             if (!MATERIAL_HUD_MAP.containsKey(materialId)) {
                 MATERIAL_HUD_MAP.put(materialId, materialPlaceholder);

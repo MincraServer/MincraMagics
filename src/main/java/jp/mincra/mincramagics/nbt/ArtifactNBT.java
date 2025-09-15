@@ -8,7 +8,6 @@ import jp.mincra.mincramagics.constant.Color;
 import jp.mincra.mincramagics.font.Fonts;
 import jp.mincra.mincramagics.nbt.components.Divider;
 import jp.mincra.mincramagics.nbt.utils.PDCUtils;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -24,20 +23,6 @@ public record ArtifactNBT(List<Material> materials,
                           List<MaterialSlot> availableSlots,
                           List<String> availableMaterials,
                           List<String> descriptionLore) {
-    // region Oraxen Tag
-    // FIXME: Change the key type to MaterialSlot
-    private static final Map<String, String> SLOT_TO_GLYPH = Map.of(
-            "left", PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%%oraxen_mouse_left%%oraxen_shift_1%"),
-            "right", PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%%oraxen_mouse_right%%oraxen_shift_1%"),
-            "swap", PlaceholderAPI.setPlaceholders(null, "%oraxen_key_f%"),
-            "drop", PlaceholderAPI.setPlaceholders(null, "%oraxen_key_q%"),
-            "passive_1", PlaceholderAPI.setPlaceholders(null, "%oraxen_passive%"),
-            "passive_2", PlaceholderAPI.setPlaceholders(null, "%oraxen_passive%")
-    );
-    private static final String SHIFT_1 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_1%");
-    private static final String SHIFT_2 = PlaceholderAPI.setPlaceholders(null, "%oraxen_shift_2%");
-    // endregion
-
     public ItemStack setNBTTag(ItemStack item) {
         return setNBTTag(new ItemBuilder(item)).build();
     }
@@ -104,15 +89,15 @@ public record ArtifactNBT(List<Material> materials,
                 String materialId = material.get().id();
                 ItemBuilder materialItemBuilder = OraxenItems.getItemById(materialId);
                 if (materialItemBuilder != null) {
-                    materialName = Fonts.getMaterialFont(materialId, false) + SHIFT_1 + materialItemBuilder.getItemName();
+                    materialName = Fonts.material(materialId, false) + Fonts.shift(1) + materialItemBuilder.getItemName();
                 } else {
-                    materialName = Fonts.getMaterialFont(materialId, false) + SHIFT_1 + materialId;
+                    materialName = Fonts.material(materialId, false) + Fonts.shift(1) + materialId;
                 }
             } else {
                 materialName = "-";
             }
 
-            newLore.add(Color.COLOR_WHITE + SLOT_TO_GLYPH.get(slot.getSlot()) + SHIFT_2 + materialName);
+            newLore.add(Color.COLOR_WHITE + Fonts.slot(slot, false) + Fonts.shift(2) + materialName);
         }
 
         // availableMaterials
