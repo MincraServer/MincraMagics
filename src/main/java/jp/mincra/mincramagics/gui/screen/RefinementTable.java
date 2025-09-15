@@ -61,6 +61,7 @@ public class RefinementTable extends GUI {
 
         final Function<ItemStack, Boolean> handleOrePlaced = (item) -> {
             if (!Refinement.isValidOre(item)) return false;
+            if (ore.value().getAmount() >= 1) return false;
             ore.set(item.clone());
             return true;
         };
@@ -72,6 +73,7 @@ public class RefinementTable extends GUI {
 
         final Function<ItemStack, Boolean> handleSupportItemPlaced = (item) -> {
             if (!Refinement.isValidSupportItem(item)) return false;
+            if (supportItem.value().getAmount() >= 1) return false;
             supportItem.set(item.clone());
             return true;
         };

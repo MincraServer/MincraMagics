@@ -206,6 +206,18 @@ public record ArtifactNBT(List<Material> materials,
 //                        .collect(Collectors.joining(SHIFT_2))));
             }
 
+            newLore.add("<reset>");
+
+            newLore.add(Color.COLOR_WHITE + "装備可能 " + (availableMaterials.isEmpty() ? "<yellow>全て" :
+                    availableMaterials.stream()
+                            // 末尾の _[0-9]+ を削除
+                            .map(id -> id.replaceAll("_[0-9]+$", ""))
+                            .distinct()
+                            .sorted()
+                            .map((id) -> Fonts.material(id + "_1", false))
+                            .collect(Collectors.joining(Fonts.shift(1)))
+                    ));
+
             // Loreの横線2
             newLore.add(divider);
 
