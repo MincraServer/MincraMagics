@@ -16,7 +16,7 @@ public class Fire extends MagicSkill {
         final float level = property.level();
         final float fireDurationTicks = level * 80; // 2 seconds per level
         final double radius = 3.0 + level * 2.0; // Radius of effect
-        final double knockbackMultiplier = 1.0 + level * 0.3; // Knockback strength
+        final double knockbackMultiplier = 1.0 + level * 0.01; // Knockback strength
         final double damage = level * 3.0; // Damage per second
 
         // Core functionality
@@ -25,7 +25,7 @@ public class Fire extends MagicSkill {
             target.damage(damage, player);
             target.setFireTicks((int) fireDurationTicks);
             // 視線方向にノックバック
-            final var knockBackVec = player.getLocation().getDirection().setY(0).normalize().setY(3).normalize().multiply(knockbackMultiplier);
+            final var knockBackVec = player.getLocation().getDirection().setY(0).normalize().setY(1.5).normalize().multiply(knockbackMultiplier);
             target.setVelocity(target.getVelocity().add(knockBackVec));
         }
 

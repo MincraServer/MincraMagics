@@ -45,7 +45,7 @@ public class Blizzard extends MagicSkill {
                 .execute(() -> {
                     final var targets = playerLoc.getWorld().getNearbyLivingEntities(playerLoc, radius, radius * 0.5, radius, e -> !e.equals(player) &&
                                     // DamageIndicator 対象外を除外
-                                    !(e instanceof ArmorStand))
+                                    !(e instanceof ArmorStand) && !(e instanceof Player))
                             .stream().distinct().toList();
                     MincraLogger.debug("Blizzard tick: applying frostbite to targets: " + targets.stream().map(CommandSender::getName).toList());
                     for (var target : targets) {
