@@ -6,6 +6,8 @@ import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.MincraMagics;
 import jp.mincra.mincramagics.gui.BuildContext;
 import jp.mincra.mincramagics.gui.GUI;
+import jp.mincra.mincramagics.gui.component.Filler;
+import jp.mincra.mincramagics.gui.component.ItemSlot;
 import jp.mincra.mincramagics.gui.lib.*;
 import jp.mincra.mincramagics.nbt.ArtifactNBT;
 import jp.mincra.mincramagics.skill.MaterialManager;
@@ -149,11 +151,11 @@ public class MaterialEditor extends GUI {
                                 .pos(new Position(0, 0, 9, 3))
                                 .isSlotExcluded(isModifiableSlot)
                                 .build(),
-                        ArtifactSlot.builder()
+                        ItemSlot.builder()
                                 .pos(new Position(1, 1))
-                                .artifact(artifactItem)
-                                .onArtifactPlaced(handleArtifactPlaced)
-                                .onArtifactPickedUp(handleArtifactPickedUp)
+                                .item(artifactItem)
+                                .onItemPlaced(handleArtifactPlaced)
+                                .onItemPickedUp(handleArtifactPickedUp)
                                 .build(),
                         MaterialSlots.builder()
                                 .pos(new Position(3, 1, 6))
@@ -164,64 +166,6 @@ public class MaterialEditor extends GUI {
                                 .build()
                 ))
                 .build();
-    }
-}
-
-@Builder
-class Filler extends Component {
-    private final Position pos;
-    private final Predicate<Integer> isSlotExcluded;
-
-    public Filler(Position pos, Predicate<Integer> isSlotExcluded) {
-        this.pos = pos;
-        this.isSlotExcluded = isSlotExcluded;
-    }
-
-    @Override
-    public void render(Inventory inv) {
-        pos.toIndexStream().forEach(i -> {
-            if (isSlotExcluded.test(i)) return;
-            inv.setItem(i, Icons.invisible);
-        });
-    }
-}
-
-@Builder
-class ArtifactSlot extends Component {
-    private final Position pos;
-    private final Function<ItemStack, Boolean> onArtifactPlaced;
-    private final Consumer<Boolean> onArtifactPickedUp;
-    private final ItemStack artifact;
-
-    public ArtifactSlot(Position pos, Function<ItemStack, Boolean> onArtifactPlaced, Consumer<Boolean> onArtifactPickedUp, ItemStack artifact) {
-        this.pos = pos;
-        this.onArtifactPlaced = onArtifactPlaced;
-        this.onArtifactPickedUp = onArtifactPickedUp;
-        this.artifact = artifact;
-    }
-
-    @Override
-    public void render(Inventory inv) {
-        final var currentItem = inv.getItem(pos.startIndex());
-        MincraLogger.debug("[ArtifactSlot] artifact: " + Strings.truncate(artifact));
-        if (artifact != null && artifact.getType() != Material.AIR && currentItem != null && currentItem.getType() != Material.AIR) {
-            inv.setItem(pos.startIndex(), artifact);
-        }
-        addMoveToOtherInventoryListener(pos.startIndex(), (e) ->
-                e.event().setCancelled(!onArtifactPlaced.apply(e.item())));
-        addPlaceListener(pos.startIndex(), (e) ->
-                e.event().setCancelled(!onArtifactPlaced.apply(e.item())));
-        addPickupListener(pos.startIndex(), (e) ->
-                onArtifactPickedUp.accept(true));
-        addSwapListener(pos.startIndex(), (e) ->
-                // TODO: Artifact の入れ替えに対応する
-                e.event().setCancelled(true));
-        addClickListener(e -> {
-            // When move to player's inventory from GUI
-            if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getRawSlot() == pos.startIndex()) {
-                onArtifactPickedUp.accept(true);
-            }
-        });
     }
 }
 

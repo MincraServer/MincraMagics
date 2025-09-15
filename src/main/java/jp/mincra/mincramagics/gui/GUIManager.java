@@ -3,6 +3,7 @@ package jp.mincra.mincramagics.gui;
 import jp.mincra.mincramagics.gui.screen.JobRewardListMenu;
 import jp.mincra.mincramagics.gui.screen.JobRewardMenu;
 import jp.mincra.mincramagics.gui.screen.MaterialEditor;
+import jp.mincra.mincramagics.gui.screen.RefinementTable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,7 @@ public class GUIManager implements Listener {
         registerGui("MaterialEditor", MaterialEditor.class);
         registerGui("JobRewardMenu", JobRewardMenu.class);
         registerGui("JobRewardListMenu", JobRewardListMenu.class);
+        registerGui("refinement_table", RefinementTable.class);
     }
 
     public boolean open(String guiId, Player target) {
