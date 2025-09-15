@@ -130,8 +130,11 @@ public class ArtifactMechanicManager implements Listener {
         final List<MaterialSkill> materialSkills = findMaterial(item, triggerType);
         if (materialSkills == null) return false;
 
-        // 一つでもスキルがトリガーされたら true を返す
-        return materialSkills.stream().anyMatch(materialSkill -> materialSkill.skill.onTrigger(caster, materialSkill.materialProperty.applyEffect(caster, item)));
+        // ~~一つでもスキルがトリガーされたら true を返す~~
+        materialSkills.stream().anyMatch(materialSkill -> materialSkill.skill.onTrigger(caster, materialSkill.materialProperty.applyEffect(caster, item)));
+
+        // アイテムスワップ, ドロップのキャンセルのために全ての場合で true を返す
+        return true;
     }
 
     /**
