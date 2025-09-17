@@ -1,8 +1,7 @@
 package jp.mincra.mincramagics.gui.screen;
 
-import com.gamingmesh.jobs.Jobs;
-import io.th0rgal.oraxen.api.OraxenItems;
 import jp.mincra.mincramagics.MincraLogger;
+import jp.mincra.mincramagics.domain.refinement.RefinementExecutor;
 import jp.mincra.mincramagics.gui.BuildContext;
 import jp.mincra.mincramagics.gui.GUI;
 import jp.mincra.mincramagics.gui.component.*;
@@ -17,17 +16,13 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class RefinementTable extends GUI {
 
@@ -39,7 +34,7 @@ public class RefinementTable extends GUI {
         final var supportItem = useState(new ItemStack(Material.AIR, 1));
 
         final var player = context.player();
-        final var refinement = new Refinement(artifact.value(), ore.value(), supportItem.value(), player);
+        final var refinement = new RefinementExecutor(artifact.value(), ore.value(), supportItem.value(), player);
         final var canRefine = refinement.canRefine();
 
         MincraLogger.debug("RefinementTable#build: artifact: " + Strings.truncate(artifact.value()) +
@@ -50,7 +45,9 @@ public class RefinementTable extends GUI {
 
         final Function<ItemStack, Boolean> handleArtifactPlaced = (item) -> {
             final var newNbt = ArtifactNBT.fromItem(item);
-            if (newNbt == null) return false;
+            if (newNbt == null) {
+                return false;
+            }
             artifact.set(item.clone());
             return true;
         };
@@ -60,7 +57,7 @@ public class RefinementTable extends GUI {
         };
 
         final Function<ItemStack, Boolean> handleOrePlaced = (item) -> {
-            if (!Refinement.isValidOre(item)) return false;
+            if (!RefinementExecutor.isValidOre(item)) return false;
             if (ore.value().getAmount() >= 1) return false;
             ore.set(item.clone());
             return true;
@@ -72,7 +69,7 @@ public class RefinementTable extends GUI {
         };
 
         final Function<ItemStack, Boolean> handleSupportItemPlaced = (item) -> {
-            if (!Refinement.isValidSupportItem(item)) return false;
+            if (!RefinementExecutor.isValidSupportItem(item)) return false;
             if (supportItem.value().getAmount() >= 1) return false;
             supportItem.set(item.clone());
             return true;
@@ -111,7 +108,7 @@ public class RefinementTable extends GUI {
 
             if (result.isSuccess()) {
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0f, 1.2f);
-                if (artifactNBT != null && !Refinement.isMaxRefineLevel(result.resultItem())) {
+                if (artifactNBT != null && !RefinementExecutor.isMaxRefineLevel(result.resultItem())) {
                     player.sendMessage("§a◆ 成功！ (+" + artifactNBT.refineLevel() + " → +" +  ArtifactNBT.fromItem(result.resultItem()).refineLevel() + ")");
                 } else {
                     // broadcast max refine level message
@@ -201,136 +198,5 @@ public class RefinementTable extends GUI {
                                 .build()
                 ))
                 .build();
-    }
-}
-
-/**
- * 精錬のコアロジック
- */
-class Refinement {
-    // Oraxen のアイテムID -> 精錬確率の一次式のy切片
-    private final static Map<String, Double> ORE_SUCCESS_RATE_Y_INTERCEPT = Map.of(
-            "damascus", 1.824,
-            "high_purity_damascus", 1.904,
-            "mithril", 1.984,
-            "high_purity_mithril", 2.064,
-            "orichalcum", 2.144,
-            "high_purity_orichalcum", 2.224
-    );
-    private final static int MAX_REFINE_LEVEL = 15;
-
-    public static boolean isValidOre(ItemStack ore) {
-        if (ore == null) return false;
-
-        final var id = OraxenItems.getIdByItem(ore);
-        if (id == null) return false;
-
-        return ORE_SUCCESS_RATE_Y_INTERCEPT.containsKey(id);
-    }
-
-    public static boolean isValidSupportItem(ItemStack supportItem) {
-        // TODO: Implement support item
-        return false;
-    }
-
-    public static boolean isMaxRefineLevel(ItemStack artifact) {
-        final var artifactNBT = ArtifactNBT.fromItem(artifact);
-        if (artifactNBT == null) return false;
-        return artifactNBT.refineLevel() >= MAX_REFINE_LEVEL;
-    }
-
-    public static record Result(boolean isSuccess, @Nullable ItemStack resultItem) {
-    }
-
-    private final ItemStack artifact;
-    private final ArtifactNBT artifactNBT;
-    private final ItemStack ore;
-    private final ItemStack supportItem;
-    private final Player player;
-
-    public Refinement(ItemStack artifact, ItemStack ore, ItemStack supportItem, Player player) {
-        this.artifact = artifact;
-        this.artifactNBT = ArtifactNBT.fromItem(artifact);
-        this.ore = ore;
-        this.supportItem = supportItem;
-        this.player = player;
-    }
-
-    @Nullable
-    public ItemStack getSuccessItem() {
-        if (artifactNBT == null) return null;
-        if (artifactNBT.refineLevel() >= MAX_REFINE_LEVEL) return null;
-        if (!isValidOre(ore)) return null;
-        return artifactNBT.setRefineLevel(artifactNBT.refineLevel() + 1).setNBTTag(new ItemStack(artifact));
-    }
-
-    @Nullable
-    public ItemStack getFailureItem() {
-        if (artifactNBT == null) return null;
-        if (artifactNBT.refineLevel() <= 0) return null;
-        if (!isValidOre(ore)) return null;
-        return artifactNBT.setRefineLevel(Math.max(0, artifactNBT.refineLevel() - 1)).setNBTTag(new ItemStack(artifact));
-    }
-
-    public boolean canRefine() {
-        if (artifactNBT == null) return false;
-        MincraLogger.debug("canRefine: " + artifactNBT.refineLevel());
-        if (artifactNBT.refineLevel() >= MAX_REFINE_LEVEL) return false;
-        MincraLogger.debug("canRefine: ore: " + Strings.truncate(ore) + ", isValidOre: " + isValidOre(ore));
-        return isValidOre(ore);
-    }
-
-    @Nullable
-    public Result startRefinement() {
-        if (!isValidOre(ore)) {
-            MincraLogger.warn("Invalid ore: " + Strings.truncate(ore));
-            return null;
-        }
-
-        final var successRate = getSuccessRate();
-        MincraLogger.debug("Refinement#startRefinement: successRate: " + successRate);
-
-        if (Math.random() < successRate) {
-            return new Result(true, getSuccessItem());
-        } else if (Math.random() < getDegradeRate()) {
-            return new Result(false, getFailureItem());
-        } else {
-            // no change
-            return new Result(false, artifact);
-        }
-    }
-
-    public double getSuccessRate() {
-        final var currentLevel = artifactNBT == null ? 0 : artifactNBT.refineLevel();
-
-        final Supplier<Integer> smithLevel = () -> {
-            // if Jobs is installed
-            if (Bukkit.getPluginManager().isPluginEnabled("Jobs")) {
-                final var jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
-                if (jobsPlayer == null) return 0;
-
-                final var smithJob = Jobs.getJob("Smith");
-                if (smithJob == null) return 0;
-                final var prog = jobsPlayer.getJobProgression(smithJob);
-                if (prog == null) return 0;
-                return prog.getLevel();
-            }
-
-            return 0;
-        };
-
-
-        return Math.min(1, Math.max(
-                -0.16 * currentLevel
-                        + ORE_SUCCESS_RATE_Y_INTERCEPT.getOrDefault(OraxenItems.getIdByItem(ore), 0.0)
-                        + smithLevel.get() * 0.001,
-                0.01));
-    }
-
-    private double getDegradeRate() {
-        final var luckEffect = player.getPotionEffect(PotionEffectType.LUCK);
-        if (luckEffect == null) return 1.0;
-
-        return Math.max(0.5, 1.0 - 0.05 * (luckEffect.getAmplifier() + 1));
     }
 }
