@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * 精錬のコアロジック
+ * 精錬値のレベルアップを行うクラス
  */
 public class RefinementUpgrade {
     // Oraxen のアイテムID -> 精錬確率の一次式のy切片
