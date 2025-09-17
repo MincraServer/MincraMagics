@@ -1,7 +1,7 @@
 package jp.mincra.mincramagics.gui.screen;
 
 import jp.mincra.mincramagics.MincraLogger;
-import jp.mincra.mincramagics.domain.refinement.RefinementExecutor;
+import jp.mincra.mincramagics.domain.refinement.RefinementUpgrade;
 import jp.mincra.mincramagics.gui.BuildContext;
 import jp.mincra.mincramagics.gui.GUI;
 import jp.mincra.mincramagics.gui.component.*;
@@ -34,7 +34,7 @@ public class RefinementTable extends GUI {
         final var supportItem = useState(new ItemStack(Material.AIR, 1));
 
         final var player = context.player();
-        final var refinement = new RefinementExecutor(artifact.value(), ore.value(), supportItem.value(), player);
+        final var refinement = new RefinementUpgrade(artifact.value(), ore.value(), supportItem.value(), player);
         final var canRefine = refinement.canRefine();
 
         MincraLogger.debug("RefinementTable#build: artifact: " + Strings.truncate(artifact.value()) +
@@ -57,7 +57,7 @@ public class RefinementTable extends GUI {
         };
 
         final Function<ItemStack, Boolean> handleOrePlaced = (item) -> {
-            if (!RefinementExecutor.isValidOre(item)) return false;
+            if (!RefinementUpgrade.isValidOre(item)) return false;
             if (ore.value().getAmount() >= 1) return false;
             ore.set(item.clone());
             return true;
@@ -69,7 +69,7 @@ public class RefinementTable extends GUI {
         };
 
         final Function<ItemStack, Boolean> handleSupportItemPlaced = (item) -> {
-            if (!RefinementExecutor.isValidSupportItem(item)) return false;
+            if (!RefinementUpgrade.isValidSupportItem(item)) return false;
             if (supportItem.value().getAmount() >= 1) return false;
             supportItem.set(item.clone());
             return true;
@@ -108,7 +108,7 @@ public class RefinementTable extends GUI {
 
             if (result.isSuccess()) {
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0f, 1.2f);
-                if (artifactNBT != null && !RefinementExecutor.isMaxRefineLevel(result.resultItem())) {
+                if (artifactNBT != null && !RefinementUpgrade.isMaxRefineLevel(result.resultItem())) {
                     player.sendMessage("§a◆ 成功！ (+" + artifactNBT.refineLevel() + " → +" +  ArtifactNBT.fromItem(result.resultItem()).refineLevel() + ")");
                 } else {
                     // broadcast max refine level message

@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 /**
  * 精錬のコアロジック
  */
-public class RefinementExecutor {
+public class RefinementUpgrade {
     // Oraxen のアイテムID -> 精錬確率の一次式のy切片
     private final static Map<String, Double> ORE_SUCCESS_RATE_Y_INTERCEPT = Map.of(
             "damascus", 1.824,
@@ -38,7 +38,7 @@ public class RefinementExecutor {
     public record Result(boolean isSuccess, @Nullable ItemStack resultItem) {
     }
 
-    public RefinementExecutor(ItemStack artifact, ItemStack ore, ItemStack supportItem, Player player) {
+    public RefinementUpgrade(ItemStack artifact, ItemStack ore, ItemStack supportItem, Player player) {
         this.artifact = artifact;
         this.artifactNBT = ArtifactNBT.fromItem(artifact);
         this.ore = ore;
