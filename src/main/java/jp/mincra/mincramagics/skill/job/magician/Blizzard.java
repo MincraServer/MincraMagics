@@ -23,7 +23,7 @@ public class Blizzard extends MagicSkill {
         final float level = property.level();
         final int freezeDurationTicks = (int) (level * 20) * 10; // 10 seconds per level
         final double damagePerSec = level * 2.0; // Damage per second
-        final double radius = 3.0 + level * 3.0; // Radius of effect
+        final double radius = 2.0 + level * 2.0; // Radius of effect
 
         // Effects and sound
         final var playerLoc = player.getLocation();
@@ -32,7 +32,7 @@ public class Blizzard extends MagicSkill {
         // 毎ティック 範囲内に SNOWFLAKE を表示
         new BKTween(MincraMagics.getInstance())
                 .execute(() -> {
-                    playerLoc.getWorld().spawnParticle(org.bukkit.Particle.SNOWFLAKE, playerLoc, (int) radius * 10, radius / 2, radius / 4, radius / 2, 0.01);
+                    playerLoc.getWorld().spawnParticle(org.bukkit.Particle.SNOWFLAKE, playerLoc.clone().add(0, 2, 0), (int) radius * 5, 5, radius / 4, radius / 2, 0.01);
                     return true;
                 })
                 .repeat(TickTime.TICK, 1, 0, freezeDurationTicks)
