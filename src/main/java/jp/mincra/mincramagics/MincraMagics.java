@@ -147,6 +147,8 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("blizzard", new Blizzard());
         skillManager.registerSkill("thunder", new Thunder());
         skillManager.registerSkill("fire", new Fire());
+        // - Farmer
+        skillManager.registerSkill("harvester", new jp.mincra.mincramagics.skill.job.farmer.Harvester());
 
         // check if DungeonMMO is present
         if (getServer().getPluginManager().getPlugin("DungeonMMO") != null) {
