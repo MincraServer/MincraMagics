@@ -38,6 +38,7 @@ import jp.mincra.mincramagics.skill.job.magician.Thunder;
 import jp.mincra.mincramagics.skill.job.miner.Hammer;
 import jp.mincra.mincramagics.skill.job.miner.MineAll;
 import jp.mincra.mincramagics.skill.job.miner.MineralDetection;
+import jp.mincra.mincramagics.skill.job.farmer.*;
 import jp.mincra.mincramagics.skill.passive.*;
 import jp.mincra.mincramagics.skill.utility.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -148,7 +149,7 @@ public final class MincraMagics extends JavaPlugin {
         skillManager.registerSkill("thunder", new Thunder());
         skillManager.registerSkill("fire", new Fire());
         // - Farmer
-        skillManager.registerSkill("harvester", new jp.mincra.mincramagics.skill.job.farmer.Harvester());
+        skillManager.registerSkill("harvester", new Harvester());
 
         // check if DungeonMMO is present
         if (getServer().getPluginManager().getPlugin("DungeonMMO") != null) {
