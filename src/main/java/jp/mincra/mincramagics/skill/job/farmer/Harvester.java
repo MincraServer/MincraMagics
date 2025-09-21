@@ -82,7 +82,7 @@ public class Harvester extends MagicSkill implements Listener {
         MincraLogger.debug("Harvester skill extraSeedCount " + extraSeedCount + " , skillLevel " + level);
 
         // Effect and sound=
-        Vfx vfx = vfxManager.getVfx("happy_villager_hexagon");
+        Vfx vfx = vfxManager.getVfx(Vfx.HAPPY_VILLAGER_HEXAGON);
         if (vfx != null) {
             Location playerLoc = player.getLocation();
             vfx.playEffect(playerLoc.add(0, 0.5, 0), 5, new Vector(0, 1, 0), Math.toRadians(player.getEyeLocation().getYaw()));
