@@ -1,6 +1,5 @@
 package jp.mincra.mincramagics.skill.job.farmer;
 
-
 import jp.mincra.bkvfx.Vfx;
 import jp.mincra.mincramagics.MincraLogger;
 import jp.mincra.mincramagics.skill.MagicSkill;
@@ -77,7 +76,7 @@ public class Harvester extends MagicSkill implements Listener {
 
         // Parameters
         final float level = property.level();
-        final int extraSeedCount = (int) (1 + 0.5D * Math.sqrt(level));
+        final int extraSeedCount = (int) (1 + 0.75D * Math.sqrt(level));
 
         // Debug info
         MincraLogger.debug("Harvester skill extraSeedCount " + extraSeedCount + " , skillLevel " + level);
