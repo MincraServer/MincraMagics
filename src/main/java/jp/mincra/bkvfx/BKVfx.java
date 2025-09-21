@@ -126,6 +126,11 @@ public class BKVfx {
                         8, Particle.ANGRY_VILLAGER)
                         .setSpeed(0)
                         .setOffset(new Vector(0.003, 0.003, 0.003)));
+        vfxManager.registerVfx((Vfx.HAPPY_VILLAGER_HEXAGON),
+                new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
+                        5, Particle.HAPPY_VILLAGER)
+                        .setSpeed(0.1f)
+                        .setOffset(new Vector(0.003, 0.003, 0.003)));
         vfxManager.registerVfx(Vfx.SNOWFLAKE_HEXAGON,
                 new SvgParticleVfx(SvgFactory.fromString(svgs.get("six_pointed_star_dual_circle")),
                         8, Particle.SNOWFLAKE)
