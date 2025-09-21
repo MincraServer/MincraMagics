@@ -9,6 +9,7 @@ public interface Vfx {
     String WAX_OFF_PENTAGON = "wax_off_pentagon";
     String ENCHANT_PENTAGON = "enchant_pentagon";
     String ANGRY_VILLAGER_PENTAGON = "angry_villager_pentagon";
+    String HAPPY_VILLAGER_HEXAGON = "happy_villager_hexagon";
     String SNOWFLAKE_HEXAGON = "snowflake_hexagon";
     String FLAME_HEXAGON = "flame_hexagon";
 
