@@ -14,4 +14,8 @@ public class Divider {
 //        return Color.COLOR_DARK_GRAY + "･".repeat((int)(descriptionLength * 2));
         return Color.COLOR_DARK_GRAY + "･".repeat(60);
     }
+
+    public static String get() {
+        return toString(List.of());
+    }
 }

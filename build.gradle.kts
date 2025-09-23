@@ -54,6 +54,8 @@ repositories {
         name = "alessiodp-repo"
         url = uri("https://repo.alessiodp.com/releases/")
     }
+
+    maven("https://mvn.lumine.io/repository/maven-public/") // ModelEngine
 }
 
 val pluginVersion = project.properties["pluginVersion"]
@@ -79,6 +81,8 @@ dependencies {
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.13")
     compileOnly("net.luckperms:api:5.5")
     compileOnly("com.alessiodp.parties:parties-api:3.2.16")
+    compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.8")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.9.5")
     compileOnly(files("libs/DungeonMMO.jar"))
     compileOnly(files("libs/OBTeam.jar"))
     compileOnly(files("libs/GSit-2.4.2.jar"))
