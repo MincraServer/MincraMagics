@@ -3,6 +3,8 @@ package jp.mincra.mincramagics;
 import com.civious.dungeonmmo.api.DungeonMMOAPI;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.github.retrooper.packetevents.PacketEvents;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import jp.mincra.bkvfx.BKVfx;
@@ -19,6 +21,7 @@ import jp.mincra.mincramagics.gui.GUIManager;
 import jp.mincra.mincramagics.hud.DamageIndicator;
 import jp.mincra.mincramagics.hud.HudManager;
 import jp.mincra.mincramagics.oraxen.mechanic.artifact.ArtifactMechanicFactory;
+import jp.mincra.mincramagics.oraxen.mechanic.broom.BroomMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.gui.GUIMechanicFactory;
 import jp.mincra.mincramagics.oraxen.mechanic.material.MaterialMechanicFactory;
 import jp.mincra.mincramagics.party.OBTeamWrapper;
@@ -62,8 +65,17 @@ public final class MincraMagics extends JavaPlugin {
     private static JobRewardDao jobRewardDao;
 
     @Override
+    public void onLoad() {
+        // PacketEvents の初期化 (Oraxen や ModelEngine より先に)
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().load();
+    }
+
+    @Override
     public void onEnable() {
         INSTANCE = this;
+
+        PacketEvents.getAPI().init();
 
         // Managers
         audiences = BukkitAudiences.create(this);
@@ -103,6 +115,7 @@ public final class MincraMagics extends JavaPlugin {
         MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
+        MechanicsManager.registerMechanicFactory("broom", new BroomMechanicFactory("broom"), true);
         OraxenItems.loadItems();
 
         // Skills
@@ -167,6 +180,7 @@ public final class MincraMagics extends JavaPlugin {
     @Override
     public void onDisable() {
         damageIndicator.removeAll();
+        PacketEvents.getAPI().terminate();
     }
 
     public void reload() {
@@ -174,6 +188,7 @@ public final class MincraMagics extends JavaPlugin {
         MechanicsManager.registerMechanicFactory("artifact", new ArtifactMechanicFactory("artifact"), true);
         MechanicsManager.registerMechanicFactory("material", new MaterialMechanicFactory("material"), true);
         MechanicsManager.registerMechanicFactory("gui", new GUIMechanicFactory("gui"), true);
+        MechanicsManager.registerMechanicFactory("broom", new BroomMechanicFactory("broom"), true);
         OraxenItems.loadItems();
         Fonts.reload();
     }
